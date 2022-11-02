@@ -62,7 +62,7 @@ Le cours de BPMN ayant eu lieu en début de formation, j'ai souhaité optimiser 
 
 ![Partie de ma planification sous Ganttproject](https://github.com/stephane-englebert/PokerMania/blob/main/project-doc/analyse/ganttproject.png)
 
-Découpage du projet en plusieurs phases et planification sous forme de tâches des différentes fonctionnalités à implémenter. Utilisation basique de Ganttproject, les seuls buts étant d'avoir une notion de l'enchaînement des tâches et surtout d'avoir une vision globale des délais et des éventuels retards pris.
+Découpage du projet en plusieurs phases et planification sous forme de tâches des différentes fonctionnalités à implémenter (illustration ci-dessus montre une grande partie des tâches côté "back"). Utilisation basique de Ganttproject, les seuls buts étant d'avoir une notion de l'enchaînement des tâches et surtout d'avoir une vision globale des délais et des éventuels retards pris.
 
 > Trello
 
@@ -72,7 +72,7 @@ Création d'une carte Trello pour chacune des tâches créées sous Ganttproject
 
 ## Développement
 
-Si pas trop contraignant, je vais essayer de tenir un [journal de développement](https://github.com/stephane-englebert/PokerMania/JOURNAL.md) relatant succinctement chaque journée de développement.
+Si pas trop contraignant, je vais essayer de tenir un [journal de développement](https://github.com/stephane-englebert/PokerMania/blob/main/JOURNAL.md) relatant succinctement chaque journée de développement.
 
 ## Technologies utilisées
 
