@@ -19,7 +19,7 @@ Site de jeu de poker en ligne
 - il faut impérativement utiliser les technologies apprises dans le cadre de la formation
 - il est préférable de constituer un dossier d'analyse préalable au développement, et celui-ci doit être présent sur notre compte github
 - sur notre repo github, on doit également retrouver le code backend et le code frontend
-- le développement doit être finalisé pour fin novembre
+- le développement doit être finalisé pour fin novembre 2022
 - une défense devant jury est potentiellement possible - à déterminer en cours de projet
 - travail majoritairement à distance en solo, sous encadrement des formateurs en cas de questions
 
@@ -36,34 +36,45 @@ Site de jeu de poker en ligne
 
 > Diagrammes d'activité
 
-- [Diagramme 1](https://github.com/stephane-englebert/PokerMania.git/project-doc/) : Gestion d'un tournoi
-- [Diagramme 2]() : Déroulement d'un tournoi
-- [Diagramme 3]() : Jouer une main
-- [Diagramme 4]() : Partage du pot
-- [Diagramme 5]() : Déterminer le classement d'une main
-- [Diagramme 6]() : Comparaison de 2 mains de même niveau
-  Le cours de BPMN ayant eu lieu en début de formation, j'ai souhaité optimiser les exercices en réfléchissant à l'avance aux règles métier de mon futur projet. Cela explique que ces diagrammes aient été réalisés avant même le cahier des charges.
+- [Diagramme 1](https://github.com/stephane-englebert/PokerMania/blob/main/project-doc/analyse/DIAG_ACTIVITE_1_tournoi_pokermania.png) : Gestion d'un tournoi
+- [Diagramme 2](https://github.com/stephane-englebert/PokerMania/blob/main/project-doc/analyse/DIAG_ACTIVITE_2_deroulement_tournoi.png) : Déroulement d'un tournoi
+- [Diagramme 3](https://github.com/stephane-englebert/PokerMania/blob/main/project-doc/analyse/DIAG_ACTIVITE_3_jouer_main.png) : Jouer une main
+- [Diagramme 4](https://github.com/stephane-englebert/PokerMania/blob/main/project-doc/analyse/DIAG_ACTIVITE_4_partage_pot.png) : Partage du pot
+- [Diagramme 5](https://github.com/stephane-englebert/PokerMania/blob/main/project-doc/analyse/DIAG_ACTIVITE_5_classement_main.png) : Déterminer le classement d'une main
+- [Diagramme 6](https://github.com/stephane-englebert/PokerMania/blob/main/project-doc/analyse/DIAG_ACTIVITE_6_comparaison_mains_meme_niveau.png) : Comparaison de 2 mains de même niveau
+
+Le cours de BPMN ayant eu lieu en début de formation, j'ai souhaité optimiser les exercices en réfléchissant à l'avance aux règles métier de mon futur projet. Cela explique que ces diagrammes aient été réalisés avant même le cahier des charges.
 
 > Cahier des charges
 
-- [Document]()
+- [Document](https://github.com/stephane-englebert/PokerMania/blob/main/project-doc/analyse/cahier_des_charges.pdf)
 
 > Use Cases
 
-- [Use Case 1]() : Homepage
-- [Use Case 2]() : Jouer un tournoi
+- [Use Case 1](https://github.com/stephane-englebert/PokerMania/blob/main/project-doc/analyse/USE_CASE_1_pokermania_home.pdf) : Homepage
+- [Use Case 2](https://github.com/stephane-englebert/PokerMania/blob/main/project-doc/analyse/USE_CASE_2_jouer_tournoi.pdf) : Jouer un tournoi
 
 > Diagramme de classes
 
-- [Document]()
-
-> Trello
+- [Document](https://github.com/stephane-englebert/PokerMania/blob/main/project-doc/analyse/DIAG_CLASSES.pdf)
 
 > GanttProject
 
+![Partie de ma planification sous Ganttproject](https://github.com/stephane-englebert/PokerMania/blob/main/project-doc/analyse/ganttproject.png)
+
+Découpage du projet en plusieurs phases et planification sous forme de tâches des différentes fonctionnalités à implémenter. Utilisation basique de Ganttproject, les seuls buts étant d'avoir une notion de l'enchaînement des tâches et surtout d'avoir une vision globale des délais et des éventuels retards pris.
+
+> Trello
+
+![Vue d'ensemble des cartes Trello de début de projet](https://github.com/stephane-englebert/PokerMania/blob/main/project-doc/analyse/trello.png)
+
+Création d'une carte Trello pour chacune des tâches créées sous Ganttproject. Les cartes ont été créées dans 2 backlog ("Front" et "Back") et sont triées par ordre chronologique croissant d'implémentation. But : faciliter la gestion au quotidien des tâches en cours d'implémentation.
+
 ## Développement
 
-## Technologies utilisée
+Si pas trop contraignant, je vais essayer de tenir un [journal de développement](https://github.com/stephane-englebert/PokerMania/JOURNAL.md) relatant succinctement chaque journée de développement.
+
+## Technologies utilisées
 
 - Dotnet Core 6.0
 - ASP Web API
