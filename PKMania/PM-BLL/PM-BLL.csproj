@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>PM_BLL</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\DTO\Entities\" />
+    <Folder Include="Data\DTO\Forms\" />
+    <Folder Include="Data\Mappers\" />
+    <Folder Include="Data\Validators\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Tools\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+</Project>
