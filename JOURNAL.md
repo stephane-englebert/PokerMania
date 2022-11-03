@@ -8,3 +8,13 @@
 - Pour le front, j'ai créé un module "home" avec la page d'accueil et créé le routing adéquat pour y accéder par défaut
 - Suppression des répertoires /bin et /obj du back et "first commit arbo" sur main Github
 - Création d'une nouvelle branch 'dev' pour la suite et push de la branch
+- maj Trello & Ganttproject
+- Ajout d'un nouveau projet à la solution afin de créer la base de données ("Projet de base de données SQL Server") et création des sous-répertoires
+- Finalisation du Schéma des Entités & Associations sur base du diagramme de classes
+- Mise à disposition du Schéma dans "project-doc" -> "database" -> "schema_entites_associations"
+- Rédaction du script de création des tables en T-SQL
+- Ajout des contraintes sur les champs
+- Publication de la base de données en local ("Pokermania")
+- git commit/push de la branch dev
+- maj Trello & Ganttproject
+  > COMMENTAIRES : bon début de projet, journée bien remplie, pas de réelle difficulté rencontrée, il m'a juste manqué un peu de temps pour le script de post-déploiement mais je vais le faire à mon aise ce soir.
