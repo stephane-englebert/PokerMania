@@ -18,3 +18,15 @@
 - git commit/push de la branch dev
 - maj Trello & Ganttproject
   > COMMENTAIRES : bon début de projet, journée bien remplie, pas de réelle difficulté rencontrée, il m'a juste manqué un peu de temps pour le script de post-déploiement mais je vais le faire à mon aise ce soir.
+
+## J2 04/11/2022
+
+- quelques minutes de réflexion afin de voir dans quel ordre je vais attaquer le code
+- ajout de 2 champs supplémentaires dans la table 'Members' : 'password' et 'role'
+- 'password' car je l'avais tout simplement oublié... ;o)
+- 'role' car même si a priori le projet ne tient compte que des joueurs, il est préférable que je prévoie 'admin' pour l'administration que je ferai du site
+- adaptation du script de post-déploiement en conséquence
+- destruction et reconstruction de la base de données locale avec le nouveau script
+- nettoyage /bin & /obj
+- commit & push de la branch dev
+- merge de dev sur main et commit/push de main

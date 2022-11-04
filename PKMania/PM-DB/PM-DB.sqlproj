@@ -67,4 +67,7 @@
     <Build Include="Tables\Tournaments_types.sql" />
     <Build Include="Tables\Gains.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\Script.PostDeployment1.sql" />
+  </ItemGroup>
 </Project>
