@@ -30,3 +30,25 @@
 - nettoyage /bin & /obj
 - commit & push de la branch dev
 - merge de dev sur main et commit/push de main
+- ajout d'un .gitignore pour les /bin et /obj
+- je choisis de commencer par l'implémentation du formulaire de login côté front
+- création du module 'tools'
+- création d'un fichier de constantes globales dans 'tools' pour y stocker ea les api endpoints
+- dans 'tools', création du composant 'login' incluant un login.service vers l'api (login navbar)
+- création du contrôleur 'TokenControleur' côté back
+- création d'un service d'authentification dans la BLL (AuthService)
+- création du service 'MemberRepository' dans la DAL afin de vérifier les identifiants dans la base de données
+- création du service 'SecurityTokenService' qui permet de générer un nouveau token
+- adaptation des scripts afin de gérer les token
+- ajout de 'toastr'
+- création de fichiers de langues (fr-en) en json dans assets
+- ajout de 'translate' et adaptation des scripts pour switcher sur le bon fichier de langues
+- adaptation des exceptions renvoyées par le back afin que cela corresponde aux clés des fichiers de langues
+- mise à jour Github, Trello & Ganttproject
+> COMMENTAIRES : difficulté rencontrée après avoir mis en place le login côté front et le contrôleur côté back -> le back transmettait bien les infos au front mais pb d'affichage dans le fichier html du composant.
+> Après avoir cherché un certain temps, j'ai sollicité l'aide de Julien. En reparcourant ensemble le code, il est apparu qu'il y avait un soucis de nommage entre back et front ...
+> Grâce à Julien qui avait déjà rencontré le pb (et à RapidAPI pour confirmer l'analyse), le code a fonctionné correctement.
+> Je n'ai pas eu le temps de tenir le timing, probablement trop fatigué et aussi un peu trop chargé pour une journée.
+> J'ai continué à coder dimanche et décidé de laisser le dernier point (enregistrement) pour le lundi
+
+

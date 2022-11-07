@@ -1,0 +1,23 @@
+<div *ngIf="!isLogged">
+  <form [formGroup]="formGroupLogin">
+      <span class="p-input-icon-left" style="margin-right: 10px;">
+          <i class="pi pi-user"></i>
+          <input  style="margin-left: 25px;" id="useridentifier-input" type="text" formControlName="UserIdentifier" pInputText placeholder="Pseudo (ou email)"/>
+      </span>
+      <span class="p-input-icon-left" style="margin-left: 20px;">
+          <i class="pi pi-key" style="margin-right: 10px;"></i>
+          <input  style="margin-left: 25px;" id="password-input" type="password" formControlName="Password" pPassword placeholder="Password" />
+      </span>
+      <span>
+          <button  style="margin-left: 20px;padding:3px;" pButton type="button" icon="pi pi-arrow-circle-right" (click)="submit()"></button>
+      </span>
+  </form>
+</div>
+<div *ngIf="isLogged">
+    <p>
+      <span><i class="pi pi-user"></i></span>
+      <span style="margin-left: 10px;">{{loggedUser.loggedMember.pseudo}}</span>
+      <span style="margin-left: 30px;">Bankroll: {{loggedUser.loggedMember.bankroll}} $</span>
+      <button style="margin-left: 30px;" pButton type="button" (click)="logout()">Logout</button>
+    </p>
+</div>
