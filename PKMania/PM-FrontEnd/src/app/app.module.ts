@@ -16,6 +16,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { RegisterComponent } from './features/tools/register/register.component';
 
 export function createTranslateLoader(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -24,7 +25,8 @@ export function createTranslateLoader(httpClient: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarConnectComponent
+    NavbarConnectComponent,
+    RegisterComponent
   ],
   imports: [
     AppRoutingModule,
@@ -39,6 +41,8 @@ export function createTranslateLoader(httpClient: HttpClient) {
     SelectButtonModule,
     ToastrModule.forRoot({
     }),
+    TranslateModule,
+    TranslateModule.forChild(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

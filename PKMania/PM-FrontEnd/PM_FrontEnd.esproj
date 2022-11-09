@@ -11,6 +11,9 @@
     <Folder Include="src\app\features\home\services\" />
     <Folder Include="src\app\features\home\pages\" />
     <Folder Include="src\app\features\tools\language\" />
+    <Folder Include="src\app\features\tools\register\models\" />
+    <Folder Include="src\app\features\tools\register\services\" />
+    <Folder Include="src\app\features\tools\register\pages\" />
     <Folder Include="src\assets\i18n\" />
   </ItemGroup>
 </Project>

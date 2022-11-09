@@ -12,6 +12,7 @@ namespace PM_DAL.Data.Entities
         public string Role { get; set; } = string.Empty;
         public string Pseudo { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        public byte[]? Salt { get; set; }
         public int Bankroll { get; set; }
         public bool IsPlaying { get; set; }
         public bool IsDisconnected { get; set; }

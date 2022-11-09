@@ -70,10 +70,6 @@ Découpage du projet en plusieurs phases et planification sous forme de tâches 
 
 Création d'une carte Trello pour chacune des tâches créées sous Ganttproject. Les cartes ont été créées dans 2 backlog ("Front" et "Back") et sont triées par ordre chronologique croissant d'implémentation. But : faciliter la gestion au quotidien des tâches en cours d'implémentation.
 
-## Développement
-
-Si pas trop contraignant, je vais essayer de tenir un [journal de développement](https://github.com/stephane-englebert/PokerMania/blob/main/JOURNAL.md) relatant succinctement chaque journée de développement.
-
 ## Technologies utilisées
 
 - Dotnet Core 6.0

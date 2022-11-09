@@ -7,11 +7,16 @@ import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { RegisterComponent } from './register/register.component';
+import { FormRegisterComponent } from './register/pages/form-register/form-register.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @NgModule({
   declarations: [
-    LoginComponent
+    LoginComponent,
+    RegisterComponent,
+    FormRegisterComponent
   ],
   imports: [
     CommonModule,
@@ -20,7 +25,8 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     InputTextModule,
     ButtonModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    TranslateModule
   ]
 })
 export class ToolsModule { }

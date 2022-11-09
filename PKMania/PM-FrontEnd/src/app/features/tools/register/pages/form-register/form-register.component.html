@@ -1,0 +1,23 @@
+<div style="width: 250px;margin:auto;margin-top: 40px;">
+  <form [formGroup]="formGroupAddMember">
+    <div class="p-input-icon-left m-2">
+      <i class="pi pi-user"></i>
+      <input id="pseudo-input" type="text" formControlName="Pseudo" pInputText placeholder="{{ 'REGISTER.FORM.PSEUDO' | translate }}" />
+    </div>
+    <div class="p-input-icon-left m-2">
+      <i class="pi pi-at"></i>
+      <input id="email-input" type="email" formControlName="Email" pInputText placeholder="{{ 'REGISTER.FORM.EMAIL' | translate }}" />
+    </div>
+    <div class="p-input-icon-left m-2">
+      <i class="pi pi-key"></i>
+      <input id="password-input" type="password" formControlName="Password" pInputText placeholder="{{ 'REGISTER.FORM.PWD' | translate }}" />
+    </div>
+    <div class="p-input-icon-left m-2">
+      <i class="pi pi-key"></i>
+      <input id="verif-password-input" type="password" formControlName="VerifPassword" pInputText placeholder="{{ 'REGISTER.FORM.CHECK_PWD' | translate }}" />
+    </div>
+    <div class="m-4">
+      <button pButton type="button" label="{{ 'REGISTER.FORM.SUBBTN' | translate }}" (click)="submit()"></button>
+    </div>
+  </form>
+</div>

@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IMembersService, MembersService>();
 builder.Services.AddScoped<ISecurityTokenService, SecurityTokenService>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 //builder.Services.AddRepositories();

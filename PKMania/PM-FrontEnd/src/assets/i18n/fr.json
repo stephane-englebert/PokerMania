@@ -1,4 +1,35 @@
 {
-  "AUTH_IDENT_KO": "Le Pseudo/Email est invalide!",
-  "AUTH_PWD_KO":  "Le mot de passe est invalide!"
+  "AUTH": {
+    "IDENT_KO": "Le Pseudo/Email est invalide!",
+    "PWD_KO": "Le mot de passe est invalide!"
+  },
+  "LOGIN": {
+    "FORM": {
+      "IDENT": "Pseudo (ou email)",
+      "PWD": "Mot de passe",
+      "REGISTER": "S'inscrire"
+    }
+  },
+  "NAVBAR": {
+    "BANKROLL": "Bankroll",
+    "LOGOUT": "Se déconnecter"
+  },
+  "REGISTER": {
+    "BLL": {
+      "EXISTS_EMAIL": "L'email existe déjà pour un autre utilisateur",
+      "EXISTS_PSEUDO": "Ce pseudo existe déjà pour un autre utilisateur"
+    },
+    "FORM": {
+      "CHECK_PWD": "Vérification mot de passe",
+      "EMAIL": "Email",
+      "PSEUDO": "Pseudo",
+      "PWD": "Mot de passe",
+      "SUBBTN": "S'inscrire"
+    },
+    "GENERAL": {
+      "ERROR": "Echec de l'inscription",
+      "INVALID": "Champ(s) invalide(s)",
+      "SUCCESS": "Votre inscription a bien été effectuée"
+    }
+  }
 }

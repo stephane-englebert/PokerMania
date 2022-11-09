@@ -1,4 +1,35 @@
 {
-  "AUTH_IDENT_KO": "The Nickname/Email is not valid!",
-  "AUTH_PWD_KO": "The password is not valid!"
+  "AUTH": {
+    "IDENT_KO": "The Nickname/Email is not valid!",
+    "PWD_KO": "The password is not valid!"
+  },
+  "LOGIN": {
+    "FORM": {
+      "IDENT": "Nickname (or email)",
+      "PWD": "Password",
+      "REGISTER": "Register"
+    }
+  },
+  "NAVBAR": {
+    "BANKROLL": "Bankroll",
+    "LOGOUT": "Logout"
+  },
+  "REGISTER": {
+    "BLL": {
+      "EXISTS_EMAIL": "This email already exists",
+      "EXISTS_PSEUDO": "This nickname already exists"
+    },
+    "FORM": {
+      "CHECK_PWD": "Check password",
+      "EMAIL": "Email",
+      "PSEUDO": "Nickname",
+      "PWD": "Password",
+      "SUBBTN": "Register"
+    },
+    "GENERAL": {
+      "ERROR": "Registration failure",
+      "INVALID": "Invalid Field(s)",
+      "SUCCESS": "Registration completed"
+    }
+  }
 }

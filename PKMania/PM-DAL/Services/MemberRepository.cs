@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.Extensions.Configuration;
 using PM_DAL.Data.Entities;
 using PM_DAL.Interfaces;
 using System.Data.SqlClient;
+using System.Diagnostics.Metrics;
 
 namespace PM_DAL.Services
 {
@@ -17,12 +19,22 @@ namespace PM_DAL.Services
         }
 
         public Member GetMemberByCredentials(string ident, string pwd)
-        {            
+        {
+            Member mb = GetMemberByIdentifier(ident);
+            if(mb == null) { return null; }
+            byte[] salt = (byte[])mb.Salt;
+            byte[] hashedPwd = KeyDerivation.Pbkdf2(
+                password: pwd,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: 100000,
+                numBytesRequested: 256 / 8
+            );
             using SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
             using SqlCommand cmd = connection.CreateCommand();
-            cmd.CommandText = @"SELECT * FROM [Members] WHERE password = @pwd AND (pseudo = @ident OR email = @ident)";
-            cmd.Parameters.AddWithValue("pwd", pwd);
+            cmd.CommandText = @"SELECT * FROM [Members] WHERE password = @hashedPwd AND (pseudo = @ident OR email = @ident)";
+            cmd.Parameters.AddWithValue("hashedPwd", hashedPwd);
             cmd.Parameters.AddWithValue("ident", ident);
             using SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -33,6 +45,7 @@ namespace PM_DAL.Services
                     Role = (string)reader["role"],
                     Pseudo = (string)reader["pseudo"],
                     Email = (string)reader["email"],
+                    Salt = (byte[])reader["salt"],
                     Bankroll = (int)reader["bankroll"],
                     IsPlaying = (bool)reader["playing"],
                     IsDisconnected = (bool)reader["disconnected"],
@@ -58,6 +71,7 @@ namespace PM_DAL.Services
                     Role = (string)reader["role"],
                     Pseudo = (string)reader["pseudo"],
                     Email = (string)reader["email"],
+                    Salt = (byte[])reader["salt"],
                     Bankroll = (int)reader["bankroll"],
                     IsPlaying = (bool)reader["playing"],
                     IsDisconnected = (bool)reader["disconnected"],
@@ -67,22 +81,49 @@ namespace PM_DAL.Services
             return null;
         }
 
-        public void AddMember(Member member, string password)
+        public void AddMember(Member member, byte[] password, byte[] salt)
         {
             using SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
             using SqlCommand cmd = connection.CreateCommand();
-            cmd.CommandText = @"INSERT INTO [dbo].[Members](role, pseudo, email, password, bankroll, playing, current_tournament_id, disconnected) VALUES(@role,@pseudo,@email,@password,@bankroll, @playing, @current_tournament_id, @disconnected)";
+            cmd.CommandText = @"INSERT INTO [dbo].[Members](role, pseudo, email, password, salt, bankroll, playing, current_tournament_id, disconnected) VALUES(@role,@pseudo,@email,@password, @salt, @bankroll, @playing, @current_tournament_id, @disconnected)";
             cmd.Parameters.AddWithValue("role", member.Role);
             cmd.Parameters.AddWithValue("pseudo", member.Pseudo);
             cmd.Parameters.AddWithValue("email", member.Email);
             cmd.Parameters.AddWithValue("password", password);
+            cmd.Parameters.AddWithValue("salt", salt);
             cmd.Parameters.AddWithValue("bankroll", member.Bankroll);
             cmd.Parameters.AddWithValue("playing", member.IsPlaying);
             cmd.Parameters.AddWithValue("current_tournament_id", member.CurrentTournament);
             cmd.Parameters.AddWithValue("disconnected", member.IsDisconnected);
             cmd.ExecuteNonQuery();
             connection.Close();
+        }
+
+        public bool ExistEmail(string email)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT * FROM [Members] WHERE email=@email";
+            cmd.Parameters.AddWithValue("email", email);
+            bool emailFound = false;
+            using SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read()) { emailFound = true; }
+            return emailFound;
+        }
+
+        public bool ExistPseudo(string pseudo)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT * FROM [Members] WHERE pseudo=@pseudo";
+            cmd.Parameters.AddWithValue("pseudo", pseudo);
+            bool pseudoFound = false;
+            using SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read()) { pseudoFound = true; }
+            return pseudoFound;
         }
     }
 }

@@ -26,11 +26,11 @@ namespace PM_BLL.Services
                 memb = _memberRepository.GetMemberByIdentifier(member.UserIdentifier);
                 if(memb == null)
                 {
-                    throw new AuthenticationException("AUTH_IDENT_KO");
+                    throw new AuthenticationException("AUTH.IDENT_KO");
                 }
                 else
                 {
-                    throw new AuthenticationException("AUTH_PWD_KO");
+                    throw new AuthenticationException("AUTH.PWD_KO");
                 }
             }
             MemberDTO membDTO = new MemberDTO(memb);

@@ -3,15 +3,28 @@ import { CommonModule } from '@angular/common';
 
 import { HomeRoutingModule } from './home-routing.module';
 import { IndexComponent } from './pages/index/index.component';
+import { RegistrationComponent } from './pages/registration/registration.component';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormRegisterComponent } from '../tools/register/pages/form-register/form-register.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @NgModule({
   declarations: [
-    IndexComponent
+    IndexComponent,
+    RegistrationComponent,
+    FormRegisterComponent
   ],
   imports: [
     CommonModule,
-    HomeRoutingModule
+    HomeRoutingModule,
+    InputTextModule,
+    ButtonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    TranslateModule
   ]
 })
 export class HomeModule { }
