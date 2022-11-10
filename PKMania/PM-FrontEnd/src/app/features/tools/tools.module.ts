@@ -10,13 +10,15 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RegisterComponent } from './register/register.component';
 import { FormRegisterComponent } from './register/pages/form-register/form-register.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { HubComponent } from './hub/hub.component';
 
 
 @NgModule({
   declarations: [
     LoginComponent,
     RegisterComponent,
-    FormRegisterComponent
+    FormRegisterComponent,
+    HubComponent
   ],
   imports: [
     CommonModule,

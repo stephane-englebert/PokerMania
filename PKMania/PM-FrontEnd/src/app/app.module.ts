@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -17,6 +17,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { RegisterComponent } from './features/tools/register/register.component';
+import { HubComponent } from './features/tools/hub/hub.component';
+import { AuthInterceptor } from './features/tools/auth/interceptor';
 
 export function createTranslateLoader(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -25,6 +27,7 @@ export function createTranslateLoader(httpClient: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
+    HubComponent,
     NavbarConnectComponent,
     RegisterComponent
   ],
@@ -52,7 +55,8 @@ export function createTranslateLoader(httpClient: HttpClient) {
     })
   ],
   providers: [
-    GlobalConst
+    GlobalConst,
+
   ],
   bootstrap: [AppComponent]
 })
