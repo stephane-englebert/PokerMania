@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using PM_DAL.Data.Entities;
 
 namespace PM_BLL.Data.DTO.Entities
 {
@@ -16,7 +13,7 @@ namespace PM_BLL.Data.DTO.Entities
         public int TournamentType { get; set; }
         public int RegistrationsNumber { get; set; }
         public int RealPaidPlaces { get; set; }
-        public GainsDTO[]? Gains { get; set; }
+        public IEnumerable<Gains>? Gains { get; set; }
         public int CurrentLevel { get; set; }
         public int CurrentSmallBlind { get; set; }
         public int CurrentBigBlind { get; set; }
@@ -26,6 +23,26 @@ namespace PM_BLL.Data.DTO.Entities
         public int NextSmallBlind { get; set; }
         public int NextBigBlind { get; set; }
         public int NextAnte { get; set; }
-
+        public TournamentDTO(Tournament t)
+        {
+            Id = t.Id;
+            Status = t.Status;
+            StartedOn = t.StartedOn;
+            FinishedOn = t.FinishedOn;
+            Name = t.Name;
+            TournamentType = t.TournamentType;
+            RegistrationsNumber = t.RegistrationsNumber;
+            RealPaidPlaces = t.RealPaidPlaces;
+            Gains = t.Gains;
+            CurrentLevel = t.CurrentLevel;
+            CurrentSmallBlind = t.CurrentSmallBlind;
+            CurrentBigBlind = t.CurrentBigBlind;
+            CurrentAnte = t.CurrentAnte;
+            NextLevel = t.NextLevel;
+            TimeBeforeNextLevel = t.TimeBeforeNextLevel;
+            NextSmallBlind = t.NextSmallBlind;
+            NextBigBlind = t.NextBigBlind;
+            NextAnte = t.NextAnte;
+        }
     }
 }

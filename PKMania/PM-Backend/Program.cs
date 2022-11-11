@@ -17,11 +17,14 @@ builder.Services.AddSignalR(options =>
     options.EnableDetailedErrors = true;
 });
 // Add services to the container.
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddScoped<ITournamentsListRepository, TournamentsListRepository>();
+
+builder.Services.AddScoped<ITournamentsManagerService, TournamentsManagerService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMembersService, MembersService>();
 builder.Services.AddScoped<ISecurityTokenService, SecurityTokenService>();
-builder.Services.AddScoped<IMemberRepository, MemberRepository>();
-builder.Services.AddScoped<ITournamentsManagerService, TournamentsManagerService>();
+builder.Services.AddScoped<ITournamentsListService, TournamentsListService>();
 builder.Services.AddSingleton<PkHub>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PM_DAL.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +14,12 @@ namespace PM_BLL.Data.DTO.Entities
         public int NumberChips { get; set; }
         public double Percentage { get; set; }
 
+        public GainsDTO(Gains g)
+        {
+            StartPlace = g.StartPlace;
+            EndPlace = g.EndPlace;
+            NumberChips = g.NumberChips;
+            Percentage = g.Percentage;
+        }
     }
 }
