@@ -12,7 +12,9 @@ namespace PM_BLL.Data.DTO.Entities
         public string Name { get; set; } = string.Empty;
         public int TournamentType { get; set; }
         public int RegistrationsNumber { get; set; }
+        public int PrizePool { get; set; }
         public int RealPaidPlaces { get; set; }
+        public int GainsSharingNr { get; set; }
         public IEnumerable<Gains>? Gains { get; set; }
         public int CurrentLevel { get; set; }
         public int CurrentSmallBlind { get; set; }
@@ -32,7 +34,9 @@ namespace PM_BLL.Data.DTO.Entities
             Name = t.Name;
             TournamentType = t.TournamentType;
             RegistrationsNumber = t.RegistrationsNumber;
+            PrizePool = t.PrizePool;
             RealPaidPlaces = t.RealPaidPlaces;
+            GainsSharingNr = t.GainsSharingNr;
             Gains = t.Gains;
             CurrentLevel = t.CurrentLevel;
             CurrentSmallBlind = t.CurrentSmallBlind;

@@ -10,7 +10,9 @@ namespace PM_DAL.Data.Entities
         public string Name { get; set; } = string.Empty;
         public int TournamentType { get; set; }
         public int RegistrationsNumber { get; set; }
+        public int PrizePool { get; set; }
         public int RealPaidPlaces { get; set; }
+        public int GainsSharingNr { get; set; }
         public IEnumerable<Gains>? Gains { get; set; }
         public int CurrentLevel { get; set; }
         public int CurrentSmallBlind { get; set; }

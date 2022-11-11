@@ -66,8 +66,8 @@ INSERT INTO [dbo].[Tournaments_types](
 );
 
 
-INSERT INTO [dbo].[Tournaments](status,name,tournament_type_id)VALUES('created','Tournoi à 1 table',1);
-INSERT INTO [dbo].[Tournaments](status,name,tournament_type_id)VALUES('created','Tournoi à 2 tables',2);
+INSERT INTO [dbo].[Tournaments](status,name,tournament_type_id,players_nb,prize_pool,gains_sharing_nr)VALUES('created','Tournoi à 1 table',1,3,6000,1);
+INSERT INTO [dbo].[Tournaments](status,name,tournament_type_id,players_nb,prize_pool,gains_sharing_nr)VALUES('created','Tournoi à 2 tables',2,3,9000,2);
 
 INSERT INTO [dbo].[Registrations](tournament_id,player_id,stack,bonus_time)VALUES(1,1,1500,60);
 INSERT INTO [dbo].[Registrations](tournament_id,player_id,stack,bonus_time)VALUES(1,2,1500,60);

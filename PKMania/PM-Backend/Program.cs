@@ -19,6 +19,7 @@ builder.Services.AddSignalR(options =>
 // Add services to the container.
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<ITournamentsListRepository, TournamentsListRepository>();
+builder.Services.AddScoped<IGainsRepository, GainsRepository>();
 
 builder.Services.AddScoped<ITournamentsManagerService, TournamentsManagerService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
