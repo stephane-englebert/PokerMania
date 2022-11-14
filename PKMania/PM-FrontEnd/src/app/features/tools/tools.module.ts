@@ -11,6 +11,8 @@ import { RegisterComponent } from './register/register.component';
 import { FormRegisterComponent } from './register/pages/form-register/form-register.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { HubComponent } from './hub/hub.component';
+import { TournamentsComponent } from './tournaments/tournaments.component';
+import { TableModule } from 'primeng/table';
 
 
 @NgModule({
@@ -18,7 +20,8 @@ import { HubComponent } from './hub/hub.component';
     LoginComponent,
     RegisterComponent,
     FormRegisterComponent,
-    HubComponent
+    HubComponent,
+    TournamentsComponent
   ],
   imports: [
     CommonModule,
@@ -28,7 +31,8 @@ import { HubComponent } from './hub/hub.component';
     ButtonModule,
     ReactiveFormsModule,
     FormsModule,
-    TranslateModule
+    TranslateModule,
+    TableModule,
   ]
 })
 export class ToolsModule { }

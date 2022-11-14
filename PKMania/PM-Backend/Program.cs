@@ -17,15 +17,18 @@ builder.Services.AddSignalR(options =>
     options.EnableDetailedErrors = true;
 });
 // Add services to the container.
-builder.Services.AddScoped<IMemberRepository, MemberRepository>();
-builder.Services.AddScoped<ITournamentsListRepository, TournamentsListRepository>();
 builder.Services.AddScoped<IGainsRepository, GainsRepository>();
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
+builder.Services.AddScoped<ITournamentsListRepository, TournamentsListRepository>();
+builder.Services.AddScoped<ITournamentsTypesRepository, TournamentsTypesRepository>();
 
 builder.Services.AddScoped<ITournamentsManagerService, TournamentsManagerService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMembersService, MembersService>();
 builder.Services.AddScoped<ISecurityTokenService, SecurityTokenService>();
 builder.Services.AddScoped<ITournamentsListService, TournamentsListService>();
+builder.Services.AddScoped<ITournamentsTypesService, TournamentsTypesService>();
 builder.Services.AddSingleton<PkHub>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -95,6 +98,9 @@ app.MapControllers();
 app.MapHub<PkHub>("pkhub");
 Task myTask = Task.Run(() =>
 {
+    //ITournamentsListRepository _tournamentsListRepository = new TournamentsListRepository();
+    //IGainsRepository _gainsRepository = new GainsRepository();
+    //ITournamentsListService _tournamentsListService = new TournamentsListService(_tournamentsListRepository,_gainsRepository);
     PkHub pk = new PkHub();
     TournamentsManagerService tms = new TournamentsManagerService(pk);
     tms.TournamentsManager();

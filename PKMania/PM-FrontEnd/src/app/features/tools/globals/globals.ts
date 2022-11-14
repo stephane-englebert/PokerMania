@@ -12,4 +12,6 @@ export class GlobalConst{
     // API Endpoints
     API_MEMBERS: string = this.HTTP_HOST + '/Members';
     API_TOKEN: string = this.HTTP_HOST + '/Token';
+    API_TOURNAMENTS_LIST: string = this.HTTP_HOST + '/TournamentsList';
+    API_TOURNAMENTS_TYPES: string = this.HTTP_HOST + '/TournamentsTypes';
 }

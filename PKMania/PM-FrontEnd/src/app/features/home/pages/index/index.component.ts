@@ -1,4 +1,11 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { GlobalConst } from '../../../tools/globals/globals';
+import { Tournament } from '../../../tools/tournaments/models/tournament';
+import { TournamentsList } from '../../../tools/tournaments/models/tournamentsList';
+import { TournamentsTypes } from '../../../tools/tournaments/models/tournamentsTypes';
+import { TournamentsService } from '../../../tools/tournaments/services/tournaments.service';
 
 @Component({
   selector: 'app-index',
@@ -7,13 +14,43 @@ import { Component, OnInit } from '@angular/core';
 })
 export class IndexComponent implements OnInit {
 
+  _hubConnection: HubConnection;
+  _testInt: number = 0;
+  tournamentsList!: Tournament[];
+  tournamentsTypes!: TournamentsTypes[];
 
 
-  constructor() {
-    
+  constructor(
+    private _httpClient: HttpClient,
+    private GBconst: GlobalConst,
+    private _tournamentsService: TournamentsService
+  ) {
+    //this._tournamentsService.initActivTournamentsList();
+    this._tournamentsService.trTypes.subscribe({
+      next: (response: TournamentsTypes[]) => {
+        this.tournamentsTypes = response;
+      }
+    });
+    this._tournamentsService.trList.subscribe({
+      next: (response: TournamentsList) => {
+        this.tournamentsList = response.tournaments;
+      }
+    });
+    this._hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7122/pkhub').build();
+    this._hubConnection.start().then(() => {
+      this._hubConnection.send('SendMsgToAll', "Demande des infos tournois actifs depuis la page index");
+      this._hubConnection.send('getInfosActivTournaments');
+      this._hubConnection.on('inc', (testInt) => this._testInt = testInt);
+      this._hubConnection.on('sendInfosActivTournaments', () => this._tournamentsService.getActivTournamentsList());
+
+    });
   }
 
   ngOnInit(): void {
+  }
+
+  incTestInt() {
+    this._hubConnection.send("TestMsg", "Incrémentation...");
   }
 
 }

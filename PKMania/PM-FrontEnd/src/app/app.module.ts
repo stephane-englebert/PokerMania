@@ -19,6 +19,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { RegisterComponent } from './features/tools/register/register.component';
 import { HubComponent } from './features/tools/hub/hub.component';
 import { AuthInterceptor } from './features/tools/auth/interceptor';
+import { TableModule } from 'primeng/table';
 
 export function createTranslateLoader(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -52,7 +53,8 @@ export function createTranslateLoader(httpClient: HttpClient) {
         useFactory: (createTranslateLoader),
         deps: [HttpClient]
       }
-    })
+    }),
+    TableModule
   ],
   providers: [
     GlobalConst,

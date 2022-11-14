@@ -1,1 +1,111 @@
 <h1>Bienvenue sur PokerMania!</h1>
+<a click="incTestInt()">Incrémenter variable</a>
+<p>
+  Variable 'testInt' vaut : {{ _testInt }}
+  <button style="margin-left: 30px;" pButton type="button" (click)="incTestInt()">{{ _testInt }}</button>
+</p>
+<style>
+  td {
+    text-align: center;
+  }
+</style>
+<p-table [value]="tournamentsList" responsiveLayout="scroll" border="1">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Id</th>
+      <th>status</th>
+      <th>startedOn</th>
+      <th>finishedOn</th>
+      <th>name</th>
+      <th>tournamentType</th>
+      <th>registrationsNumber</th>
+      <th>prizePool</th>
+      <th>realPaidPlaces</th>
+      <th>gainsSharingNr</th>
+      <th>gains</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-tournList>
+    <tr>
+      <td>{{tournList.id}}</td>
+      <td>{{tournList.status}}</td>
+      <td>{{tournList.startedOn | date: 'dd/MM/YYYY h:s'}}</td>
+      <td>{{tournList.finishedOn | date: 'dd/MM/YYYY h:s'}}</td>
+      <td>{{tournList.name}}</td>
+      <td>{{tournList.tournamentType}}</td>
+      <td>{{tournList.registrationsNumber}}</td>
+      <td>{{tournList.prizePool}}</td>
+      <td>{{tournList.realPaidPlaces}}</td>
+      <td>{{tournList.gainsSharingNr}}</td>
+      <td>
+        <div *ngFor="let g of tournList.gains">{{g.startPlace}}-{{g.endPlace}} {{g.numberChips}} ({{g.percentage}})</div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+<div style="background-color:cadetblue !important;">
+  <p-table [value]="tournamentsTypes" responsiveLayout="scroll" border="1">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>id</th>
+        <th>buyIn</th>
+        <th>lateRegistrationLevel</th>
+        <th>startingStack</th>
+        <th>rebuy</th>
+        <th>rebuyLevel</th>
+        <th>levelsDuration</th>
+        <th>minPlayers</th>
+        <th>maxPlayers</th>
+        <th>playersPerTable</th>
+        <th>maxPaidPlaces</th>
+        <th>gainsSharingNr</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-tournTypes>
+      <tr>
+        <td>{{tournTypes.id}}</td>
+        <td>{{tournTypes.buyIn}}</td>
+        <td>{{tournTypes.lateRegistrationLevel}}</td>
+        <td>{{tournTypes.startingStack}}</td>
+        <td>{{tournTypes.rebuy}}</td>
+        <td>{{tournTypes.rebuyLevel}}</td>
+        <td>{{tournTypes.levelsDuration}}</td>
+        <td>{{tournTypes.minPlayers}}</td>
+        <td>{{tournTypes.maxPlayers}}</td>
+        <td>{{tournTypes.playersPerTable}}</td>
+        <td>{{tournTypes.maxPaidPlaces}}</td>
+        <td>{{tournTypes.gainsSharingNr}}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<div *ngIf="tournamentsList!=null && tournamentsTypes!=null">
+  <p-table [value]="tournamentsList" responsiveLayout="scroll" border="1">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Début</th>
+        <th>Tournoi</th>
+        <th>Buy-in</th>
+        <th>Rebuy</th>
+        <th>Prize pool</th>
+        <th>Joueurs/table</th>
+        <th>Places payées</th>
+        <th>Inscrits</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-tournList>
+      <tr>
+        <td>{{tournList.status}}</td>
+        <td>{{tournList.name}}</td>
+        <td>xxxx</td>
+        <td>xxxx</td>
+        <td>xxxx</td>
+        <td>xxxx</td>
+        <td>xxxx</td>
+        <td>xxxx</td>
+        <td>boutons...</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

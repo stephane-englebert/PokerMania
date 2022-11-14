@@ -8,9 +8,11 @@ namespace PM_Backend.Services
         public TournamentsManagerService(PkHub hub)
         {
             _hub = hub;
+            _hub.SendMsgToAll("Initialisation des tournois...");
         }
         public void TournamentsManager(){
             _hub.SendMsgToAll("Petit coucou à tous les joueurs!");
         }
+
     }
 }

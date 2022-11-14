@@ -9,6 +9,7 @@ import { ButtonModule } from 'primeng/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormRegisterComponent } from '../tools/register/pages/form-register/form-register.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { TableModule } from 'primeng/table';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { TranslateModule } from '@ngx-translate/core';
     ButtonModule,
     ReactiveFormsModule,
     FormsModule,
-    TranslateModule
+    TranslateModule,
+    TableModule
   ]
 })
 export class HomeModule { }

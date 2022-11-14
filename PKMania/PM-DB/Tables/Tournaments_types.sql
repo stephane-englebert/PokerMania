@@ -5,13 +5,13 @@
 	[late_registration_level] INT NOT NULL DEFAULT 0,
 	[starting_stack] INT NOT NULL DEFAULT 3000,
 	[rebuy] BIT NOT NULL DEFAULT 0,
-	[rebuy_level] TINYINT NOT NULL DEFAULT 0,
-	[levels_duration] SMALLINT NOT NULL DEFAULT 240,
-	[min_players] TINYINT NOT NULL DEFAULT 2,
-	[max_players] SMALLINT NOT NULL DEFAULT 32,
-	[players_per_table] TINYINT NOT NULL DEFAULT 9,
-	[max_paid_places] SMALLINT NOT NULL DEFAULT 0,
-	[gains_sharing_nr] SMALLINT NOT NULL DEFAULT 0,
+	[rebuy_level] INT NOT NULL DEFAULT 0,
+	[levels_duration] INT NOT NULL DEFAULT 240,
+	[min_players] INT NOT NULL DEFAULT 2,
+	[max_players] INT NOT NULL DEFAULT 32,
+	[players_per_table] INT NOT NULL DEFAULT 9,
+	[max_paid_places] INT NOT NULL DEFAULT 0,
+	[gains_sharing_nr] INT NOT NULL DEFAULT 0,
 	CONSTRAINT PK_tournaments_types PRIMARY KEY(id)
 )
 GO
