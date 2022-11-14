@@ -1,15 +1,69 @@
 <h1>Bienvenue sur PokerMania!</h1>
-<a click="incTestInt()">Incrémenter variable</a>
-<p>
-  Variable 'testInt' vaut : {{ _testInt }}
-  <button style="margin-left: 30px;" pButton type="button" (click)="incTestInt()">{{ _testInt }}</button>
-</p>
+<h2>Liste des tournois</h2>
 <style>
   td {
     text-align: center;
   }
 </style>
-<p-table [value]="tournamentsList" responsiveLayout="scroll" border="1">
+<p-table [value]="tournamentsDetails" responsiveLayout="scroll" border="1">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Début</th>
+      <th>Tournoi</th>
+      <th>Buy-in</th>
+      <th>Rebuy</th>
+      <th>Prize pool</th>
+      <th>Joueurs/table</th>
+      <th>Places payées</th>
+      <th>Inscrits</th>
+      <th></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-tournDetails>
+    <tr>
+      <td>
+        <span *ngIf="tournDetails.status == 'created'">{{tournDetails.startedOn | date: 'dd/MM h:s'}}</span>
+      </td>
+      <td>{{tournDetails.name}}</td>
+      <td>{{tournDetails.buyIn}}</td>
+      <td>
+        <span *ngIf="!tournDetails.rebuy">-</span>
+        <span *ngIf="tournDetails.rebuy">-> Lvl {{tournDetails.rebuyLevel}}</span>
+      </td>
+      <td>
+        {{tournDetails.buyIn * tournDetails.maxPaidPlaces}}
+      </td>
+      <td>{{tournDetails.playersPerTable}}</td>
+      <td>{{tournDetails.maxPaidPlaces}}</td>
+      <td>{{tournDetails.registrationsNumber}}/{{tournDetails.maxPlayers}}</td>
+      <td>
+        <div *ngIf="!isLogged">          
+          <span *ngIf="tournDetails.registrationsNumber != tournDetails.maxPlayers">Se connecter pour jouer</span>
+          <span *ngIf="tournDetails.registrationsNumber == tournDetails.maxPlayers">Complet</span>
+        </div>
+        <div *ngIf="isLogged">
+          <span *ngIf="tournDetails.registrationsNumber == tournDetails.maxPlayers">Complet</span>
+          <div *ngIf="tournDetails.registrationsNumber != tournDetails.maxPlayers">
+            <span *ngIf="">
+              <button style="margin-left: 30px;" pButton type="button" (click)="registerTourn()">S'inscrire</button>
+            </span>
+            <span *ngIf="">
+              <button style="margin-left: 30px;" pButton type="button" (click)="unregisterTourn()">Se désinscrire</button>
+            </span>
+            <span *ngIf="tournDetails.status == 'ongoing'">
+              <button style="margin-left: 30px;" pButton type="button" (click)="joinTable()">Rejoindre table</button>
+            </span>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+<!--<p>
+  Variable 'testInt' vaut : {{ _testInt }}
+  <button style="margin-left: 30px;" pButton type="button" (click)="incTestInt()">{{ _testInt }}</button>
+</p>-->
+<!--<p-table [value]="tournamentsList" responsiveLayout="scroll" border="1">
   <ng-template pTemplate="header">
     <tr>
       <th>Id</th>
@@ -78,34 +132,4 @@
       </tr>
     </ng-template>
   </p-table>
-</div>
-<div *ngIf="tournamentsList!=null && tournamentsTypes!=null">
-  <p-table [value]="tournamentsList" responsiveLayout="scroll" border="1">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Début</th>
-        <th>Tournoi</th>
-        <th>Buy-in</th>
-        <th>Rebuy</th>
-        <th>Prize pool</th>
-        <th>Joueurs/table</th>
-        <th>Places payées</th>
-        <th>Inscrits</th>
-        <th></th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-tournList>
-      <tr>
-        <td>{{tournList.status}}</td>
-        <td>{{tournList.name}}</td>
-        <td>xxxx</td>
-        <td>xxxx</td>
-        <td>xxxx</td>
-        <td>xxxx</td>
-        <td>xxxx</td>
-        <td>xxxx</td>
-        <td>boutons...</td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
+</div>-->

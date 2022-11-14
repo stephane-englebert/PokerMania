@@ -20,8 +20,8 @@ export class TournamentsService {
 
   // local variable
   private tournList!: TournamentsList;
-  private tournTypes!: TournamentsTypes;
-  private tournDetails!: TournamentsDetails[];
+  private tournTypes!: TournamentsTypes[];
+  private tournDetails: TournamentsDetails[] = [];
 
   constructor(
     private GBconst: GlobalConst,
@@ -54,7 +54,8 @@ export class TournamentsService {
     this._http.get<TournamentsTypes[]>(this.GBconst.API_TOURNAMENTS_TYPES).subscribe({
       next: (response: TournamentsTypes[]) => {
         this.trTypes.next(response);
-
+        this.tournTypes = response;
+        this.getTournamentsDetails();
       },
       error: (err) => {
         this.translate.get(err.error).subscribe(toastMsg => {
@@ -68,34 +69,35 @@ export class TournamentsService {
   }
 
   getTournamentsDetails() {
-    if (this.tournList != null && this.tournTypes != null) {
+    //if (this.tournList != null && this.tournTypes != null) {
       this.tournList.tournaments.forEach(t => {
-        this.tournDetails.push(
-          new (
-            id = t.id;
-            status = t.status;
-          name: ;
-          buyIn: ;
-          rebuy: ;
-          rebuyLevel: ;
-          prizePool:
-            playersPerTable: ;
-        maxPaidPlaces: ;
-        registrationsNumber: number;
-        minPlayers: number;
-        maxPlayers: number;
-        startingStack: number;
-        levelsDuration: number;
-        gainsSharingNr: number;
-        startedOn: string;
-        finishedOn: string;
-        tournamentType: number;
-        realPaidPlaces: number;
-        )
-      );
-    }
+        const trType: TournamentsTypes[] = this.tournTypes.filter(x => x.id == t.tournamentType);
+        const obj: TournamentsDetails = {
+          id: t.id,
+          status: t.status,
+          name: t.name,
+          buyIn: trType[0].buyIn,
+          rebuy: trType[0].rebuy,
+          rebuyLevel: trType[0].rebuyLevel,
+          prizePool: t.prizePool,
+          playersPerTable: trType[0].playersPerTable,
+          maxPaidPlaces: trType[0].maxPaidPlaces,
+          registrationsNumber: t.registrationsNumber,
+          minPlayers: trType[0].minPlayers,
+          maxPlayers: trType[0].maxPlayers,
+          startingStack: trType[0].startingStack,
+          levelsDuration: trType[0].levelsDuration,
+          gainsSharingNr: t.gainsSharingNr,
+          startedOn: t.startedOn,
+          finishedOn: t.finishedOn,
+          tournamentType: t.tournamentType,
+          realPaidPlaces: t.realPaidPlaces
+        };
+        this.tournDetails.push(obj);
+      });
       this.trDetails.next(this.tournDetails);
-    }
+      console.log("on passe ici!");
+    //}
   }
 
 }
