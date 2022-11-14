@@ -29,7 +29,7 @@ export class TournamentsService {
     private toastr: ToastrService,
     private translate: TranslateService
   ) {
-    this.getActivTournamentsList();
+    //this.getActivTournamentsList();
   }
 
   getActivTournamentsList() {
@@ -69,7 +69,7 @@ export class TournamentsService {
   }
 
   getTournamentsDetails() {
-    //if (this.tournList != null && this.tournTypes != null) {
+    if (this.tournList != null && this.tournTypes != null) {
       this.tournList.tournaments.forEach(t => {
         const trType: TournamentsTypes[] = this.tournTypes.filter(x => x.id == t.tournamentType);
         const obj: TournamentsDetails = {
@@ -97,7 +97,7 @@ export class TournamentsService {
       });
       this.trDetails.next(this.tournDetails);
       console.log("on passe ici!");
-    //}
+    }
   }
 
 }

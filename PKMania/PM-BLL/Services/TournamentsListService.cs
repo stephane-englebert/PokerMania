@@ -56,5 +56,11 @@ namespace PM_BLL.Services
             TournamentsListDTO dto = new TournamentsListDTO(trList,bools);
             return dto;
         }
+        public TournamentsListDTO GetPlayerActiveTournaments(int playerId)
+        {
+            TournamentsListDTO allTourn = this.GetActiveTournaments();
+
+            return allTourn;
+        }
     }
 }

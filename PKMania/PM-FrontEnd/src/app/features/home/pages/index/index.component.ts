@@ -16,8 +16,8 @@ import { TournamentsService } from '../../../tools/tournaments/services/tourname
 })
 export class IndexComponent implements OnInit {
 
-  _hubConnection: HubConnection;
-  isLogged: boolean;
+  _hubConnection: HubConnection = new HubConnectionBuilder().withUrl('https://localhost:7122/pkhub').build();
+  isLogged: boolean = false;
   tournamentsList!: Tournament[];
   tournamentsTypes!: TournamentsTypes[];
   tournamentsDetails!: TournamentsDetails[];
@@ -29,6 +29,9 @@ export class IndexComponent implements OnInit {
     private _tournamentsService: TournamentsService,
     private _loginService: LoginService
   ) {
+  }
+
+  ngOnInit(): void {
     this.isLogged = this._loginService.userLogged();
     this._tournamentsService.trTypes.subscribe({
       next: (response: TournamentsTypes[]) => {
@@ -43,18 +46,17 @@ export class IndexComponent implements OnInit {
     this._tournamentsService.trDetails.subscribe({
       next: (response: TournamentsDetails[]) => {
         this.tournamentsDetails = response;
+
       }
     });
     this._hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7122/pkhub').build();
     this._hubConnection.start().then(() => {
       this._hubConnection.send('SendMsgToAll', "Demande des infos tournois actifs depuis la page index");
-      this._hubConnection.send('getInfosActivTournaments');
-      this._hubConnection.on('sendInfosActivTournaments', () => this._tournamentsService.getActivTournamentsList());
+      //this._hubConnection.send('getInfosActivTournaments');
+      //this._hubConnection.on('sendInfosActivTournaments', () => this._tournamentsService.getActivTournamentsList());
+      this._tournamentsService.getActivTournamentsList();
 
     });
-  }
-
-  ngOnInit(): void {
   }
 
   registerTourn() {

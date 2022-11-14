@@ -5,5 +5,6 @@ namespace PM_BLL.Interfaces
     public interface ITournamentsListService
     {
         TournamentsListDTO GetActiveTournaments();
+        TournamentsListDTO GetPlayerActiveTournaments(int playerId);
     }
 }

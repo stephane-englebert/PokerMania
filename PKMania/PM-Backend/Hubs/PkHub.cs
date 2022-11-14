@@ -2,6 +2,7 @@
 using PM_Backend.Services;
 using PM_BLL.Data.DTO.Entities;
 using PM_BLL.Interfaces;
+using PM_BLL.Services;
 
 namespace PM_Backend.Hubs
 {
@@ -32,12 +33,13 @@ namespace PM_Backend.Hubs
             this.SendMsgToAll("Votre message: " + msg + " [testInt = " + testInt + "]");
             Clients.All.SendAsync("inc",testInt);
         }
-        public void GetInfosActivTournaments()
+        public void GetInfosActivTournaments(TournamentsListService tournamentsListService)
         {
             try
             {
-                //TournamentsListDTO tournamentsList = _tournamentsListService.GetActiveTournaments();
-                //Clients.Caller.SendAsync("sendInfosActivTournaments",testInt, tournamentsList);
+                TournamentsListDTO tournamentsList = tournamentsListService.GetActiveTournaments();
+                Clients.Caller.SendAsync("sendInfosActivTournaments", tournamentsList);
+                Console.WriteLine("tesssssst");
             }
             catch (Exception)
             {

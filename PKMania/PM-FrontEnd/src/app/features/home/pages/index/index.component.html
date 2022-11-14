@@ -5,7 +5,7 @@
     text-align: center;
   }
 </style>
-<p-table [value]="tournamentsDetails" responsiveLayout="scroll" border="1">
+<p-table *ngIf="tournamentsDetails != null" [value]="tournamentsDetails" responsiveLayout="scroll" border="1">
   <ng-template pTemplate="header">
     <tr>
       <th>Début</th>
