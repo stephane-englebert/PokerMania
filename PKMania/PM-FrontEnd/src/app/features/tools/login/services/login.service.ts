@@ -103,7 +103,6 @@ export class LoginService {
   }
 
   logoutUser(){
-    console.log("Déconnexion de l'utilisateur courant...");
     localStorage.clear();
     this.isLogged.next(false);
   }

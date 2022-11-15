@@ -1,12 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { GlobalConst } from '../../../tools/globals/globals';
 import { LoginService } from '../../../tools/login/services/login.service';
-import { Tournament } from '../../../tools/tournaments/models/tournament';
-import { TournamentsDetails } from '../../../tools/tournaments/models/tournamentsDetails';
-import { TournamentsList } from '../../../tools/tournaments/models/tournamentsList';
-import { TournamentsTypes } from '../../../tools/tournaments/models/tournamentsTypes';
+import { TournamentDetails } from '../../../tools/tournaments/models/tournamentDetails';
 import { TournamentsService } from '../../../tools/tournaments/services/tournaments.service';
 
 @Component({
@@ -18,49 +13,26 @@ export class IndexComponent implements OnInit {
 
   _hubConnection: HubConnection = new HubConnectionBuilder().withUrl('https://localhost:7122/pkhub').build();
   isLogged: boolean = false;
-  tournamentsList!: Tournament[];
-  tournamentsTypes!: TournamentsTypes[];
-  tournamentsDetails!: TournamentsDetails[];
-
+  tournamentsDetails!: TournamentDetails[];
 
   constructor(
-    private _httpClient: HttpClient,
-    private GBconst: GlobalConst,
-    private _tournamentsService: TournamentsService,
-    private _loginService: LoginService
+    private _loginService: LoginService,
+    private _tournamentsService: TournamentsService
   ) {
   }
 
   ngOnInit(): void {
-    this.isLogged = this._loginService.userLogged();
-    this._tournamentsService.trTypes.subscribe({
-      next: (response: TournamentsTypes[]) => {
-        this.tournamentsTypes = response;
-      }
-    });
-    this._tournamentsService.trList.subscribe({
-      next: (response: TournamentsList) => {
-        this.tournamentsList = response.tournaments;
-      }
-    });
-    this._tournamentsService.trDetails.subscribe({
-      next: (response: TournamentsDetails[]) => {
-        this.tournamentsDetails = response;
-
-      }
-    });
+    this._loginService.isLogged.subscribe({next: (response: boolean) => this.isLogged = response});
     this._hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7122/pkhub').build();
     this._hubConnection.start().then(() => {
-      this._hubConnection.send('SendMsgToAll', "Demande des infos tournois actifs depuis la page index");
-      //this._hubConnection.send('getInfosActivTournaments');
-      //this._hubConnection.on('sendInfosActivTournaments', () => this._tournamentsService.getActivTournamentsList());
-      this._tournamentsService.getActivTournamentsList();
+      this._hubConnection.send('getTournamentsDetails');
+      this._hubConnection.on('sendTournamentsDetails', (details) => this.tournamentsDetails = details);
 
     });
   }
 
-  registerTourn() {
-
+  registerTourn(trId: number) {
+    console.log(trId);
   }
 
   unregisterTourn() {

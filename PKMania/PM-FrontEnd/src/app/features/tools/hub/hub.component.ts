@@ -16,10 +16,7 @@ export class HubComponent implements OnInit {
   ) {
     this._hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7122/pkhub').build();
     this._hubConnection.start().then(() => {
-      this._hubConnection.send('SendMsgToAll', "Hello,je viens de me connecter!");
-      this._hubConnection.on('msgToAll', (msg) => {
-        console.log(msg);
-      })
+
     });
   }
 

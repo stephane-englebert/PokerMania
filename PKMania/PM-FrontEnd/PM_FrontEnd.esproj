@@ -18,7 +18,6 @@
     <Folder Include="src\app\features\tools\register\models\" />
     <Folder Include="src\app\features\tools\register\services\" />
     <Folder Include="src\app\features\tools\register\pages\" />
-    <Folder Include="src\app\features\tools\tournaments\models\" />
     <Folder Include="src\app\features\tools\tournaments\services\" />
     <Folder Include="src\app\features\tools\tournaments\pages\" />
     <Folder Include="src\assets\i18n\" />

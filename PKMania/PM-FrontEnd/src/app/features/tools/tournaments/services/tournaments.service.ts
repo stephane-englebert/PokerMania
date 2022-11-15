@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TournamentsList } from '../models/tournamentsList';
 import { Subject } from 'rxjs';
 import { TournamentsTypes } from '../models/tournamentsTypes';
-import { TournamentsDetails } from '../models/tournamentsDetails';
+import { TournamentDetails } from '../models/tournamentDetails';
 
 @Injectable({
   providedIn: 'root'
@@ -16,12 +16,12 @@ export class TournamentsService {
   // Observable
   trList: Subject<TournamentsList> = new Subject<TournamentsList>();
   trTypes: Subject<TournamentsTypes[]> = new Subject<TournamentsTypes[]>();
-  trDetails: Subject<TournamentsDetails[]> = new Subject<TournamentsDetails[]>();
+  trDetails: Subject<TournamentDetails[]> = new Subject<TournamentDetails[]>();
 
   // local variable
   private tournList!: TournamentsList;
   private tournTypes!: TournamentsTypes[];
-  private tournDetails: TournamentsDetails[] = [];
+  private tournDetails: TournamentDetails[] = [];
 
   constructor(
     private GBconst: GlobalConst,
@@ -29,7 +29,6 @@ export class TournamentsService {
     private toastr: ToastrService,
     private translate: TranslateService
   ) {
-    //this.getActivTournamentsList();
   }
 
   getActivTournamentsList() {
@@ -72,7 +71,7 @@ export class TournamentsService {
     if (this.tournList != null && this.tournTypes != null) {
       this.tournList.tournaments.forEach(t => {
         const trType: TournamentsTypes[] = this.tournTypes.filter(x => x.id == t.tournamentType);
-        const obj: TournamentsDetails = {
+        const obj: TournamentDetails = {
           id: t.id,
           status: t.status,
           name: t.name,
@@ -96,7 +95,6 @@ export class TournamentsService {
         this.tournDetails.push(obj);
       });
       this.trDetails.next(this.tournDetails);
-      console.log("on passe ici!");
     }
   }
 

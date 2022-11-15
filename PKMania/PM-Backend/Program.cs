@@ -29,6 +29,7 @@ builder.Services.AddScoped<IMembersService, MembersService>();
 builder.Services.AddScoped<ISecurityTokenService, SecurityTokenService>();
 builder.Services.AddScoped<ITournamentsListService, TournamentsListService>();
 builder.Services.AddScoped<ITournamentsTypesService, TournamentsTypesService>();
+builder.Services.AddScoped<ITournamentsDetailsService, TournamentsDetailsService>();
 builder.Services.AddSingleton<PkHub>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -102,7 +103,8 @@ Task myTask = Task.Run(() =>
     //IGainsRepository _gainsRepository = new GainsRepository();
     //ITournamentsListService _tournamentsListService = new TournamentsListService(_tournamentsListRepository,_gainsRepository);
     PkHub pk = new PkHub();
-    TournamentsManagerService tms = new TournamentsManagerService(pk);
-    tms.TournamentsManager();
+    //pk.startTournamentsManagement();
+    //TournamentsManagerService tms = new TournamentsManagerService(pk);
+    //tms.TournamentsManager();
 });
 app.Run();

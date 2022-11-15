@@ -9,14 +9,18 @@ namespace PM_BLL.Services
 {
     public class TournamentsListService: ITournamentsListService
     {
-        private readonly ITournamentsListRepository _tournamentsListRepository;
-        private readonly IGainsRepository _gainsRepository;
-        public TournamentsListService(
-            ITournamentsListRepository tournamentsListRepository,
-            IGainsRepository gainsRepository
-        ) {
-            _tournamentsListRepository = tournamentsListRepository;
-            _gainsRepository = gainsRepository;
+        private readonly ITournamentsListRepository _tournamentsListRepository = new TournamentsListRepository();
+        private readonly IGainsRepository _gainsRepository = new GainsRepository();
+        //public TournamentsListService(
+        //    ITournamentsListRepository tournamentsListRepository,
+        //    IGainsRepository gainsRepository
+        //) {
+        //    _tournamentsListRepository = tournamentsListRepository;
+        //    _gainsRepository = gainsRepository;
+        //}
+        public TournamentsListService()
+        {
+
         }
         public TournamentsListDTO GetActiveTournaments()
         {
