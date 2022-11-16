@@ -39,6 +39,10 @@ export class LoginService {
     this.initUserLogged();
   }
 
+  ngOnInit(): void{
+
+  }
+
   loginUser(user: UserModel){
     this._http.post<LoggedUserModel>(this.GBconst.API_TOKEN,user).subscribe({
       next: (response: LoggedUserModel) => {

@@ -5,7 +5,7 @@ namespace PM_BLL.Interfaces
 {
     public interface ITournamentsDetailsService
     {
-        IEnumerable<TournamentDetailsDTO> GetTournamentsDetails(TournamentsListDTO trList, TournamentsTypesDTO[] trTypes);
+        IEnumerable<TournamentDetailsDTO> GetTournamentsDetails(TournamentsListDTO trList, IEnumerable<TournamentsTypesDTO> trTypes);
 
     }
 }

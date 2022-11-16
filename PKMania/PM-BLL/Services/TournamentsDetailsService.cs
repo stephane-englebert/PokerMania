@@ -15,20 +15,17 @@ namespace PM_BLL.Services
 
         }
 
-        public IEnumerable<TournamentDetailsDTO> GetTournamentsDetails(TournamentsListDTO trList,TournamentsTypesDTO[] trTypes)
+        public IEnumerable<TournamentDetailsDTO> GetTournamentsDetails(TournamentsListDTO trList,IEnumerable<TournamentsTypesDTO> trTypes)
         {
-            //List<TournamentDetailsDTO> _trDetails = new List<TournamentDetailsDTO>();
             if (trList.Tournaments != null)
             {
                 foreach (TournamentDTO dto in trList.Tournaments)
                 {
                     TournamentsTypesDTO tType = trTypes.Single(ty => ty.Id == dto.TournamentType);
                     TournamentDetailsDTO tDetails = new TournamentDetailsDTO(dto, tType);
-                    //_trDetails.Add(tDetails);
                     yield return tDetails;
                 }
             }
-            //return _trDetails.ToArray();
             
         }
     }

@@ -8,14 +8,6 @@ namespace PM_BLL.Data.Mappers
     {
         public static PlayerDTO PlayerDalToDTO(this Player player)
         {
-            //PlayerDTO py = new PlayerDTO();
-            //py.Id = player.Id;
-            //py.Pseudo = player.Pseudo;
-            //py.Eliminated = player.EliminatedAt.Year > 2000;
-            //py.SittingAtTable = player.TableNr;
-            //py.Stack = player.Stack;
-            //py.BonusTime = player.BonusTime;
-            //return py;
             return new PlayerDTO
             {
                 Id = player.Id,
@@ -24,6 +16,18 @@ namespace PM_BLL.Data.Mappers
                 SittingAtTable = player.TableNr,
                 Stack = player.Stack,
                 BonusTime = player.BonusTime
+            };
+        }
+        public static RankedPlayerDTO PlayerDTOToRankedPlayerDTO(this PlayerDTO player)
+        {
+            return new RankedPlayerDTO
+            {
+                Rank = player.GeneralRanking,
+                TableNr = player.SittingAtTable,
+                PlayerId = player.Id,
+                Pseudo = player.Pseudo,
+                Stack = player.Stack,
+                Eliminated = player.Eliminated
             };
         }
     }

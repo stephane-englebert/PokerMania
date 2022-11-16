@@ -33,5 +33,17 @@ namespace PM_DAL.Services
                 };
             }
         }
+
+        public Boolean IsPlayerRegistered(int trId, int playerId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT COUNT(*) FROM [Registrations] WHERE tournament_id = @trId AND player_id = @playerId";
+            cmd.Parameters.AddWithValue("trId",trId);
+            cmd.Parameters.AddWithValue("playerId", playerId);
+            int cpt = (int)cmd.ExecuteScalar();
+            return cpt > 0;
+        }
     }
 }
