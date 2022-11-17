@@ -30,29 +30,32 @@ export class IndexComponent implements OnInit {
       this._hubConnection.send('getTournamentsDetails');
       this._hubConnection.send('getTournamentPlayers',1);
       this._hubConnection.send('getTournamentRankedPlayers', 1);
-      this._hubConnection.send('getIdRegisteredTournaments',6);
+      this._hubConnection.send('getIdRegisteredTournaments', 1);
+      this._hubConnection.on('msgToAll', (msg) => { console.log(msg); });
       this._hubConnection.on('sendTournamentsDetails', (details) => this.tournamentsDetails = details);
-      this._hubConnection.on('sendTournamentPlayers', (details) => console.log(details));
-      this._hubConnection.on('sendTournamentRankedPlayers', (details) => console.log(details));
-      this._hubConnection.on('sendIdRegisteredTournaments', (data) => {
-        this.tabIdRegisteredTr = data;
-        console.log(data);
-      })
-      this._hubConnection.on('sendInfosTournament', (infos) => console.log(infos));
+      this._hubConnection.on('sendTournamentPlayers', (details) => {if (this.isLogged){console.log(details);}});
+      this._hubConnection.on('sendTournamentRankedPlayers', (details) => { if (this.isLogged) { console.log(details); } });
+      this._hubConnection.on('sendIdRegisteredTournaments', (data) => { this.tabIdRegisteredTr = data; });
     });
   }
 
   isRegistered(trId: number) {
-    if (trId in this.tabIdRegisteredTr) { return true; } else { return false; }
+    if (this.tabIdRegisteredTr.indexOf(trId) > -1) { return true; } else { return false; }
   }
 
   registerTourn(trId: number) {
     console.log(trId);
-    this._hubConnection.send('getInfosTournament',trId);
   }
 
   unregisterTourn(trId: number) {
-
+    this._tournamentsService.unregisterTournament(trId).subscribe({
+      next: () => {
+        this._hubConnection.send('UpdateNecessary', "registrations");
+      },
+      error: (err) => {
+        console.log(err.error);
+      }
+    });
   }
 
   joinTable() {

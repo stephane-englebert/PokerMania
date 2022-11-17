@@ -14,4 +14,5 @@ export class GlobalConst{
     API_TOKEN: string = this.HTTP_HOST + '/Token';
     API_TOURNAMENTS_LIST: string = this.HTTP_HOST + '/TournamentsList';
     API_TOURNAMENTS_TYPES: string = this.HTTP_HOST + '/TournamentsTypes';
+    API_REGISTRATIONS: string = this.HTTP_HOST + '/Registrations';
 }

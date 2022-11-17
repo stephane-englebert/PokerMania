@@ -45,5 +45,15 @@ namespace PM_DAL.Services
             int cpt = (int)cmd.ExecuteScalar();
             return cpt > 0;
         }
+        public void UnregisterTournament(int trId, int playerId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"DELETE FROM [Registrations] WHERE tournament_id = @trId AND player_id = @playerId";
+            cmd.Parameters.AddWithValue("trId", trId);
+            cmd.Parameters.AddWithValue("playerId", playerId);
+            cmd.ExecuteNonQuery();
+        }
     }
 }

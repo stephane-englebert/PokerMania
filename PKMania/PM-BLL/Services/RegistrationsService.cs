@@ -12,6 +12,7 @@ namespace PM_BLL.Services
     public class RegistrationsService : IRegistrationsService
     {
         private readonly IRegistrationsRepository _registrationsRepository = new RegistrationsRepository();
+        private readonly ITournamentsListRepository _tournamentsListRepository = new TournamentsListRepository();
         public RegistrationsService(){}
         public IEnumerable<TournamentPlayersDTO> GetAllRegistrations(TournamentsListDTO trList)
         {
@@ -61,6 +62,58 @@ namespace PM_BLL.Services
                 newPlayerDTO.GeneralRanking = cpt;
                 cpt++;
                 yield return newPlayerDTO;
+            }
+        }
+        public Boolean CanRegister(TournamentsListDTO trList, IEnumerable<TournamentPlayersDTO> trPlayers, int trId, int playerId)
+        {
+            if(trList.Tournaments != null)
+            {
+                // Le statut du tournoi permet-il de s'inscrire?
+                TournamentDTO? tournament = trList.Tournaments.FirstOrDefault(t => t.Id == trId);
+                bool trStatus = ((tournament.Status == "created")||(tournament.Status == "waitingForPlayers"));
+
+                // Le joueur est-il déjà inscrit au tournoi?
+                TournamentPlayersDTO? trPlr = trPlayers.FirstOrDefault(t => t.TournamentId == trId);
+                bool anyRegistered = trPlr.Players.Any(t => t.Id == playerId);
+
+                return (trStatus && !anyRegistered);
+            }
+            return false;
+        }
+        public Boolean CanUnregister(TournamentsListDTO trList, IEnumerable<TournamentPlayersDTO> trPlayers, int trId, int playerId)
+        {
+            if (trList.Tournaments != null)
+            {
+                // Le statut du tournoi permet-il de se désinscrire?
+                TournamentDTO? tournament = trList.Tournaments.FirstOrDefault(t => t.Id == trId);
+                bool trStatus = ((tournament.Status == "created") || (tournament.Status == "waitingForPlayers"));
+
+                // Le joueur est-il inscrit au tournoi?
+                TournamentPlayersDTO? trPlr = trPlayers.FirstOrDefault(t => t.TournamentId == trId);
+                bool anyRegistered = trPlr.Players.Any(t => t.Id == playerId);
+
+                return (trStatus && anyRegistered);
+            }
+            return false;
+        }
+        public void UnregisterTournament(int trId, int playerId)
+        {
+            if(IsPlayerRegistered(trId, playerId))
+            {
+                if (!this._tournamentsListRepository.IsTournamentStarted(trId))
+                {
+                    try
+                    {
+                        this._registrationsRepository.UnregisterTournament(trId, playerId);
+                    }catch(Exception e)
+                    {
+                        throw new Exception("UNREGISTER_TOURN_FAILURE");
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("UNREGISTER_TOURN_NOT_REGIS");
             }
         }
     }

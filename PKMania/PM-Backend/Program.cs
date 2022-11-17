@@ -72,6 +72,7 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(securityRequirement);
 }
 );
+
 builder.Services.AddCors(options => options.AddDefaultPolicy(builder =>
 {
     builder.WithOrigins("https://localhost:4200");
@@ -93,7 +94,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseCors();
 app.UseHttpsRedirection();
-//app.UseAuthentication();
+app.UseAuthentication();
 app.UseAuthorization();
 
 

@@ -64,6 +64,18 @@ namespace PM_Backend.Hubs
                 Clients.Caller.SendAsync("sendTournamentRankedPlayers", this._trPlayers.Where(d => d.TournamentId == trId).Select(t => t.RankedPlayers));
             }
         }
+        public void CanUnregister(int trId, int playerId)
+        {
+            if(Clients != null)
+            {
+                Clients.Caller.SendAsync("sendCanUnregister", this._registrationsService.CanUnregister(this._trList, this._trPlayers, trId, playerId));
+            }
+        }
+        public void UpdateNecessary(string typeUpdate)
+        {
+            this.SendMsgToAll("Update necessary -> " + typeUpdate);
+        }
+
         //public void IsPlayerRegistered(int trId, int playerId)
         //{
         //    Clients.Caller.SendAsync("sendIsPlayerRegistered",);

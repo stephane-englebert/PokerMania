@@ -13,5 +13,8 @@ namespace PM_BLL.Interfaces
         IEnumerable<PlayerDTO> GetAllRegistrationsForOneTournament(int trId);
         IEnumerable<int> GetPlayerIdRegisteredTournaments(IEnumerable<TournamentPlayersDTO> trPlayers, int playerId);
         Boolean IsPlayerRegistered(int trId, int playerId);
+        Boolean CanRegister(TournamentsListDTO trList, IEnumerable<TournamentPlayersDTO> trPlayers, int trId, int playerId);
+        Boolean CanUnregister(TournamentsListDTO trList, IEnumerable<TournamentPlayersDTO> trPlayers, int trId, int playerId);
+        void UnregisterTournament(int trId, int playerId);
     }
 }

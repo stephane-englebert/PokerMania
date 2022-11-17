@@ -44,12 +44,10 @@
         <div *ngIf="isLogged">
           <span *ngIf="tournDetails.registrationsNumber == tournDetails.maxPlayers">Complet</span>
           <div *ngIf="tournDetails.registrationsNumber != tournDetails.maxPlayers">
-            <span *ngIf="isRegistered(tournDetails.id)">
-              <span>{{isRegistered(tournDetails.id)}}</span>
+            <span *ngIf="!isRegistered(tournDetails.id)">
               <button style="margin-left: 30px;" pButton type="button" (click)="registerTourn(tournDetails.id)">S'inscrire</button>
             </span>
-            <span *ngIf="!isRegistered(tournDetails.id)">
-              <span>{{!isRegistered(tournDetails.id)}}</span>
+            <span *ngIf="isRegistered(tournDetails.id)">
               <button style="margin-left: 30px;" pButton type="button" (click)="unregisterTourn(tournDetails.id)">Se désinscrire</button>
             </span>
             <span *ngIf="tournDetails.status == 'ongoing'">

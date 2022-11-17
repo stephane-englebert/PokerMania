@@ -44,5 +44,14 @@ namespace PM_DAL.Services
                 };
             }
         }
+        public Boolean IsTournamentStarted(int trId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT status FROM [Tournaments] WHERE id = @trId";
+            cmd.Parameters.AddWithValue("trId", trId);
+            return (string)cmd.ExecuteScalar() != "created" && (string)cmd.ExecuteScalar() == "waitingForPlayers";
+        }
     }
 }

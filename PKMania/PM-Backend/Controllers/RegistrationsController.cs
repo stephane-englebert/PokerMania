@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PM_BLL.Data.DTO.Entities;
 using PM_BLL.Interfaces;
+using System.Security.Claims;
 
 namespace PM_Backend.Controllers
 {
@@ -20,6 +21,7 @@ namespace PM_Backend.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles ="player")]
         public IActionResult Get()
         {
             try
@@ -39,6 +41,7 @@ namespace PM_Backend.Controllers
         }
 
         [HttpGet("{tr}")]
+        [Authorize(Roles = "player")]
         public IActionResult Get(int tr)
         {
             try
@@ -56,6 +59,7 @@ namespace PM_Backend.Controllers
         }
 
         [HttpGet("{tr}/{id}")]
+        [Authorize(Roles = "player")]
         public IActionResult Get(int tr, int id)
         {
             try
@@ -71,6 +75,20 @@ namespace PM_Backend.Controllers
                 throw;
             }
 
+        }
+
+        [HttpDelete("{tr}")]
+        [Authorize(Roles = "player")]
+        public IActionResult Delete(int tr)
+        {
+            try
+            {
+                this._registrationsService.UnregisterTournament(tr, int.Parse(User.FindFirstValue("Id")));
+                return NoContent();
+            }catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
