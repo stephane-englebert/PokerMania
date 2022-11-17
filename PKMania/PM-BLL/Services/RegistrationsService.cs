@@ -116,5 +116,28 @@ namespace PM_BLL.Services
                 throw new Exception("UNREGISTER_TOURN_NOT_REGIS");
             }
         }
+
+        public void RegisterTournament(int trId, int playerId)
+        {
+            if (!IsPlayerRegistered(trId, playerId))
+            {
+                if (!this._tournamentsListRepository.IsTournamentStarted(trId))
+                {
+                    try
+                    {
+                        
+                        this._registrationsRepository.RegisterTournament(trId, playerId);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception("REGISTER_TOURN_FAILURE");
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("REGISTER_TOURN_ALREADY_REGIS");
+            }
+        }
     }
 }

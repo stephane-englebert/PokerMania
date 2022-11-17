@@ -90,5 +90,20 @@ namespace PM_Backend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost]
+        [Authorize(Roles = "player")]
+        public IActionResult Post([FromBody] int tr)
+        {
+            try
+            {
+                this._registrationsService.RegisterTournament(tr, int.Parse(User.FindFirstValue("Id")));
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

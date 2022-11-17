@@ -30,8 +30,13 @@ export class TournamentsService {
     private translate: TranslateService
   ) {
   }
+  
+  registerTournament(value: any) {
+    return this._http.post(this.GBconst.API_REGISTRATIONS, value);
+  }
+  
   unregisterTournament(value: any) {
-    return this._http.delete<void>(this.GBconst.API_REGISTRATIONS, value);
+    return this._http.delete<void>(this.GBconst.API_REGISTRATIONS+'/'+ value);
   }
 
   getActivTournamentsList() {

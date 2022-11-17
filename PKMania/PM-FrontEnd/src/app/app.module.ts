@@ -58,7 +58,7 @@ export function createTranslateLoader(httpClient: HttpClient) {
   ],
   providers: [
     GlobalConst,
-
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

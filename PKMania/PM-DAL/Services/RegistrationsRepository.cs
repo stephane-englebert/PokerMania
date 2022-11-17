@@ -55,5 +55,23 @@ namespace PM_DAL.Services
             cmd.Parameters.AddWithValue("playerId", playerId);
             cmd.ExecuteNonQuery();
         }
+        public void RegisterTournament(int trId, int playerId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand(); 
+            cmd.CommandText = @"SELECT starting_stack FROM [Tournaments_types] tt JOIN [Tournaments] t ON t.tournament_type_id = tt.id WHERE tt.id=@trId";
+            cmd.Parameters.AddWithValue("trId", trId);
+            int stack = (int)cmd.ExecuteScalar();
+
+            using SqlConnection connection2 = new SqlConnection(connectionString);
+            connection2.Open();
+            using SqlCommand cmd2 = connection.CreateCommand();
+            cmd2.CommandText = @"INSERT INTO [Registrations] (tournament_id,player_id,stack,bonus_time) VALUES (@trId,@playerId,@stack,60)";
+            cmd2.Parameters.AddWithValue("trId", trId);
+            cmd2.Parameters.AddWithValue("playerId", playerId);
+            cmd2.Parameters.AddWithValue("stack", stack);
+            cmd2.ExecuteNonQuery();
+        }
     }
 }
