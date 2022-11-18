@@ -9,5 +9,6 @@ namespace PM_DAL.Interfaces
         void AddMember(Member member, byte[] password, byte[] salt);
         bool ExistEmail(string email);
         bool ExistPseudo(string pseudo);
+        void UpdateCurrentTournIdForOneTournament(int trId);
     }
 }

@@ -10,5 +10,6 @@ namespace PM_BLL.Interfaces
     public interface ITournamentsTypesService
     {
         IEnumerable<TournamentsTypesDTO> GetAllTournamentsTypes();
+        IEnumerable<TournamentsTypesDTO> GetTournamentsTypesById(int id);
     }
 }

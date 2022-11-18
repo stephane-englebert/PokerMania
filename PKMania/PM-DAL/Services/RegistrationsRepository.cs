@@ -60,18 +60,38 @@ namespace PM_DAL.Services
             using SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
             using SqlCommand cmd = connection.CreateCommand(); 
-            cmd.CommandText = @"SELECT starting_stack FROM [Tournaments_types] tt JOIN [Tournaments] t ON t.tournament_type_id = tt.id WHERE tt.id=@trId";
+            cmd.CommandText = @"SELECT tt.starting_stack FROM [Tournaments] t JOIN [Tournaments_types] tt ON t.tournament_type_id = tt.id WHERE t.id=@trId";
             cmd.Parameters.AddWithValue("trId", trId);
-            int stack = (int)cmd.ExecuteScalar();
+            int stack = 0;
+            stack = (int)cmd.ExecuteScalar();
+            connection.Close();
 
             using SqlConnection connection2 = new SqlConnection(connectionString);
             connection2.Open();
-            using SqlCommand cmd2 = connection.CreateCommand();
+            using SqlCommand cmd2 = connection2.CreateCommand();
             cmd2.CommandText = @"INSERT INTO [Registrations] (tournament_id,player_id,stack,bonus_time) VALUES (@trId,@playerId,@stack,60)";
             cmd2.Parameters.AddWithValue("trId", trId);
             cmd2.Parameters.AddWithValue("playerId", playerId);
             cmd2.Parameters.AddWithValue("stack", stack);
             cmd2.ExecuteNonQuery();
+        }
+        public void DeleteRegistrationsByTournament(int trId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"DELETE FROM [Registrations] WHERE tournament_id = @trId";
+            cmd.Parameters.AddWithValue("trId", trId);
+            cmd.ExecuteNonQuery();
+        }
+        public Boolean StillFreePlacesForTournament(int trId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT tt.max_players - t.players_nb FROM [Tournaments] t JOIN [Tournaments_types] tt ON t.tournament_type_id = tt.id WHERE t.id=@trId;";
+            cmd.Parameters.AddWithValue("trId", trId);
+            return (int)cmd.ExecuteScalar() > 0;
         }
     }
 }

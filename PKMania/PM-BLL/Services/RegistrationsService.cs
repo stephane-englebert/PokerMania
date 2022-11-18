@@ -12,6 +12,7 @@ namespace PM_BLL.Services
     public class RegistrationsService : IRegistrationsService
     {
         private readonly IRegistrationsRepository _registrationsRepository = new RegistrationsRepository();
+        private readonly ITournamentRepository _tournamentRepository = new TournamentRepository();
         private readonly ITournamentsListRepository _tournamentsListRepository = new TournamentsListRepository();
         public RegistrationsService(){}
         public IEnumerable<TournamentPlayersDTO> GetAllRegistrations(TournamentsListDTO trList)
@@ -105,7 +106,9 @@ namespace PM_BLL.Services
                     try
                     {
                         this._registrationsRepository.UnregisterTournament(trId, playerId);
-                    }catch(Exception e)
+                        this._tournamentRepository.UpdateNumberPlayersRegistered(trId, -1);
+                    }
+                    catch(Exception e)
                     {
                         throw new Exception("UNREGISTER_TOURN_FAILURE");
                     }
@@ -116,6 +119,10 @@ namespace PM_BLL.Services
                 throw new Exception("UNREGISTER_TOURN_NOT_REGIS");
             }
         }
+        public Boolean StillFreePlacesForTournament(int trId)
+        {
+            return this._registrationsRepository.StillFreePlacesForTournament(trId);
+        }
 
         public void RegisterTournament(int trId, int playerId)
         {
@@ -123,14 +130,22 @@ namespace PM_BLL.Services
             {
                 if (!this._tournamentsListRepository.IsTournamentStarted(trId))
                 {
-                    try
+                    if (this.StillFreePlacesForTournament(trId))
                     {
-                        
-                        this._registrationsRepository.RegisterTournament(trId, playerId);
+                        try
+                        {
+                            this._registrationsRepository.RegisterTournament(trId, playerId);
+                            this._tournamentRepository.UpdateNumberPlayersRegistered(trId, 1);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new Exception("REGISTER_TOURN_FAILURE");
+                        }
+
                     }
-                    catch (Exception e)
+                    else
                     {
-                        throw new Exception("REGISTER_TOURN_FAILURE");
+                        throw new Exception("REGISTER_TOURN_NO_MORE_PLACE");
                     }
                 }
             }

@@ -16,6 +16,7 @@ namespace PM_BLL.Interfaces
         Boolean CanRegister(TournamentsListDTO trList, IEnumerable<TournamentPlayersDTO> trPlayers, int trId, int playerId);
         Boolean CanUnregister(TournamentsListDTO trList, IEnumerable<TournamentPlayersDTO> trPlayers, int trId, int playerId);
         void UnregisterTournament(int trId, int playerId);
+        Boolean StillFreePlacesForTournament(int trId);
         void RegisterTournament(int trId, int playerId);
     }
 }

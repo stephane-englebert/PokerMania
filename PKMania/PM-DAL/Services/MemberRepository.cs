@@ -12,9 +12,9 @@ namespace PM_DAL.Services
         private readonly IConfiguration _configuration;
         private string connectionString = @"server=(localdb)\MSSQLLocalDB;Initial Catalog = Pokermania; Integrated Security = True;";
 
-        public MemberRepository(IConfiguration configuration)
+        public MemberRepository()
         {
-            _configuration = configuration;
+            //_configuration = configuration;
             //this.connectionString = _configuration.GetConnectionString("PkMania");
         }
 
@@ -124,6 +124,15 @@ namespace PM_DAL.Services
             using SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read()) { pseudoFound = true; }
             return pseudoFound;
+        }
+        public void UpdateCurrentTournIdForOneTournament(int trId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"UPDATE [Members] SET current_tournament_id = 0 WHERE current_tournament_id = @trId";
+            cmd.Parameters.AddWithValue("trId", trId);
+            cmd.ExecuteNonQuery();
         }
     }
 }

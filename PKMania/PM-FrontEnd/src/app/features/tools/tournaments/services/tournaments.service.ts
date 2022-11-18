@@ -32,7 +32,7 @@ export class TournamentsService {
   }
   
   registerTournament(value: any) {
-    return this._http.post(this.GBconst.API_REGISTRATIONS, value);
+    return this._http.post<void>(this.GBconst.API_REGISTRATIONS, value);
   }
   
   unregisterTournament(value: any) {

@@ -18,6 +18,7 @@ builder.Services.AddSignalR(options =>
 });
 // Add services to the container.
 builder.Services.AddScoped<IGainsRepository, GainsRepository>();
+builder.Services.AddScoped<IHandsRepository, HandsRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IRegistrationsRepository, RegistrationsRepository>();
 builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();

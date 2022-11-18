@@ -15,5 +15,9 @@ namespace PM_BLL.Services
         {
             return _tournamentsTypesRepository.GetAllTournamentsTypes().Select(t => new TournamentsTypesDTO(t));
         }
+        public IEnumerable<TournamentsTypesDTO> GetTournamentsTypesById(int id)
+        {
+            return _tournamentsTypesRepository.GetTournamentsTypesById(id).Select(t => new TournamentsTypesDTO(t));
+        }
     }
 }

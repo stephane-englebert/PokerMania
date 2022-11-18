@@ -34,7 +34,7 @@ namespace PM_DAL.Services
                 };
             }
         }
-        public TournamentsTypes GetTournamentsTypesById(int id)
+        public IEnumerable<TournamentsTypes> GetTournamentsTypesById(int id)
         {
             using SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
@@ -42,9 +42,9 @@ namespace PM_DAL.Services
             cmd.CommandText = @"SELECT * FROM Tournaments_types WHERE id = @id";
             cmd.Parameters.AddWithValue("id", id);
             using SqlDataReader reader = cmd.ExecuteReader();
-            if (reader.Read())
+            while(reader.Read())
             {
-                return new TournamentsTypes
+                yield return new TournamentsTypes
                 {
                     Id = (int)reader["id"],
                     BuyIn = (int)reader["buy_in"],
@@ -60,7 +60,6 @@ namespace PM_DAL.Services
                     GainsSharingNr = (int)reader["gains_sharing_nr"]
                 };
             }
-            return null;
         }
     }
 }

@@ -6,6 +6,6 @@ namespace PM_DAL.Interfaces
     public interface ITournamentsTypesRepository
     {
         IEnumerable<TournamentsTypes> GetAllTournamentsTypes();
-        TournamentsTypes GetTournamentsTypesById(int id);
+        IEnumerable<TournamentsTypes> GetTournamentsTypesById(int id);
     }
 }

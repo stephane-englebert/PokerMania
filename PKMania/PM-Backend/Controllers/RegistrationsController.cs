@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PM_BLL.Data.DTO.Entities;
+using PM_BLL.Data.DTO.Forms;
 using PM_BLL.Interfaces;
 using System.Security.Claims;
 
@@ -93,11 +94,11 @@ namespace PM_Backend.Controllers
 
         [HttpPost]
         [Authorize(Roles = "player")]
-        public IActionResult Post([FromBody] int tr)
+        public IActionResult Post(RegisterToTournamentFormDTO tr)
         {
             try
             {
-                this._registrationsService.RegisterTournament(tr, int.Parse(User.FindFirstValue("Id")));
+                this._registrationsService.RegisterTournament(tr.TournamentId, int.Parse(User.FindFirstValue("Id")));
                 return NoContent();
             }
             catch (Exception ex)
