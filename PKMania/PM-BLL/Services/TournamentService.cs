@@ -37,13 +37,53 @@ namespace PM_BLL.Services
         {
             try
             {
-                _registrationsRepository.DeleteRegistrationsByTournament(trId);
-                _memberRepository.UpdateCurrentTournIdForOneTournament(trId);
                 _handsRepository.DeleteHandsByTournament(trId);
                 _tournamentRepository.DeleteTournament(trId);
             }catch(Exception e)
             {
                 Console.WriteLine(e);
+                throw new Exception();
+            }
+        }
+        public Boolean CanJoinLobby(int trId, int playerId)
+        {
+            // vérifier si le tournoi a bien débuté
+            Boolean trStarted = this._tournamentRepository.CanJoinLobby(trId, playerId);
+            // vérifier si le joueur n'est pas déjà dans un autre lobby (member -> current_tournament_id)
+            int crtTrId = this._memberRepository.GetMemberCurrentTournId(playerId);
+            Boolean trOtherLobby = crtTrId != 0 && crtTrId != trId;
+            return trStarted && !trOtherLobby;
+        }
+        public Boolean StartTournament(int trId)
+        {
+            if(this._tournamentRepository.GetTournamentStatus(trId) == "created"){
+                this._tournamentRepository.StartTournament(trId);
+                return true;
+            }
+            return false;
+        }
+        public void CloseTournament(int trId)
+        {
+            try
+            {
+                _registrationsRepository.DeleteRegistrationsByTournament(trId);
+                _memberRepository.UpdateCurrentTournIdForOneTournament(trId);
+                this._tournamentRepository.SetTournamentStatus(trId, "finished");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new Exception();
+            }
+        }
+        public void PlayerIsJoiningLobby(int trId, int playerId)
+        {
+            try
+            {
+                this._memberRepository.SetMemberCurrentTournId(trId, playerId);
+            }
+            catch(Exception e)
+            {
                 throw new Exception();
             }
         }

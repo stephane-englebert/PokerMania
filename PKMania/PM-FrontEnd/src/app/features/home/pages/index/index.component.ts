@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { LoggedUserModel } from '../../../tools/login/models/loggedUser';
 import { LoginService } from '../../../tools/login/services/login.service';
@@ -25,7 +26,8 @@ export class IndexComponent implements OnInit {
   constructor(
     private _loginService: LoginService,
     private _tournamentsService: TournamentsService,
-    private _formBuilder: FormBuilder
+    private _formBuilder: FormBuilder,
+    private _router: Router
   ) {
     this.userId = parseInt(localStorage.getItem("id") as string);
     this._loginService.userInfos.subscribe({
@@ -49,6 +51,7 @@ export class IndexComponent implements OnInit {
       this._hubConnection.send('getTournamentsDetails');
       this._hubConnection.send('getIdRegisteredTournaments', this.userId);
       this._hubConnection.on('msgToAll', (msg) => { console.log(msg); });
+      this._hubConnection.on('msgToCaller', (msg) => { console.log(msg); });
       this._hubConnection.on('sendTournamentsDetails', (details) => this.tournamentsDetails = details);
       this._hubConnection.on('sendIdRegisteredTournaments', (data) => { this.tabIdRegisteredTr = data; });
     });
@@ -87,8 +90,22 @@ export class IndexComponent implements OnInit {
     });
   }
 
-  joinTable() {
-
+  joinLobby(trId: number) {    
+    this._tournamentsService.canJoinLobby(trId, this.userId).subscribe({
+      next: (response: boolean) => {
+        if (response) {
+          // si ok, signaler au serveur qu'il rejoint le tournoi/lobby
+          this._hubConnection.send('PlayerIsJoiningLobby',trId, this.userId);
+          console.log("canJoinLobby -> réponse serveur = " + response);
+          this._router.navigate(['/home/game']);
+        } else {
+          console.log("Pas possible de rejoindre le lobby!");
+        }
+      },
+      error: (err) => {
+        console.log(err.message);
+      }
+    });
   }
 
   createTournament() {
@@ -97,7 +114,11 @@ export class IndexComponent implements OnInit {
   }
 
   startTournament(trId: number) {
-    console.log("tournoi " + trId + " démarré...");
+    this._hubConnection.send('StartTournament', trId);
+  }
+
+  closeTournament(trId: number) {
+    this._hubConnection.send('CloseTournament', trId);
   }
 
   deleteTournament(trId: number) {

@@ -8,8 +8,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\app\features\home\models\" />
+    <Folder Include="src\app\features\home\pages\game\" />
     <Folder Include="src\app\features\home\services\" />
-    <Folder Include="src\app\features\home\pages\" />
     <Folder Include="src\app\features\tools\hub\models\" />
     <Folder Include="src\app\features\tools\hub\services\" />
     <Folder Include="src\app\features\tools\hub\pages\" />

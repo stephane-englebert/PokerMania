@@ -106,4 +106,8 @@ export class TournamentsService {
     }
   }
 
+  canJoinLobby(trId: number, playerId: number) {
+    return this._http.get<boolean>(this.GBconst.API_TOURNAMENT + '/lobby/' + trId + '/' + playerId);
+  }
+
 }

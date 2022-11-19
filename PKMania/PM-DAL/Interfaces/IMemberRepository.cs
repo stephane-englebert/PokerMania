@@ -10,5 +10,7 @@ namespace PM_DAL.Interfaces
         bool ExistEmail(string email);
         bool ExistPseudo(string pseudo);
         void UpdateCurrentTournIdForOneTournament(int trId);
+        int GetMemberCurrentTournId(int playerId);
+        void SetMemberCurrentTournId(int trId, int playerId);
     }
 }

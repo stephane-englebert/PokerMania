@@ -39,5 +39,41 @@ namespace PM_DAL.Services
             cmd.Parameters.AddWithValue("trId", trId);
             cmd.ExecuteNonQuery();
         }
+
+        public Boolean CanJoinLobby(int trId, int playerId)
+        {            
+            string trStatus = this.GetTournamentStatus(trId);
+            return  trStatus == "ongoing" || trStatus == "waitingForPlayers";
+        }
+
+        public string GetTournamentStatus(int trId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT status FROM [Tournaments] WHERE id=@trId";
+            cmd.Parameters.AddWithValue("trId", trId);
+            return (string)cmd.ExecuteScalar();
+        }
+        public void SetTournamentStatus(int trId, string status)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"UPDATE [Tournaments] SET status = @status WHERE id=@trId";
+            cmd.Parameters.AddWithValue("trId", trId);
+            cmd.Parameters.AddWithValue("status", status);
+            cmd.ExecuteNonQuery();
+        }
+        public void StartTournament(int trId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"UPDATE [Tournaments] SET started_on = @startedOn,status = 'ongoing' WHERE id=@trId";
+            cmd.Parameters.AddWithValue("trId", trId);
+            cmd.Parameters.AddWithValue("startedOn", DateTime.Now);
+            cmd.ExecuteNonQuery();
+        }
     }
 }

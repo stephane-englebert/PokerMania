@@ -134,5 +134,26 @@ namespace PM_DAL.Services
             cmd.Parameters.AddWithValue("trId", trId);
             cmd.ExecuteNonQuery();
         }
+
+        public int GetMemberCurrentTournId(int playerId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT current_tournament_id FROM [Members] WHERE id = @playerId";
+            cmd.Parameters.AddWithValue("playerId", playerId);
+            return (int)cmd.ExecuteScalar();
+        }
+
+        public void SetMemberCurrentTournId(int trId, int playerId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"UPDATE [Members] SET current_tournament_id = @trId WHERE id = @playerId";
+            cmd.Parameters.AddWithValue("playerId", playerId);
+            cmd.Parameters.AddWithValue("trId", trId);
+            cmd.ExecuteNonQuery();
+        }
     }
 }

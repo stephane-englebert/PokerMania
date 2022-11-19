@@ -23,6 +23,13 @@ namespace PM_Backend.Hubs
             this.startTournamentsManagement();
         }
 
+        public void SendMsgToCaller(string msg, IClientProxy clt)
+        {
+            if(clt != null)
+            {
+                clt.SendAsync("msgToCaller", msg);
+            }
+        }
         public void SendMsgToAll(string message)
         {
            if(Clients != null)
@@ -90,20 +97,44 @@ namespace PM_Backend.Hubs
             this.SendMsgToAll("Update necessary -> " + typeUpdate);
         }
 
+        public void PlayerIsJoiningLobby(int trId,int playerId)
+        {
+            this.SendMsgToCaller("Merci d'avoir prévenu!["+playerId+"]", Clients.Caller);
+            this._tournamentService.PlayerIsJoiningLobby(trId, playerId);
+        }
+
         public void CreateTournament(DateTime startDate, string name, int type)
         {
             this._tournamentService.CreateTournament(startDate, name, type);
         }
+        public void StartTournament(int trId)
+        {
+            Boolean trStarted = this._tournamentService.StartTournament(trId);
+            if (trStarted)
+            {
+                this.SendMsgToAll("Le tournoi " + trId + " va démarrer sous peu.  Merci de bien vouloir rejoindre le lobby.");
+                this.UpdateNecessary("tournaments");
+                //=================================================================
+                //                  GESTION D'UN TOURNOI
+                //=================================================================
 
+
+
+
+
+                //=================================================================
+            }
+        }
+
+        public void CloseTournament(int trId)
+        {
+            this._tournamentService.CloseTournament(trId);
+            this.UpdateNecessary("tournaments");
+        }
         public void DeleteTournament(int trId)
         {
             this._tournamentService.DeleteTournament(trId);
         }
-
-        //public void IsPlayerRegistered(int trId, int playerId)
-        //{
-        //    Clients.Caller.SendAsync("sendIsPlayerRegistered",);
-        //}
         public void startTournamentsManagement()
         {
             this.SendMsgToAll("Initialisation de la TournamentsList...");

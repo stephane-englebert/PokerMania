@@ -30,9 +30,10 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMembersService, MembersService>();
 builder.Services.AddScoped<IRegistrationsService, RegistrationsService>();
 builder.Services.AddScoped<ISecurityTokenService, SecurityTokenService>();
+builder.Services.AddScoped<ITournamentsDetailsService, TournamentsDetailsService>();
+builder.Services.AddScoped<ITournamentService, TournamentService>();
 builder.Services.AddScoped<ITournamentsListService, TournamentsListService>();
 builder.Services.AddScoped<ITournamentsTypesService, TournamentsTypesService>();
-builder.Services.AddScoped<ITournamentsDetailsService, TournamentsDetailsService>();
 builder.Services.AddSingleton<PkHub>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

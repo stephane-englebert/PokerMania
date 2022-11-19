@@ -10,13 +10,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormRegisterComponent } from '../tools/register/pages/form-register/form-register.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
+import { GameComponent } from './pages/game/game.component';
 
 
 @NgModule({
   declarations: [
     IndexComponent,
     RegistrationComponent,
-    FormRegisterComponent
+    FormRegisterComponent,
+    GameComponent
   ],
   imports: [
     CommonModule,
