@@ -155,5 +155,9 @@ namespace PM_DAL.Services
             cmd.Parameters.AddWithValue("trId", trId);
             cmd.ExecuteNonQuery();
         }
+        public void GetMemberIdOfPlayersJoiningTournament(int trId)
+        {
+
+        }
     }
 }

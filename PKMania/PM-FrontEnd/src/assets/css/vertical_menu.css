@@ -1,0 +1,59 @@
+ul, li{
+  margin: 0;
+  padding: 0;
+}
+
+ul{
+  background: #333;
+  min-width: 30px;
+  box-sizing: border-box;
+  position: fixed;
+  margin-left:315px;
+}
+
+li{
+  list-style-type: none;
+  padding: 10px 0 10px 0px;
+  border-bottom: 1px solid #222;
+  transform: translateY(55px);
+  text-align: center;
+  cursor: pointer;
+}
+
+a{
+  color: #aaa;
+  text-decoration: none;
+  padding: 10px 10px;
+}
+
+li.active{
+  background: #222;
+  opacity: 1;
+}
+
+li:not(.active):hover {
+  background: #2c2c2c;
+}
+
+img{
+  width: 30px;
+}
+
+li:hover img, .active img{
+  opacity: 1;
+}
+
+
+
+@media screen and (min-width: 1600px) {
+    ul{
+      height:800px;
+    }
+}
+
+
+@media only screen and (min-width: 1px) and (max-width: 1599px) {
+    ul{
+      height:620px;
+    }
+}

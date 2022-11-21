@@ -9,6 +9,7 @@ namespace PM_DAL.Interfaces
         Boolean CanJoinLobby(int trId, int playerId);
         string GetTournamentStatus(int trId);
         void SetTournamentStatus(int trId, string status);
+        void LaunchTournament(int trId);
         void StartTournament(int trId);
     }
 }

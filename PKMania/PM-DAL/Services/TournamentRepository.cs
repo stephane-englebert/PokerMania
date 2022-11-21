@@ -65,6 +65,16 @@ namespace PM_DAL.Services
             cmd.Parameters.AddWithValue("status", status);
             cmd.ExecuteNonQuery();
         }
+        public void LaunchTournament(int trId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"UPDATE [Tournaments] SET started_on = @startedOn,status = 'waitingForPlayers' WHERE id=@trId";
+            cmd.Parameters.AddWithValue("trId", trId);
+            cmd.Parameters.AddWithValue("startedOn", DateTime.Now);
+            cmd.ExecuteNonQuery();
+        }
         public void StartTournament(int trId)
         {
             using SqlConnection connection = new SqlConnection(connectionString);

@@ -54,9 +54,18 @@ namespace PM_BLL.Services
             Boolean trOtherLobby = crtTrId != 0 && crtTrId != trId;
             return trStarted && !trOtherLobby;
         }
+        public Boolean LaunchTournament(int trId)
+        {
+            if(this._tournamentRepository.GetTournamentStatus(trId) == "created")
+            {
+                this._tournamentRepository.LaunchTournament(trId);
+                return true;
+            }
+            return false;
+        }
         public Boolean StartTournament(int trId)
         {
-            if(this._tournamentRepository.GetTournamentStatus(trId) == "created"){
+            if(this._tournamentRepository.GetTournamentStatus(trId) == "waitingForPlayers"){
                 this._tournamentRepository.StartTournament(trId);
                 return true;
             }

@@ -101,23 +101,70 @@ namespace PM_Backend.Hubs
         {
             this.SendMsgToCaller("Merci d'avoir prévenu!["+playerId+"]", Clients.Caller);
             this._tournamentService.PlayerIsJoiningLobby(trId, playerId);
+            // Acter la présence des joueurs (playerDTO -> 'Disconnected')
+            // Vérifier si tous les joueurs présents
         }
 
         public void CreateTournament(DateTime startDate, string name, int type)
         {
             this._tournamentService.CreateTournament(startDate, name, type);
         }
+        public void LaunchTournament(int trId)
+        {
+            // Basculer status tournoi en 'waitingForPlayers' (ouverture du tournoi)
+            Boolean trOpened = this._tournamentService.LaunchTournament(trId);
+            if (trOpened)
+            {
+                //=================================================================
+                //                  OUVERTURE D'UN TOURNOI
+                //=================================================================
+
+                // Invitations à 'rejoindre lobby' envoyées aux joueurs inscrits               
+                    this.UpdateNecessary("tournaments");
+                    if(Clients != null){Clients.All.SendAsync("launchTr",trId);}
+
+                // Décompte avant début tournoi
+                    System.Timers.Timer aTimer = new System.Timers.Timer(300000);
+                    aTimer.Elapsed += (Object source, System.Timers.ElapsedEventArgs e) =>
+                    {
+                        // A la fin du décompte, vérifier le nombre de joueurs qui ont joints le lobby
+
+                        // Si pas assez de joueurs => Canceled
+
+                        // Si suffisamment de joueurs => Ongoing
+                        this.StartTournament(trId);
+                        // Déroulement du tournoi
+                        aTimer.Stop();
+                        aTimer.Dispose();
+                    };
+                    aTimer.AutoReset = false;
+                    aTimer.Enabled = true;
+                //=================================================================
+            }
+        }        
         public void StartTournament(int trId)
         {
+            // Basculer status tournoi en 'ongoing' (start tournoi)
             Boolean trStarted = this._tournamentService.StartTournament(trId);
             if (trStarted)
             {
-                this.SendMsgToAll("Le tournoi " + trId + " va démarrer sous peu.  Merci de bien vouloir rejoindre le lobby.");
-                this.UpdateNecessary("tournaments");
                 //=================================================================
-                //                  GESTION D'UN TOURNOI
+                //                  DEMARRAGE D'UN TOURNOI
                 //=================================================================
 
+                // Invitations à 'rejoindre lobby' envoyées aux joueurs inscrits
+                    this.SendMsgToAll("Démarrage du tournoi [" + trId + "]...");
+                    this.UpdateNecessary("tournaments");
+                    // JL, TRxxx
+
+                // Décompte avant début tournoi
+                // A la fin du décompte, vérifier le nombre de joueurs qui ont joints le lobby
+
+                    // Si pas assez de joueurs => Canceled
+
+
+                    // Si suffisamment de joueurs => Ongoing
+                    // Déroulement du tournoi
 
 
 

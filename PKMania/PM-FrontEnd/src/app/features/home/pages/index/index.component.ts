@@ -50,6 +50,11 @@ export class IndexComponent implements OnInit {
       console.log("démarrage hub");
       this._hubConnection.send('getTournamentsDetails');
       this._hubConnection.send('getIdRegisteredTournaments', this.userId);
+      this._hubConnection.on('launchTr', (trId) => {
+        if (this.isRegistered(trId)) {
+          console.log("Le tournoi [" + trId + "] va démarrer sous peu.");
+        }
+      });
       this._hubConnection.on('msgToAll', (msg) => { console.log(msg); });
       this._hubConnection.on('msgToCaller', (msg) => { console.log(msg); });
       this._hubConnection.on('sendTournamentsDetails', (details) => this.tournamentsDetails = details);
@@ -113,8 +118,8 @@ export class IndexComponent implements OnInit {
     this._hubConnection.send('UpdateNecessary', "tournaments");
   }
 
-  startTournament(trId: number) {
-    this._hubConnection.send('StartTournament', trId);
+  launchTournament(trId: number) {
+    this._hubConnection.send('LaunchTournament', trId);
   }
 
   closeTournament(trId: number) {
