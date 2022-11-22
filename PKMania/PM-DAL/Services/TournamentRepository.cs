@@ -1,4 +1,5 @@
-﻿using PM_DAL.Interfaces;
+﻿using PM_DAL.Data.Entities;
+using PM_DAL.Interfaces;
 using System.Data.SqlClient;
 
 namespace PM_DAL.Services
@@ -84,6 +85,21 @@ namespace PM_DAL.Services
             cmd.Parameters.AddWithValue("trId", trId);
             cmd.Parameters.AddWithValue("startedOn", DateTime.Now);
             cmd.ExecuteNonQuery();
+        }
+        public IEnumerable<Clean> GetIdTournamentsToClean()
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT id,status FROM [Tournaments] WHERE status IN ('canceled','finished')";
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                yield return new Clean(
+                    reader.GetInt32(0),
+                    reader.GetString(1)
+                );
+            }
         }
     }
 }

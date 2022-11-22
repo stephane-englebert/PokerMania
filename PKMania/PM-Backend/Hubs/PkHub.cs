@@ -182,6 +182,12 @@ namespace PM_Backend.Hubs
         {
             this._tournamentService.DeleteTournament(trId);
         }
+        public void CleanDatabase()
+        {
+            this._tournamentService.CleanDatabase();
+            this.UpdateNecessary("tournaments");
+            this.SendMsgToAll("Database cleaned");
+        }
         public void startTournamentsManagement()
         {
             this.SendMsgToAll("Initialisation de la TournamentsList...");

@@ -64,16 +64,28 @@ a:link {text-decoration: none;}
 
 body {padding-top:20px;}
 
-/* =========== BASIC COLOR =============== */ 
-.bg_defaut_color {background: #00bb00;}
-.defaut_color {color: #00bb00;}
-.shadow_color {box-shadow: 0px 0px 18px 4px rgba(62,204,0,0.45);}
+/* =========== BASIC COLOR =============== */
+.bg_defaut_color {
+  background: #f7a728;
+}
+.defaut_color {
+  color: #f7a728;
+}
+.shadow_color {
+  box-shadow: 0px 0px 4px 4px rgba(247, 167, 40,0.50);
+}
     
 /* =========== COLONNE GAUCHE =============== */ 
 .col_left {
       position:absolute;
       margin-left: 0px;
     }
+
+.msgToPlayer {
+  background-color: black;
+  border-radius: 10px;
+  color: #f7a728;
+}
     
 /* =========== COLONNE DROITE =============== */ 
 .col_right {
@@ -83,39 +95,49 @@ body {padding-top:20px;}
     
 /* =========== RANK TABLE =============== */ 
 .ranking_box_table {
-      width:250px;
+      width:315px;
+
+      height:100%;
       position: absolute;
-      margin-left:35px;
+      /*border-left:4px solid black;*/
+      /*border-right:3px solid black;*/
+      /*border-bottom:1px solid red;*/
     }
 
 .ranking_box_table::-webkit-scrollbar {width: 5px;}
 .ranking_box_table::-webkit-scrollbar-track {background: #555555;}
 
 .ranking_box_title {
-      width:230px;
-      height:20px;
-      padding:10px;
-      position: fixed;
+      width:315px;
+      height:30px;
+      position: absolute;
     }
     
 .ranking_line {
       padding:5px;
       margin-top:2px;
-      max-width:250px;
+      max-width:310px;
     }
     
 .ranking_line_content {
-      padding:2px;
+      /*padding:2px;*/
     }
+.ranking_line_content img{
+    width:43px;
+    height:48px;
+    /*margin-left:5px;*/
+}
 
     
 /* =========== RANK TOURNAMENT =============== */    
 .ranking_box_tournament {
-      width:250px;
+      width:315px;
+      height:100%;
       position: absolute;
       overflow-x: hidden;
       overflow-y: auto;
-      margin-left:35px;
+      /*margin-left:3px;*/
+      /*border:1px solid red;*/
     }
 
 .ranking_box_tournament::-webkit-scrollbar {width: 5px;}
@@ -231,20 +253,25 @@ body {padding-top:20px;}
    ========================================================================================================================================================================= */ 
 @media screen and (min-width: 1600px) {
     .box {
-      width:1600px;
+      width:1607px;
       height:800px;
       margin: auto;
     }
 
     .box_navbar {
-      width: 1600px;
-      height: 120px;
+      width: 1607px;
+      height: 150px;
       margin: auto;
-      border: 10px solid black;
       z-index: 999;
       background-color: black;
       -webkit-box-shadow: 0 0 10px #808080;
       box-shadow: 0 0 10px #555555;
+    }
+
+    .bar_box{
+        width:1607px;
+        height:30px;
+        margin:auto;
     }
     
     .col_left {
@@ -258,8 +285,7 @@ body {padding-top:20px;}
     }
     
     .ranking_box_tournament {
-      margin-top:25px;
-      height: 750px;
+      height: 100%;
       scrollbar-color: dark;
     }
     
@@ -291,16 +317,15 @@ body {padding-top:20px;}
    ========================================================================================================================================================================= */ 
 @media only screen and (min-width: 1px) and (max-width: 1599px) {
     .box {
-        width:1280px;
+        width:1288px;
         height:620px;
         margin: auto;
     }
 
     .box_navbar {
-      width: 1280px;
-      height: 120px;
+      width: 1288px;
+      height: 150px;
       margin: auto;
-      border: 10px solid black;
       z-index: 999;
       background-color: black;
       -webkit-box-shadow: 0 0 10px #808080;
@@ -318,14 +343,13 @@ body {padding-top:20px;}
     }
 
     .ranking_box_table {
-      height: 250px;
+      height: 100%;
       overflow-x: hidden;
       overflow-y: auto;
     }
     
     .ranking_box_tournament {
-      margin-top:25px;
-      height: 570px;
+      margin-top:0px;
     }
     
     .poker_decor {
@@ -355,5 +379,20 @@ body {padding-top:20px;}
     .avatar7 {margin-top: 275px;margin-left:50px;}
     .avatar8 {margin-top: 75px;margin-left:125px;}
     .avatar9 {margin-top: 45px;margin-left:300px;}
+    .avatar10 {margin-top: 45px;margin-left:400px;}
+
 }
+    .btn_raise{
+        width:150px;
+        height:20px;
+        margin:auto;
+        background-color:#333;
+        padding:5px;
+        margin:8px;
+        cursor:pointer;
+        border-radius:5px;
+    }
+      .btn_raise:hover {
+        background-color: #e76138;
+      }
 

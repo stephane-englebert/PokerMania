@@ -3,6 +3,7 @@ using PM_BLL.Data.DTO.Entities;
 using PM_BLL.Interfaces;
 using PM_DAL.Services;
 using PM_DAL.Interfaces;
+using PM_DAL.Data.Entities;
 
 namespace PM_BLL.Services
 {
@@ -80,6 +81,22 @@ namespace PM_BLL.Services
                 this._tournamentRepository.SetTournamentStatus(trId, "finished");
             }
             catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw new Exception();
+            }
+        }
+        public void CleanDatabase()
+        {
+            try
+            {
+                IEnumerable<Clean> trToClean = (IEnumerable<Clean>)this._tournamentRepository.GetIdTournamentsToClean();
+                foreach (Clean toClean in trToClean)
+                {
+                    if(toClean.Status == "canceled"){this.CloseTournament(toClean.Id);}
+                    this.DeleteTournament(toClean.Id);
+                }
+            }catch(Exception e)
             {
                 Console.WriteLine(e);
                 throw new Exception();

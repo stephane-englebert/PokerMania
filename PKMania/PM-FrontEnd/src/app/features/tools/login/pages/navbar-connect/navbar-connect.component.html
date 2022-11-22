@@ -1,6 +1,32 @@
+<style>
+  button {
+    height: 25px;
+    background-color: black;
+    color: white;
+    padding-top: 1px;
+    margin-top: 10px;
+    margin-right:20px;
+    border: 1px solid #f7a728;
+    font-size: 14px;
+    font-weight:bold;
+    border-radius: 5px;
+  }
+    button:hover {
+      height: 25px;
+      background-color: #f7a728;
+      color: black;
+      padding-top: 1px;
+      margin-top: 10px;
+      margin-right: 20px;
+      border-bottom: 2px solid black;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+</style>
 <div class="box_navbar">
   <div style="text-align:left;float:left;">
-    <img src="../../../../../../assets/images/logo_poker.png" style="width:300px;height:140px;" />
+    <img class="absolute index999" src="../../../../../../assets/images/logo_poker.png" style="width:400px;height:230px;" />
   </div>
   <div style="text-align: right; float: right; color: #f7a728;">
     <div *ngIf="!isLogged" style="">
@@ -14,7 +40,7 @@
           <input style="margin-left: 25px;" id="password-input" type="password" formControlName="Password" pPassword placeholder="{{ 'LOGIN.FORM.PWD' | translate }}" />
         </span>
         <span>
-          <button style="margin-left: 20px;padding:3px;" pButton type="button" icon="pi pi-arrow-circle-right" (click)="submit()"></button>
+          <button style="margin-left: 30px;" pButton type="button" (click)="submit()"><i class="pi pi-sign-in"></i></button>
         </span>
       </form>
       <div>
@@ -24,9 +50,9 @@
     <div *ngIf="isLogged">
       <p>
         <span><i class="pi pi-user"></i></span>
-        <span style="margin-left: 10px;">{{loggedUser.loggedMember.pseudo}}</span>
-        <span style="margin-left: 30px;">{{ 'NAVBAR.BANKROLL' | translate }}: {{loggedUser.loggedMember.bankroll}} $</span>
-        <button style="margin-left: 30px;" pButton type="button" (click)="logout()">{{ 'NAVBAR.LOGOUT' | translate }}</button>
+        <span style="margin-left: 10px;"><span style="color: white;">{{loggedUser.loggedMember.pseudo}}</span></span>
+        <span style="margin-left: 30px;">{{ 'NAVBAR.BANKROLL' | translate }}: <span style="color: #ffea57;">{{loggedUser.loggedMember.bankroll}}</span> $</span>
+        <button style="margin-left: 30px;" pButton type="button" (click)="logout()"><i class="pi pi-sign-out"></i></button>
       </p>
     </div>
   </div>

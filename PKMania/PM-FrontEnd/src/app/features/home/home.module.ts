@@ -11,6 +11,7 @@ import { FormRegisterComponent } from '../tools/register/pages/form-register/for
 import { TranslateModule } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
 import { GameComponent } from './pages/game/game.component';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { GameComponent } from './pages/game/game.component';
     ReactiveFormsModule,
     FormsModule,
     TranslateModule,
-    TableModule
+    TableModule,
+    RadioButtonModule
   ]
 })
 export class HomeModule { }

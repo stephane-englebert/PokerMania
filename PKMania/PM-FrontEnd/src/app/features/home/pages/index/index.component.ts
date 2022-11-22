@@ -113,8 +113,11 @@ export class IndexComponent implements OnInit {
     });
   }
 
-  createTournament() {
-    this._hubConnection.send('CreateTournament', new Date('2022-11-18 03:30:00'), 'Tournoi à 1 table', 2);
+  createTournament(nbPl: number) {
+    if (nbPl == 2) {
+      this._hubConnection.send('CreateTournament', new Date(), 'Heads-Up 2 joueurs', 1);
+      //this._hubConnection.send('CreateTournament', new Date('2022-11-18 03:30:00'), 'Heads-Up 2 joueurs', 1);
+    }
     this._hubConnection.send('UpdateNecessary', "tournaments");
   }
 
@@ -126,8 +129,7 @@ export class IndexComponent implements OnInit {
     this._hubConnection.send('CloseTournament', trId);
   }
 
-  deleteTournament(trId: number) {
-    this._hubConnection.send('DeleteTournament', trId);
-    this._hubConnection.send('UpdateNecessary', "tournaments");
+  cleanTournaments() {
+    this._hubConnection.send('CleanDatabase');
   }
 }

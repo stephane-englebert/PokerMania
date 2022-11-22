@@ -25,7 +25,7 @@ ALTER TABLE [dbo].[Tournaments_types]
 	ADD CONSTRAINT [CK_tournaments_types_min_players] CHECK(min_players >= 2)
 GO
 ALTER TABLE [dbo].[Tournaments_types]
-	ADD CONSTRAINT [CK_tournaments_types_min_max] CHECK(min_players < max_players)
+	ADD CONSTRAINT [CK_tournaments_types_min_max] CHECK(min_players <= max_players)
 GO
 ALTER TABLE [dbo].[Tournaments_types]
 	ADD CONSTRAINT [CK_tournaments_types_players_per_table] CHECK(players_per_table BETWEEN 2 AND 9)

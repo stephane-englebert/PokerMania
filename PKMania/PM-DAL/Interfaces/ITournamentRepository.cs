@@ -1,4 +1,6 @@
 ﻿
+using PM_DAL.Data.Entities;
+
 namespace PM_DAL.Interfaces
 {
     public interface ITournamentRepository
@@ -11,5 +13,6 @@ namespace PM_DAL.Interfaces
         void SetTournamentStatus(int trId, string status);
         void LaunchTournament(int trId);
         void StartTournament(int trId);
+        IEnumerable<Clean> GetIdTournamentsToClean();
     }
 }

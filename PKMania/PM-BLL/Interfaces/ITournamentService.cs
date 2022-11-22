@@ -9,6 +9,7 @@ namespace PM_BLL.Interfaces
         Boolean LaunchTournament(int trId);
         Boolean StartTournament(int trId);
         void CloseTournament(int trId);
+        void CleanDatabase();
         void PlayerIsJoiningLobby(int trId, int playerId);
     }
 }

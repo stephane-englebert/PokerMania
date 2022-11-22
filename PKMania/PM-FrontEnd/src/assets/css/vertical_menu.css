@@ -7,8 +7,9 @@ ul{
   background: #333;
   min-width: 30px;
   box-sizing: border-box;
-  position: fixed;
+  position: absolute;
   margin-left:315px;
+  padding-top:5px;
 }
 
 li{
@@ -26,9 +27,15 @@ a{
   padding: 10px 10px;
 }
 
-li.active{
-  background: #222;
+li.active {
+  background: #f7a728;
   opacity: 1;
+  border:3px solid #333;
+}
+
+li.active a{
+  color: #000000;
+
 }
 
 li:not(.active):hover {

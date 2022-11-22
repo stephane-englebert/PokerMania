@@ -1,61 +1,94 @@
-
-<div class="box degrade_gris_clair">
+<div class="box degrade_gris_clair" style="border-top: 30px solid #f7a728;">
   <style>
+    th {
+      height: 40px;
+      background-color: black;
+      color: #f7a728;
+      padding-top: 10px;
+      border-bottom: 2px solid #727272;
+    }
+
     td {
       text-align: center;
+      height: 40px;
+      color: #000000;
+      padding-top: 3px;
+      border-bottom: 2px solid #727272;
+      background-color: #d5d5d5;
     }
+
+    button {
+      height: 25px;
+      background-color: black;
+      color: #f7a728;
+      padding-top: 1px;
+      margin-top: 3px;
+      border-bottom: 1px solid #808080;
+      font-size: 12px;
+      border-radius: 5px;
+    }
+
+      button:hover {
+        height: 25px;
+        background-color: #f7a728;
+        color: black;
+        padding-top: 0px;
+        margin-top: 3px;
+        border-bottom: 2px solid black;
+        font-size: 12px;
+        border-radius: 5px;
+      }
   </style>
+
   <div *ngIf="hubStarted" style="margin:0px 30px 30px 30px;padding:15px;text-align:center;">
+
     <div style="height: 40px; color: #000000; padding: 40px 0px 30px 0px;font-size:1.8rem">
       <h2>Liste des tournois</h2>
     </div>
     <p-table *ngIf="tournamentsDetails != null" [value]="tournamentsDetails" styleClass="p-datatable-striped">
       <ng-template pTemplate="header">
         <tr>
-          <th style="height: 30px; background-color: black; color: #f7a728;padding-top:8px"></th>
-          <th style="height: 30px; background-color: black; color: #f7a728;padding-top:8px">Début</th>
-          <th style="height: 30px; background-color: black; color: #f7a728;padding-top:8px">Tournoi</th>
-          <th style="height: 30px; background-color: black; color: #f7a728;padding-top:8px">Buy-in</th>
-          <th style="height: 30px; background-color: black; color: #f7a728;padding-top:8px">Rebuy</th>
-          <th style="height: 30px; background-color: black; color: #f7a728;padding-top:8px">Prize pool</th>
-          <th style="height: 30px; background-color: black; color: #f7a728;padding-top:8px">Joueurs/table</th>
-          <th style="height: 30px; background-color: black; color: #f7a728;padding-top:8px">Places payées</th>
-          <th style="height: 30px; background-color: black; color: #f7a728;padding-top:8px">Inscrits</th>
-          <th style="height: 30px; background-color: black; color: #f7a728;padding-top:8px"></th>
+          <th></th>
+          <th>Début</th>
+          <th>Tournoi</th>
+          <th>Buy-in</th>
+          <th>Rebuy</th>
+          <th>Prize pool</th>
+          <th>Joueurs/table</th>
+          <th>Places payées</th>
+          <th>Inscrits</th>
+          <th></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-tournDetails>
         <tr>
-          <td style="height: 40px; color: #000000; padding-top: 10px; border-bottom: 1px solid #f7a728">
+          <td style="">
             <button *ngIf="isLogged && tournDetails.status == 'created'" style="margin-left: 30px;" pButton type="button" (click)="launchTournament(tournDetails.id)">
               <i class="pi pi-play"></i>
             </button>
             <button *ngIf="isLogged && (tournDetails.status == 'ongoing' || tournDetails.status == 'waitingForPlayers')" style="margin-left: 30px;" pButton type="button">
               <i class="pi pi-circle-fill"></i>
             </button>
-            <button *ngIf="isLogged" style="margin-left: 30px;" pButton type="button" (click)="closeTournament(tournDetails.id)">
-              <i class="pi pi-times"></i>
-            </button>
-            <button *ngIf="isLogged" style="margin-left: 5px;" pButton type="button" (click)="deleteTournament(tournDetails.id)">
+            <button *ngIf="isLogged" style="margin-left: 5px;" pButton type="button" (click)="closeTournament(tournDetails.id)">
               <i class="pi pi-trash"></i>
             </button>
           </td>
-          <td style="height: 40px; color: #000000; padding-top: 10px; border-bottom: 1px solid #f7a728">
+          <td>
             <span *ngIf="tournDetails.status == 'created'">{{tournDetails.startedOn | date: 'dd/MM h:m'}}</span>
           </td>
-          <td style="height: 40px; color: #000000; padding-top: 10px; border-bottom: 1px solid #f7a728">{{tournDetails.name}}</td>
-          <td style="height: 40px; color: #000000; padding-top: 10px; border-bottom: 1px solid #f7a728">{{tournDetails.buyIn}}</td>
-          <td style="height: 40px; color: #000000; padding-top: 10px; border-bottom: 1px solid #f7a728">
+          <td>{{tournDetails.name}}</td>
+          <td>{{tournDetails.buyIn}}</td>
+          <td>
             <span *ngIf="!tournDetails.rebuy">-</span>
             <span *ngIf="tournDetails.rebuy">-> Lvl {{tournDetails.rebuyLevel}}</span>
           </td>
-          <td style="height: 40px; color: #000000; padding-top: 10px; border-bottom: 1px solid #f7a728">
+          <td>
             {{tournDetails.buyIn * tournDetails.maxPaidPlaces}}
           </td>
-          <td style="height: 40px; color: #000000; padding-top: 10px; border-bottom: 1px solid #f7a728">{{tournDetails.playersPerTable}}</td>
-          <td style="height: 40px; color: #000000; padding-top: 10px; border-bottom: 1px solid #f7a728">{{tournDetails.maxPaidPlaces}}</td>
-          <td style="height: 40px; color: #000000; padding-top: 10px; border-bottom: 1px solid #f7a728">{{tournDetails.registrationsNumber}}/{{tournDetails.maxPlayers}}</td>
-          <td style="height: 40px; color: #000000; padding-top: 10px; border-bottom: 1px solid #f7a728">
+          <td>{{tournDetails.playersPerTable}}</td>
+          <td>{{tournDetails.maxPaidPlaces}}</td>
+          <td>{{tournDetails.registrationsNumber}}/{{tournDetails.maxPlayers}}</td>
+          <td>
             <div *ngIf="!isLogged">
               <span *ngIf="tournDetails.registrationsNumber != tournDetails.maxPlayers">Se connecter pour jouer</span>
               <span *ngIf="tournDetails.registrationsNumber == tournDetails.maxPlayers">Complet</span>
@@ -81,11 +114,17 @@
     </p-table>
     <div *ngIf="isLogged" style="width:300px;margin:auto;margin-top:80px;padding:10px;border:1px solid grey;">
       <h2>Tournament Manager</h2>
-      <div>hubStarted = {{hubStarted}}</div>
-      <div>isLogged = {{isLogged}}</div>
-      <div>tabIdRegisteredTr.length = {{tabIdRegisteredTr.length}}</div>
-      <div *ngIf="tournamentsDetails != null">tournamentsDetails.length = {{tournamentsDetails.length}}</div>
-      <div><button style="margin-left: 30px;" pButton type="button" (click)="createTournament()">Ajouter Tournoi</button></div>
+      <hr />
+      <div style="text-align:left;padding-top:10px;">
+        <span>Ajouter tournoi : </span>
+        <span>
+          <button style="margin-left: 30px;" pButton type="button" (click)="createTournament(2)">1 Vs 1</button>
+        </span>
+      </div>
+      <hr />
+      <span>
+        <button style="margin-left: 30px;" pButton type="button" (click)="cleanTournaments()">Clean Database</button>
+      </span>
     </div>
   </div>
 </div>
