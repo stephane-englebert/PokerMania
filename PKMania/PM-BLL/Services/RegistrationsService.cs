@@ -14,6 +14,7 @@ namespace PM_BLL.Services
         private readonly IRegistrationsRepository _registrationsRepository = new RegistrationsRepository();
         private readonly ITournamentRepository _tournamentRepository = new TournamentRepository();
         private readonly ITournamentsListRepository _tournamentsListRepository = new TournamentsListRepository();
+        private readonly IMemberRepository _memberRepository = new MemberRepository();
         public RegistrationsService(){}
         public IEnumerable<TournamentPlayersDTO> GetAllRegistrations(TournamentsListDTO trList)
         {
@@ -152,6 +153,17 @@ namespace PM_BLL.Services
             else
             {
                 throw new Exception("REGISTER_TOURN_ALREADY_REGIS");
+            }
+        }
+        public int GetPlayerCurrentTournamentId(int playerId)
+        {
+            try
+            {
+                return this._memberRepository.GetMemberCurrentTournId(playerId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("GAME_GET_CRT_TR_ID_FAILURE");
             }
         }
     }

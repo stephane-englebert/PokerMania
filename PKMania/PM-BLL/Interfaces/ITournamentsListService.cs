@@ -6,5 +6,6 @@ namespace PM_BLL.Interfaces
     {
         TournamentsListDTO GetActiveTournaments();
         TournamentsListDTO GetPlayerActiveTournaments(int playerId);
+        Boolean IsThereOngoingTrForOnePlayer(int playerId);
     }
 }

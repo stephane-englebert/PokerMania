@@ -311,6 +311,10 @@ body {padding-top:20px;}
     .avatar7 {margin-top: 400px;margin-left:120px;}
     .avatar8 {margin-top: 160px;margin-left:170px;}
     .avatar9 {margin-top: 105px;margin-left:430px;}
+  .avatar10 {
+    margin-top: 105px;
+    margin-left: 565px;
+  }
 }
 
 /* ======================================================================== DE 1280 A 1600 ========================================================================== 
@@ -379,7 +383,7 @@ body {padding-top:20px;}
     .avatar7 {margin-top: 275px;margin-left:50px;}
     .avatar8 {margin-top: 75px;margin-left:125px;}
     .avatar9 {margin-top: 45px;margin-left:300px;}
-    .avatar10 {margin-top: 45px;margin-left:400px;}
+    .avatar10 {margin-top: 35px;margin-left:400px;}
 
 }
     .btn_raise{

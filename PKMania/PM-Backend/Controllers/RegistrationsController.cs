@@ -59,6 +59,39 @@ namespace PM_Backend.Controllers
             }
         }
 
+        [HttpGet("full/{tr}")]
+        [Authorize(Roles = "player")]
+        public IActionResult GetFull(int tr)
+        {
+            try
+            {
+                return Ok(!this._registrationsService.StillFreePlacesForTournament(tr));
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("TOURN_NO_REGIS");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("crt")]
+        [Authorize(Roles = "player")]
+        public IActionResult GetCrt()
+        {
+            try
+            {
+                return Ok(this._registrationsService.GetPlayerCurrentTournamentId(int.Parse(User.FindFirstValue("Id"))));
+
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
         [HttpGet("{tr}/{id}")]
         [Authorize(Roles = "player")]
         public IActionResult Get(int tr, int id)

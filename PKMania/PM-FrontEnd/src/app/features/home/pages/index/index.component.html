@@ -94,18 +94,19 @@
               <span *ngIf="tournDetails.registrationsNumber == tournDetails.maxPlayers">Complet</span>
             </div>
             <div *ngIf="isLogged">
-              <span *ngIf="tournDetails.registrationsNumber == tournDetails.maxPlayers">Complet</span>
-              <div *ngIf="tournDetails.registrationsNumber != tournDetails.maxPlayers">
-                <span *ngIf="!isRegistered(tournDetails.id) && tournDetails.status == 'created'">
+              <span *ngIf="isLogged && tournDetails.registrationsNumber == tournDetails.maxPlayers">Complet - En cours</span>
+              <div >
+                <span *ngIf="isLogged && !isRegistered(tournDetails.id) && tournDetails.status == 'created'">
+                  {{isLogged}} - {{isRegistered(tournDetails.id)}} - {{tournDetails.status}}
                   <button style="margin-left: 30px;" pButton type="button" (click)="registerTourn(tournDetails.id)">S'inscrire</button>
                 </span>
-                <span *ngIf="isRegistered(tournDetails.id) && tournDetails.status == 'created'">
+                <span *ngIf="isLogged && isRegistered(tournDetails.id) && tournDetails.status == 'created'">
                   <button style="margin-left: 30px;" pButton type="button" (click)="unregisterTourn(tournDetails.id)">Se désinscrire</button>
                 </span>
-                <span *ngIf="(tournDetails.status == 'ongoing' || tournDetails.status == 'waitingForPlayers') && isRegistered(tournDetails.id)">
+                <!--<span *ngIf="(tournDetails.status == 'ongoing' || tournDetails.status == 'waitingForPlayers') && isRegistered(tournDetails.id)">
                   <button style="margin-left: 30px;" pButton type="button" (click)="joinLobby(tournDetails.id)">Rejoindre Lobby</button>
                 </span>
-                <span *ngIf="(tournDetails.status == 'ongoing' || tournDetails.status == 'waitingForPlayers') && !isRegistered(tournDetails.id)">En cours...</span>
+                <span *ngIf="(tournDetails.status == 'ongoing' || tournDetails.status == 'waitingForPlayers') && !isRegistered(tournDetails.id)">En cours...</span>-->
               </div>
             </div>
           </td>

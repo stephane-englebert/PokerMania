@@ -15,13 +15,15 @@ import { TournamentsService } from '../../../tools/tournaments/services/tourname
 export class IndexComponent implements OnInit {
 
   _hubConnection: HubConnection ;
-  isLogged: boolean = false;
+  isLogged: boolean;
   tournamentsDetails!: TournamentDetails[];
-  tabIdRegisteredTr: number[] = [];
+  tabIdRegisteredTr!: number[];
   loggedUser!: LoggedUserModel;
   hubStarted!: boolean;
   formGroupRegTourn!: FormGroup;
   userId!: number;
+  statusTr: string = "";
+  trDetails!: TournamentDetails;
 
   constructor(
     private _loginService: LoginService,
@@ -33,6 +35,8 @@ export class IndexComponent implements OnInit {
     this._loginService.userInfos.subscribe({
       next: (response: LoggedUserModel) => {
         this.loggedUser = response;
+        this.userId = this.loggedUser.loggedMember.id;
+        this._hubConnection.send('getIdRegisteredTournaments', this.userId);
         //this._hubConnection.on('sendTournamentPlayers', (details) => { console.log(details); });
         //this._hubConnection.on('sendTournamentRankedPlayers', (details) => { if (this.isLogged) { console.log(details); } });
       }
@@ -47,37 +51,65 @@ export class IndexComponent implements OnInit {
     this._hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7122/pkhub').build();
     this._hubConnection.start().then(() => {
       this.hubStarted = true;
-      console.log("démarrage hub");
       this._hubConnection.send('getTournamentsDetails');
-      this._hubConnection.send('getIdRegisteredTournaments', this.userId);
-      this._hubConnection.on('launchTr', (trId) => {
-        if (this.isRegistered(trId)) {
-          console.log("Le tournoi [" + trId + "] va démarrer sous peu.");
-        }
-      });
+      if (this.isLogged) {
+        this._hubConnection.send('getIdRegisteredTournaments', this.userId);
+        this._hubConnection.on('pleaseJoinTr', (trId) => {
+          if (this.isRegistered(trId)) {
+            this._router.navigate(['/home/game']);
+          }
+        });
+      }
       this._hubConnection.on('msgToAll', (msg) => { console.log(msg); });
       this._hubConnection.on('msgToCaller', (msg) => { console.log(msg); });
       this._hubConnection.on('sendTournamentsDetails', (details) => this.tournamentsDetails = details);
-      this._hubConnection.on('sendIdRegisteredTournaments', (data) => { this.tabIdRegisteredTr = data; });
+      this._hubConnection.on('sendIdRegisteredTournaments', (data) => {
+        this.tabIdRegisteredTr = data;
+        this.checkOngoingTr();
+      });
+      //this._hubConnection.on('navigateGame', () => {
+      //  this._router.navigate(['/home/game']);
+      //  console.log("navigate -> ligne 69");
+      //});
+      //this._hubConnection.on('pleaseJoinTr', (tr) => {
+      //  if (this.isRegistered(tr)) {
+      //    this._router.navigate(['/home/game']);
+      //    console.log("navigate -> ligne 74");
+      //  }
+      //});
+
+      //
     });
   }
 
   ngOnInit(): void {
     this.formGroupRegTourn = this._formBuilder.group({ TournamentId: [null] });
-    console.log(this);
+  }
+
+  checkOngoingTr() {
+    this._tournamentsService.OngoingTournamentsForOnePlayer().subscribe({
+      next: (response: boolean) => {
+        if (response) {
+          this._router.navigate(['/home/game']);
+          console.log("navigate -> ligne 88 [" + this.userId + "]");
+        }
+      }
+    });
   }
 
   isRegistered(trId: number) {
-    if (this.tabIdRegisteredTr.indexOf(trId) > -1) { return true; } else { return false; }
+    if (this.isLogged && this.tabIdRegisteredTr != null) {
+      if (this.tabIdRegisteredTr.indexOf(trId) > -1) {
+        return true;
+      } else { return false; }
+    } else { return false; }
   }
 
   registerTourn(trId: number) {
-    console.log(trId);
     this.formGroupRegTourn.reset({ TournamentId: trId });
     this._tournamentsService.registerTournament(this.formGroupRegTourn.value).subscribe({
       next: () => {
-        this._hubConnection.send('UpdateNecessary', 'registrations');
-        this._hubConnection.send('getIdRegisteredTournaments', this.userId);
+        this._hubConnection.send('PlayerGetRegisteredToTr', trId, this.userId);
       },
       error: (err) => { console.log(err.message); console.log(err.error); }
     });
@@ -101,8 +133,9 @@ export class IndexComponent implements OnInit {
         if (response) {
           // si ok, signaler au serveur qu'il rejoint le tournoi/lobby
           this._hubConnection.send('PlayerIsJoiningLobby',trId, this.userId);
-          console.log("canJoinLobby -> réponse serveur = " + response);
+          //console.log("canJoinLobby -> réponse serveur = " + response);
           this._router.navigate(['/home/game']);
+          console.log("navigate -> ligne 126");
         } else {
           console.log("Pas possible de rejoindre le lobby!");
         }

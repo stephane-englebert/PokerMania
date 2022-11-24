@@ -6,5 +6,6 @@ namespace PM_DAL.Interfaces
     {
         IEnumerable<Tournament> GetActiveTournaments(IEnumerable<Gains> allGains);
         Boolean IsTournamentStarted(int trId);
+        Boolean IsThereOngoingTrForOnePlayer(int playerId);
     }
 }

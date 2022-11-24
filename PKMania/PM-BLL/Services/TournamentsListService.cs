@@ -66,5 +66,10 @@ namespace PM_BLL.Services
 
             return allTourn;
         }
+
+        public Boolean IsThereOngoingTrForOnePlayer(int playerId)
+        {
+            return this._tournamentsListRepository.IsThereOngoingTrForOnePlayer(playerId);
+        }
     }
 }

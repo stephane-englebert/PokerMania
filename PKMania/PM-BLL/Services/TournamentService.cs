@@ -64,6 +64,10 @@ namespace PM_BLL.Services
             }
             return false;
         }
+        public Boolean TournamentAlreadyStarted(int trId)
+        {
+            return this._tournamentRepository.GetTournamentStatus(trId) == "ongoing";
+        }
         public Boolean StartTournament(int trId)
         {
             if(this._tournamentRepository.GetTournamentStatus(trId) == "waitingForPlayers"){
@@ -112,6 +116,10 @@ namespace PM_BLL.Services
             {
                 throw new Exception();
             }
+        }
+        public Boolean HasPlayerAlreadyJoinedLobby(int trId, int playerId)
+        {
+            return this._memberRepository.GetMemberCurrentTournId(playerId) == trId;
         }
     }
 }

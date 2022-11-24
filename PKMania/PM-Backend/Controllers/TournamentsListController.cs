@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PM_BLL.Interfaces;
+using System.Security.Claims;
 
 namespace PM_Backend.Controllers
 {
@@ -21,6 +22,19 @@ namespace PM_Backend.Controllers
                 return Ok(_tournamentsListService.GetActiveTournaments());
             }
             catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("ongoing")]
+        [Authorize(Roles="player")]
+        public IActionResult GetOngoing()
+        {
+            try
+            {
+                return Ok(this._tournamentsListService.IsThereOngoingTrForOnePlayer(int.Parse(User.FindFirstValue("Id"))));
+            }catch(Exception e)
             {
                 throw;
             }

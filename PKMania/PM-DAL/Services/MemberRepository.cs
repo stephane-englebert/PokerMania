@@ -150,7 +150,7 @@ namespace PM_DAL.Services
             using SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
             using SqlCommand cmd = connection.CreateCommand();
-            cmd.CommandText = @"UPDATE [Members] SET current_tournament_id = @trId WHERE id = @playerId";
+            cmd.CommandText = @"UPDATE [Members] SET current_tournament_id = @trId,disconnected = 'false' WHERE id = @playerId";
             cmd.Parameters.AddWithValue("playerId", playerId);
             cmd.Parameters.AddWithValue("trId", trId);
             cmd.ExecuteNonQuery();

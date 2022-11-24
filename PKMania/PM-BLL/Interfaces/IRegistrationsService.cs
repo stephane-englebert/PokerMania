@@ -18,5 +18,6 @@ namespace PM_BLL.Interfaces
         void UnregisterTournament(int trId, int playerId);
         Boolean StillFreePlacesForTournament(int trId);
         void RegisterTournament(int trId, int playerId);
+        int GetPlayerCurrentTournamentId(int playerId);
     }
 }

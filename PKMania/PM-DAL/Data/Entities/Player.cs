@@ -9,5 +9,6 @@ namespace PM_DAL.Data.Entities
         public int Stack { get; set; }
         public int BonusTime { get; set; }
         public DateTime EliminatedAt { get; set; }
+        public Boolean Disconnected { get; set; }
     }
 }

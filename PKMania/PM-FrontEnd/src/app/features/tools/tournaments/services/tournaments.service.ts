@@ -110,4 +110,12 @@ export class TournamentsService {
     return this._http.get<boolean>(this.GBconst.API_TOURNAMENT + '/lobby/' + trId + '/' + playerId);
   }
 
+  StillFreePlacesForTournament(trId: number) {
+    return this._http.get<boolean>(this.GBconst.API_REGISTRATIONS + '/full/' + trId);
+  }
+
+  OngoingTournamentsForOnePlayer() {
+    return this._http.get<boolean>(this.GBconst.API_TOURNAMENTS_LIST + '/ongoing');
+  }
+
 }

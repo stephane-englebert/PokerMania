@@ -15,7 +15,8 @@ namespace PM_BLL.Data.Mappers
                 Eliminated = player.EliminatedAt.Year > 2000,
                 SittingAtTable = player.TableNr,
                 Stack = player.Stack,
-                BonusTime = player.BonusTime
+                BonusTime = player.BonusTime,
+                Disconnected = player.Disconnected,
             };
         }
         public static RankedPlayerDTO PlayerDTOToRankedPlayerDTO(this PlayerDTO player)

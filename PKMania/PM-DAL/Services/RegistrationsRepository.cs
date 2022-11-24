@@ -13,7 +13,7 @@ namespace PM_DAL.Services
             using SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
             using SqlCommand cmd = connection.CreateCommand();
-            cmd.CommandText = @"SELECT r.player_id,m.pseudo,r.table_nr,r.stack,r.bonus_time,r.eliminated_at FROM [Registrations] r 
+            cmd.CommandText = @"SELECT r.player_id,m.pseudo,r.table_nr,r.stack,r.bonus_time,r.eliminated_at,m.disconnected FROM [Registrations] r 
                                 JOIN [Members] m ON r.player_id = m.id
                                 WHERE r.tournament_id = @trId";
             cmd.Parameters.AddWithValue("trId", trId);
@@ -29,7 +29,8 @@ namespace PM_DAL.Services
                     TableNr = (int)reader["table_nr"],
                     Stack = (int)reader["stack"],
                     BonusTime = (int)reader["bonus_time"],
-                    EliminatedAt = elim
+                    EliminatedAt = elim,
+                    Disconnected = (bool)reader["disconnected"]
                 };
             }
         }
