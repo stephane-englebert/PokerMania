@@ -18,7 +18,7 @@ namespace PM_BLL.Services
         public TournamentService()
         {
         }
-        public void CreateTournament(DateTime startDate, string name, int type)
+        public int CreateTournament(DateTime startDate, string name, int type)
         {
             IEnumerable<TournamentsTypesDTO> trType = _tournamentsTypesService.GetTournamentsTypesById(type).ToList();
             int buyIn = trType.Single().BuyIn;
@@ -27,7 +27,7 @@ namespace PM_BLL.Services
             int gainsSharingNr = trType.Single().GainsSharingNr;
             try
             {
-                _tournamentRepository.CreateTournament(startDate, name, type, prizePool, gainsSharingNr);
+                return _tournamentRepository.CreateTournament(startDate, name, type, prizePool, gainsSharingNr);
             }
             catch (Exception e)
             {

@@ -5,16 +5,16 @@ using PM_DAL.Interfaces;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.ComponentModel.DataAnnotations;
+using PM_DAL.Services;
 
 namespace PM_BLL.Services
 {
     public class MembersService: IMembersService
     {
-        private readonly IMemberRepository _memberRepository;
+        private readonly IMemberRepository _memberRepository = new MemberRepository();
 
-        public MembersService(IMemberRepository memberRepository)
+        public MembersService()
         {
-            _memberRepository = memberRepository;
         }
         public void AddMember(MemberRegisterFormDTO member)
         {
@@ -44,6 +44,11 @@ namespace PM_BLL.Services
                 numBytesRequested: 256 / 8
             );
             _memberRepository.AddMember(memb, hashed, salt);
+        }
+
+        public void SetAllRegisteredMembersCurrentTournId(int trId)
+        {
+                _memberRepository.SetAllRegisteredMembersCurrentTournId(trId);
         }
     }
 }

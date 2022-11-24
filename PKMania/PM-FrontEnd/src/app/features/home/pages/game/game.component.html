@@ -11,7 +11,7 @@
     </div>
 
     <!-- MY AVATAR-->
-    <div *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers'" class="my_avatar index999 txt_center padtop10">
+    <div *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers' && rankedTablePlayers.length > 0" class="my_avatar index999 txt_center padtop10">
 
       <div class="my_box_blind color1 pad5 bold font14 maj" style="background-color: #E76138;">
           sb
@@ -25,8 +25,8 @@
       <!-- img avatar-->
       <div class="my_avatar_img left"><a href=""><img src="./assets/images/demon.jpg" class="width50px height50px radius50p opacity100" /></a></div>
       <div class="left color16">
-        <div class="top5">My Name</div>
-        <div class="bg_defaut_color color1 bold font18 txt_center top5 radius5">32144</div>
+        <div class="top5">{{rankedTablePlayers[1].pseudo}}</div>
+        <div class="bg_defaut_color color1 bold font18 txt_center top5 radius5">{{rankedTablePlayers[1].stack}}</div>
       </div>
 
     </div>

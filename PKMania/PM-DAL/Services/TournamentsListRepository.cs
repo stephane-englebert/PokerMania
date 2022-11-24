@@ -58,7 +58,7 @@ namespace PM_DAL.Services
             using SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
             using SqlCommand cmd = connection.CreateCommand();
-            cmd.CommandText = @"SELECT COUNT(*) FROM [Tournaments] t JOIN [Registrations] r ON t.id = r.tournament_id WHERE t.status = 'ongoing' AND r.player_id=@playerId";
+            cmd.CommandText = @"SELECT COUNT(*) FROM [Tournaments] t JOIN [Registrations] r ON t.id = r.tournament_id JOIN [Members] m ON m.id = r.player_id WHERE t.status = 'ongoing' AND r.player_id=@playerId AND m.current_tournament_id = t.id;";
             cmd.Parameters.AddWithValue("playerId", playerId);
             Boolean test = (int)cmd.ExecuteScalar() > 0;
             return test;

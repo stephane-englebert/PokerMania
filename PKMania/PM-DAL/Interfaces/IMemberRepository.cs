@@ -12,5 +12,6 @@ namespace PM_DAL.Interfaces
         void UpdateCurrentTournIdForOneTournament(int trId);
         int GetMemberCurrentTournId(int playerId);
         void SetMemberCurrentTournId(int trId, int playerId);
+        void SetAllRegisteredMembersCurrentTournId(int trId);
     }
 }

@@ -5,5 +5,6 @@ namespace PM_BLL.Interfaces
     public interface IMembersService
     {
         void AddMember(MemberRegisterFormDTO member);
+        void SetAllRegisteredMembersCurrentTournId(int trId);
     }
 }

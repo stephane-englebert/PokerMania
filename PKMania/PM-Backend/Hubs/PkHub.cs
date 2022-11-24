@@ -14,6 +14,7 @@ namespace PM_Backend.Hubs
         private readonly ITournamentsDetailsService _tournamentsDetailsService = new TournamentsDetailsService();
         private readonly IRegistrationsService _registrationsService = new RegistrationsService();
         private readonly ITournamentService _tournamentService = new TournamentService();
+        private readonly IMembersService _membersService = new MembersService();
         private TournamentsListDTO _trList;
         private IEnumerable<TournamentsTypesDTO> _trTypes;
         private IEnumerable<TournamentDetailsDTO> _trDetails;
@@ -146,9 +147,9 @@ namespace PM_Backend.Hubs
             {
                 foreach(TournamentPlayersDTO tournament in newTrPlayers)
                 {
-                    //IEnumerable<int> listIdPl = backUp.Single(p => p.TournamentId == tournament.TournamentId).Players.Select(t => t.Id);
+                    IEnumerable<int> listIdPl = backUp.Single(p => p.TournamentId == tournament.TournamentId).Players.Select(t => t.Id);
                     List<PlayerDTO> listBUPl = backUp.Single(p => p.TournamentId == tournament.TournamentId).Players.ToList();
-                    List<int> listIdPl = listBUPl.Select(p => p.Id).ToList();
+                    //List<int> listIdPl = listBUPl.Select(p => p.Id).ToList();
                     List<PlayerDTO> newPlayers = tournament.Players.ToList();
 
                     newPlayers.ForEach(p => {
@@ -194,13 +195,14 @@ namespace PM_Backend.Hubs
             {
                 this.UpdateTrList();
                 this.UpdateTrDetails();
+                this.UpdateTrPlayers();
                 this.GetTournamentsDetails();
             }
             if(typeUpdate == "registrations")
             {
                 this.UpdateTrList();
                 this.UpdateTrDetails();
-                //this.UpdateTrPlayers();
+                this.UpdateTrPlayers();
                 this.GetTournamentsDetails();
             }
             this.SendMsgToAll("Update necessary -> " + typeUpdate);
@@ -213,8 +215,11 @@ namespace PM_Backend.Hubs
                 Clients.Caller.SendAsync("sendIdRegisteredTournaments", this._registrationsService.GetPlayerIdRegisteredTournaments(_trPlayers, playerId));
                 if (!this._registrationsService.StillFreePlacesForTournament(trId))
                 {
-                    this.PlayerIsJoiningLobby(trId,playerId);
-                    //Clients.Caller.SendAsync("navigateGame");                    
+                    this._membersService.SetAllRegisteredMembersCurrentTournId(trId);
+                    //this.PlayerIsJoiningLobby(trId,playerId);
+                    //this.playerIsConnected(trId, playerId);
+                    Clients.All.SendAsync("sendTournamentsDetails", this._trDetails);
+                    this.LaunchTournament(trId);
                 }
             }
         }
@@ -278,9 +283,12 @@ namespace PM_Backend.Hubs
         // A automatiser
         public void CreateTournament(DateTime startDate, string name, int type)
         {
-            this._tournamentService.CreateTournament(startDate, name, type);
+            int idNewTr = this._tournamentService.CreateTournament(startDate, name, type);
+            TournamentPlayersDTO newTrPlayersDTO = new TournamentPlayersDTO();
+            newTrPlayersDTO.TournamentId = idNewTr;
+            this._trPlayers.Add(newTrPlayersDTO);
         }
-        
+
         // Retourne le nombre de joueurs présents dans le lobby d'un tournoi.
         // La valeur provient de trPlayers (pas de la base de données)
         public int GetNbConnectedPlayers(int trId)

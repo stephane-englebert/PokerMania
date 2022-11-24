@@ -155,6 +155,23 @@ namespace PM_DAL.Services
             cmd.Parameters.AddWithValue("trId", trId);
             cmd.ExecuteNonQuery();
         }
+        public void SetAllRegisteredMembersCurrentTournId(int trId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"UPDATE [Members] SET current_tournament_id = @trId, disconnected = 'false' WHERE id IN (SELECT player_id FROM [Registrations] WHERE tournament_id = @trId) AND current_tournament_id = 0";
+            cmd.Parameters.AddWithValue("trId", trId);
+            cmd.ExecuteNonQuery();
+            //string paramsNames = string.Join(",", tabId.Select((id, index) => $"@tabId{index}"));
+            //cmd.CommandText = $@"UPDATE [Members] SET current_tournament_id = @trId,disconnected = 'false' WHERE id IN ({paramsNames}) AND current_tournament_id = 0";
+            //cmd.Parameters.AddWithValue("trId", trId);
+            //for (int i = 0; i < tabId.Length; i++)
+            //{
+            //    cmd.Parameters.AddWithValue("tabId"+i, tabId[i]);
+            //}
+            //cmd.ExecuteNonQuery();
+        }
         public void GetMemberIdOfPlayersJoiningTournament(int trId)
         {
 

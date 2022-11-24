@@ -3,7 +3,7 @@ namespace PM_BLL.Interfaces
 {
     public interface ITournamentService
     {
-        void CreateTournament(DateTime startDate, string name, int type);
+        int CreateTournament(DateTime startDate, string name, int type);
         void DeleteTournament(int trId);
         Boolean CanJoinLobby(int tr, int id);
         Boolean LaunchTournament(int trId);

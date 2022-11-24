@@ -148,10 +148,10 @@ export class IndexComponent implements OnInit {
 
   createTournament(nbPl: number) {
     if (nbPl == 2) {
-      this._hubConnection.send('CreateTournament', new Date(), 'Heads-Up 2 joueurs', 1);
-      //this._hubConnection.send('CreateTournament', new Date('2022-11-18 03:30:00'), 'Heads-Up 2 joueurs', 1);
+      this._hubConnection.send('CreateTournament', new Date(), 'Heads-Up 2 joueurs', 1).then(() => {
+        this._hubConnection.send('UpdateNecessary', "tournaments");
+      });
     }
-    this._hubConnection.send('UpdateNecessary', "tournaments");
   }
 
   launchTournament(trId: number) {
