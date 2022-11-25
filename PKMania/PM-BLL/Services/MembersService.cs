@@ -50,5 +50,17 @@ namespace PM_BLL.Services
         {
                 _memberRepository.SetAllRegisteredMembersCurrentTournId(trId);
         }
+        public void SetPlayerIsConnected(int playerId)
+        {
+            _memberRepository.SetPlayerIsConnected(playerId);
+        }
+        public void SetPlayerIsDisconnected(int playerId)
+        {
+            _memberRepository.SetPlayerIsDisconnected(playerId);
+        }
+        public IEnumerable<int> GetIdOfDisconnectedPlayers(int trId)
+        {
+            return _memberRepository.GetIdOfDisconnectedPlayers(trId);
+        }
     }
 }

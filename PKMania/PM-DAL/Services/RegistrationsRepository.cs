@@ -94,5 +94,16 @@ namespace PM_DAL.Services
             cmd.Parameters.AddWithValue("trId", trId);
             return (int)cmd.ExecuteScalar() > 0;
         }
+        public void EliminateFromTournament(int trId, int playerId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"UPDATE [Registrations] SET eliminated_at = @now WHERE tournament_id = @trId AND player_id=@playerId";
+            cmd.Parameters.AddWithValue("trId", trId);
+            cmd.Parameters.AddWithValue("playerId", playerId);
+            cmd.Parameters.AddWithValue("now", DateTime.Now);
+            cmd.ExecuteNonQuery();
+        }
     }
 }

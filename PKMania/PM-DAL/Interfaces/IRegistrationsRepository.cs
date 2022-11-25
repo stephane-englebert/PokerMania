@@ -11,5 +11,6 @@ namespace PM_DAL.Interfaces
         void RegisterTournament(int trId, int playerId);
         void DeleteRegistrationsByTournament(int trId);
         Boolean StillFreePlacesForTournament(int trId);
+        void EliminateFromTournament(int trId, int playerId);
     }
 }

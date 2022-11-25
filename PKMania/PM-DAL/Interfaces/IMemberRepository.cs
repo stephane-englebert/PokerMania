@@ -13,5 +13,8 @@ namespace PM_DAL.Interfaces
         int GetMemberCurrentTournId(int playerId);
         void SetMemberCurrentTournId(int trId, int playerId);
         void SetAllRegisteredMembersCurrentTournId(int trId);
+        void SetPlayerIsConnected(int playerId);
+        void SetPlayerIsDisconnected(int playerId);
+        IEnumerable<int> GetIdOfDisconnectedPlayers(int trId);
     }
 }

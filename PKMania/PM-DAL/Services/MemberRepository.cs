@@ -176,5 +176,36 @@ namespace PM_DAL.Services
         {
 
         }
+        public void SetPlayerIsConnected(int playerId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"UPDATE [Members] SET disconnected = 'false' WHERE id = @playerId";
+            cmd.Parameters.AddWithValue("playerId", playerId);
+            cmd.ExecuteNonQuery();
+        }
+        public void SetPlayerIsDisconnected(int playerId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"UPDATE [Members] SET disconnected = 'true' WHERE id = @playerId";
+            cmd.Parameters.AddWithValue("playerId", playerId);
+            cmd.ExecuteNonQuery();
+        }
+        public IEnumerable<int> GetIdOfDisconnectedPlayers(int trId)
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            using SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = @"SELECT id FROM [Members] WHERE current_tournament_id = @trId AND disconnected = 'true'";
+            cmd.Parameters.AddWithValue("trId",trId);
+            using SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                yield return (int)reader["id"];
+            }
+        }
     }
 }

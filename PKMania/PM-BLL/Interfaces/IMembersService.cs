@@ -6,5 +6,8 @@ namespace PM_BLL.Interfaces
     {
         void AddMember(MemberRegisterFormDTO member);
         void SetAllRegisteredMembersCurrentTournId(int trId);
+        void SetPlayerIsConnected(int playerId);
+        void SetPlayerIsDisconnected(int playerId);
+        IEnumerable<int> GetIdOfDisconnectedPlayers(int trId);
     }
 }

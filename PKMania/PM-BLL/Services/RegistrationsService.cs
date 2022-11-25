@@ -166,5 +166,16 @@ namespace PM_BLL.Services
                 throw new Exception("GAME_GET_CRT_TR_ID_FAILURE");
             }
         }
+        public void EliminateFromTournament(int trId, int playerId)
+        {
+            try
+            {
+                this._registrationsRepository.EliminateFromTournament(trId,playerId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("REGIS_ELIMINATE_PLAYER_FAILURE");
+            }
+        }
     }
 }

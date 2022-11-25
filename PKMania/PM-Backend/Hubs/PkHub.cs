@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using PM_Backend.Services;
 using PM_BLL.Data.DTO.Entities;
+using PM_BLL.Data.DTO.Entities.Hubs;
 using PM_BLL.Interfaces;
 using PM_BLL.Services;
 using System.Linq.Expressions;
@@ -19,6 +20,7 @@ namespace PM_Backend.Hubs
         private IEnumerable<TournamentsTypesDTO> _trTypes;
         private IEnumerable<TournamentDetailsDTO> _trDetails;
         private List<TournamentPlayersDTO> _trPlayers;
+        private List<RoomConnection> _trRooms;
 
         public PkHub()
         {
@@ -213,37 +215,109 @@ namespace PM_Backend.Hubs
             if(Clients != null)
             {
                 Clients.Caller.SendAsync("sendIdRegisteredTournaments", this._registrationsService.GetPlayerIdRegisteredTournaments(_trPlayers, playerId));
+                Clients.All.SendAsync("sendTournamentsDetails", this._trDetails);
                 if (!this._registrationsService.StillFreePlacesForTournament(trId))
                 {
                     this._membersService.SetAllRegisteredMembersCurrentTournId(trId);
-                    //this.PlayerIsJoiningLobby(trId,playerId);
-                    //this.playerIsConnected(trId, playerId);
-                    Clients.All.SendAsync("sendTournamentsDetails", this._trDetails);
                     this.LaunchTournament(trId);
                 }
             }
         }
 
+        private void CheckPlayersConnected(int trId)
+        {
+            List<int> listIdDisconnected = this._membersService.GetIdOfDisconnectedPlayers(trId).ToList();
+            List<PlayerDTO> regisPlayers = this._trPlayers.Single(d => d.TournamentId == trId).Players.ToList();
+            if(listIdDisconnected.Count > 0)
+            {
+                int cptModif = 0;
+                foreach(PlayerDTO player in regisPlayers){
+                    if (listIdDisconnected.Contains(player.Id)){
+                        this.playerIsDisConnected(trId,player.Id);
+                        cptModif++; 
+                    }
+                }
+                if(cptModif > 0) { this.SendTrPlayersToRoomPlayers(trId); }
+            }
+            Console.WriteLine(regisPlayers.Count);
+        }
+        private Boolean CheckIfPlayerAlreadyConnected(int trId, int playerId)
+        {
+            if(this._trRooms != null)
+            {
+                return this._trRooms.SingleOrDefault(r => r.PlayerId == playerId) != null;
+            }
+            else { return false; }
+        }
+        public void JoinRoom(string roomName,int trId, int playerId)
+        {
+            Groups.AddToGroupAsync(Context.ConnectionId, roomName);
+            Console.WriteLine("on passe par joinroom serveur");
+            if(this.CheckIfPlayerAlreadyConnected(trId, playerId))
+            {
+                int exTrId = this._trRooms.Single(r => r.PlayerId == playerId).TournamentId;
+                string exConId = this._trRooms.Single(r => r.PlayerId == playerId).ConnectionId;
+                string exRoomName = this._trRooms.Single(r => r.PlayerId == playerId).RoomName;
+                if (exTrId != trId || exConId != Context.ConnectionId){
+                    this.playerIsDisConnected(exTrId, playerId);
+                    this.LeaveRoom(exRoomName, exConId);
+                    if(exTrId != trId){this.QuitTournament(trId, playerId);}
+                }
+                this._trRooms.Single(r => r.PlayerId == playerId).RoomName = roomName;
+                this._trRooms.Single(r => r.PlayerId == playerId).ConnectionId = Context.ConnectionId;
+                this._trRooms.Single(r => r.PlayerId == playerId).TournamentId = trId;
+            }
+            else
+            {
+                if(this._trRooms == null){this._trRooms = new List<RoomConnection>();}
+                RoomConnection newRommCon = new RoomConnection(roomName, Context.ConnectionId, trId, playerId);
+                this._trRooms.Add(newRommCon);
+            }
+            this.playerIsConnected(trId, playerId);
+            this.SendTrPlayersToRoomPlayers(trId);
+            this.CheckPlayersConnected(trId);
+            if (this.MaxPlayersConnectedReached(trId)) { this.StartTournament(trId); }
+        }
+        public Task LeaveRoom(string roomName, string conId)
+        {
+            if(conId == null) { conId = Context.ConnectionId; }
+            return Groups.RemoveFromGroupAsync(conId, roomName);
+        }
+        private void SendTrPlayersToRoomPlayers(int trId) {
+
+                Clients.Group("tr" + trId).SendAsync("sendTournamentPlayers", this._trPlayers.Where(d => d.TournamentId == trId).Select(t => t.Players));
+                Clients.Group("tr" + trId).SendAsync("sendTournamentRankedPlayers", this._trPlayers.Where(d => d.TournamentId == trId).Select(t => t.RankedPlayers));
+                Clients.Group("tr" + trId).SendAsync("testSA", this._trRooms);
+
+        }
+        public void QuitTournament(int trId, int playerId)
+        {
+            this._trPlayers.Single(d => d.TournamentId == trId).Players.Single(p => p.Id == playerId).Eliminated = true;
+            this._trPlayers.Single(d => d.TournamentId == trId).RankedPlayers.Single(p => p.PlayerId == playerId).Eliminated = true;
+            this.UpdateTrPlayers();
+            this._registrationsService.EliminateFromTournament(trId, playerId);
+            this.SendTrPlayersToRoomPlayers(trId);
+        }
 
         // Méthode qui reprend les actions/vérifications faites lorsqu'un joueur
         // souhaite rejoindre le lobby d'un tournoi
-        public void PlayerIsJoiningLobby(int trId,int playerId)
-        {
-            // Switcher le joueur dans le canal du tournoi
+        //public void PlayerIsJoiningLobby(int trId,int playerId)
+        //{
+        //    // Switcher le joueur dans le canal du tournoi
 
-            // Vérifier si joueur pas déjà dans la liste
-            if(!this._tournamentService.HasPlayerAlreadyJoinedLobby(trId,playerId)){
-                // Acter la présence du joueur
-                this.playerIsConnected(trId, playerId);
-                this._tournamentService.PlayerIsJoiningLobby(trId, playerId);
-                // Vérifier si tous les joueurs présents
-                this.SendMsgToAll("MinPlayersConnectedReached = " + this.MinPlayersConnectedReached(trId));                
-                this.SendMsgToAll("MaxPlayersConnectedReached = " + this.MaxPlayersConnectedReached(trId));
-                if (this.MaxPlayersConnectedReached(trId)) { 
-                    this.LaunchTournament(trId);
-                }
-            }
-        }        
+        //    // Vérifier si joueur pas déjà dans la liste
+        //    if(!this._tournamentService.HasPlayerAlreadyJoinedLobby(trId,playerId)){
+        //        // Acter la présence du joueur
+        //        this.playerIsConnected(trId, playerId);
+        //        this._tournamentService.PlayerIsJoiningLobby(trId, playerId);
+        //        // Vérifier si tous les joueurs présents
+        //        this.SendMsgToAll("MinPlayersConnectedReached = " + this.MinPlayersConnectedReached(trId));                
+        //        this.SendMsgToAll("MaxPlayersConnectedReached = " + this.MaxPlayersConnectedReached(trId));
+        //        if (this.MaxPlayersConnectedReached(trId)) { 
+        //            this.LaunchTournament(trId);
+        //        }
+        //    }
+        //}        
 
         // Retourne true/false en fct du fait que le nombre minimum de joueurs requis
         // pour jouer le tournoi ait été atteint ou non
@@ -270,6 +344,7 @@ namespace PM_Backend.Hubs
         private void playerIsConnected(int trId, int playerId)
         {
             this._trPlayers.Single(d => d.TournamentId == trId).Players.First(p => p.Id == playerId).Disconnected = false;
+            this._membersService.SetPlayerIsConnected(playerId);
         }
         
         // Permet de renseigner un joueur comme déconnecté au lobby d'un tournoi
@@ -277,6 +352,8 @@ namespace PM_Backend.Hubs
         private void playerIsDisConnected(int trId, int playerId)
         {
             this._trPlayers.Single(d => d.TournamentId == trId).Players.First(p => p.Id == playerId).Disconnected = true;
+            this._membersService.SetPlayerIsDisconnected(playerId);
+            Console.WriteLine("Déconnexion joueur [" + playerId +"] du tournoi ["+trId+"]");
         }
 
         // Permet de créer un nouveau tournoi manuellement dans la base de données
@@ -305,7 +382,7 @@ namespace PM_Backend.Hubs
                 //                  OUVERTURE D'UN TOURNOI
                 //=================================================================
                 // Créer un canal pour le tournoi
-
+                    
                 // Invitations à 'rejoindre lobby' envoyées aux joueurs inscrits               
                     this.UpdateNecessary("tournaments");
                     if (Clients != null) { Clients.All.SendAsync("pleaseJoinTr", trId); }
@@ -415,15 +492,35 @@ namespace PM_Backend.Hubs
                 trPlayers.RankedPlayers = pListRk;
                 this._trPlayers.Single(d => d.TournamentId == trId).RankedPlayers = pListRk;
                 this.SendTrRankedPlayers(trId, Clients.All);
+                // Initialiser les infos sur les niveaux de Blinds
+                List<TournamentDTO> ListinitTrDTO = this._trList.Tournaments.ToList();
+                TournamentDTO initTrDTO = ListinitTrDTO.Single(t => t.Id == trId);
+                initTrDTO.CurrentLevel = 1;
+                initTrDTO.CurrentSmallBlind = 100;
 
-                this.SendInfosTournament(trId, Clients.All);
+                // Envoyer ces infos aux joueurs participant au tournoi
+                this.SendInfosTournament(trId, Clients.Group("tr"+trId));
 
-
+                //=================================================================
+                // Vérification régulière de la présence des joueurs (connexion/déconnexion)
+                //System.Timers.Timer aTimer = new System.Timers.Timer(1000);
+                //aTimer.Elapsed += (Object source, System.Timers.ElapsedEventArgs e) =>
+                //{
+                //    this.CheckPlayersConnected(trId);
+                //    if (initTrDTO.Status != "ongoing")
+                //    {
+                //        aTimer.Stop();
+                //        aTimer.Dispose();
+                //    }
+                //    Console.WriteLine(DateTime.Now + " : " + initTrDTO.Status);
+                //};
+                //aTimer.AutoReset = true;
+                //aTimer.Enabled = true;
+                //Console.WriteLine("HELLLLLLLO!");
 
                 //=================================================================
             }
         }
-
         public IEnumerable<PlayerDTO> ShufflePlayers(IEnumerable<PlayerDTO> IEToShuffle)
         {
             List<PlayerDTO> playerList = new List<PlayerDTO>();

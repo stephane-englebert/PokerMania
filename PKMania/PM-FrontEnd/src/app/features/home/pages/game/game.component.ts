@@ -35,6 +35,8 @@ export class GameComponent implements OnInit {
   rankedTablePlayers: RankedPlayer[] = [];  // infos sommaires sur les joueurs assis à table (classement table)
   infosTournament!: Tournament;             // infos courantes sur le tournoi en cours (infos 'vivantes' uniquement via le Hub)
   tournamentType!: TournamentsTypes;      // infos générales sur les types de tournois existants
+  avatarPlayer!: Player;        // infos complètes sur le joueur connecté (Heads Up)
+  avatarOpponent!: Player;      // infos complètes sur son adversaire (Heads Up)
 
   constructor(
       private _loginService: LoginService,
@@ -59,7 +61,7 @@ export class GameComponent implements OnInit {
         });
         this.isLogged = this._loginService.userLogged();
 
-      // Initiation de la communication via Hub
+    // Initiation de la communication via Hub
         this.hubStarted = false;
         this._hubConnection = new HubConnectionBuilder().withUrl('https://localhost:7122/pkhub').build();
         this._hubConnection.start().then(() => {
@@ -70,6 +72,7 @@ export class GameComponent implements OnInit {
               if (data > 0) {
                 // Si ok -> Récupération des infos sur le tournoi
                 this._hubConnection.send("GetInfosTournament", data);
+                this._hubConnection.send("GetTournamentPlayers", data);
                 this._hubConnection.send("GetTournamentRankedPlayers", data);
                 this.msgToPlayer = "Le tournoi démarrera lorsque tous les joueurs auront rejoint le lobby.";
               } else {
@@ -84,15 +87,20 @@ export class GameComponent implements OnInit {
             this.trStatus = this.infosTournament.status;
             this.nbPlayers = this.infosTournament.registrationsNumber;
             this._hubConnection.send("GetTournamentType", this.infosTournament.tournamentType);
-            //console.log(this.infosTournament);
-
+            this._hubConnection.send("JoinRoom", "tr" + this.infosTournament.id, this.infosTournament.id, this.userId);
           });
           this._hubConnection.on('sendTournamentType', (data) => {
             this.tournamentType = data;
-            //console.log(this.tournamentType);
           });
           this._hubConnection.on('sendTournamentPlayers', (data) => {
             this.tablePlayers = data[0];
+            if (this.tablePlayers[0].id == this.userId) {
+              this.avatarPlayer = this.tablePlayers[0];
+              this.avatarOpponent = this.tablePlayers[1];
+            } else {
+              this.avatarPlayer = this.tablePlayers[1];
+              this.avatarOpponent = this.tablePlayers[0];
+            }
             console.log(this.tablePlayers);
           });
           this._hubConnection.on('sendTournamentRankedPlayers', (data) => {
@@ -100,6 +108,11 @@ export class GameComponent implements OnInit {
             this.rankedTablePlayers = data[0];
             this.nbAllPlayers = this.rankedPlayers.length;
             console.log(this.rankedPlayers);
+          });
+          this._hubConnection.on('testSA', (data) => {
+            console.log("============= test SA ==========");
+            console.log(data);
+            console.log("============= test SA ==========");
           });
         });
   }

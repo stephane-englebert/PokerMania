@@ -70,11 +70,13 @@ namespace PM_BLL.Services
         }
         public Boolean StartTournament(int trId)
         {
-            if(this._tournamentRepository.GetTournamentStatus(trId) == "waitingForPlayers"){
-                this._tournamentRepository.StartTournament(trId);
-                return true;
-            }
-            return false;
+            this._tournamentRepository.StartTournament(trId);
+            return true;
+            //if(this._tournamentRepository.GetTournamentStatus(trId) == "waitingForPlayers"){
+            //    this._tournamentRepository.StartTournament(trId);
+            //    return true;
+            //}
+            //return false;
         }
         public void CloseTournament(int trId)
         {

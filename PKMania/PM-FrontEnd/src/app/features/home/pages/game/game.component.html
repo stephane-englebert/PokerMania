@@ -11,28 +11,32 @@
     </div>
 
     <!-- MY AVATAR-->
-    <div *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers' && rankedTablePlayers.length > 0" class="my_avatar index999 txt_center padtop10">
+    <div *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers' && avatarPlayer != null" class="my_avatar index999 txt_center padtop10">
 
       <div class="my_box_blind color1 pad5 bold font14 maj" style="background-color: #E76138;">
           sb
       </div> 
       <!-- My cards -->
       <div class="my_box_card top10">
-        <img src="./assets/images/2_ca.png" class="my_card_1" />
+        <img src="./assets/images/dos.png" class="my_card_1" />
         <img src="./assets/images/2_tr.png" class="my_card_2" />
       </div>
 
       <!-- img avatar-->
       <div class="my_avatar_img left"><a href=""><img src="./assets/images/demon.jpg" class="width50px height50px radius50p opacity100" /></a></div>
       <div class="left color16">
-        <div class="top5">{{rankedTablePlayers[1].pseudo}}</div>
-        <div class="bg_defaut_color color1 bold font18 txt_center top5 radius5">{{rankedTablePlayers[1].stack}}</div>
+        <div class="top5">
+          <i *ngIf="avatarPlayer.disconnected" class="pi pi-circle-fill" style="color:red"></i>
+          <i *ngIf="!avatarPlayer.disconnected" class="pi pi-circle-fill" style="color:green"></i>
+          {{avatarPlayer.pseudo}}
+        </div>
+        <div class="bg_defaut_color color1 bold font18 txt_center top5 radius5">{{avatarPlayer.stack}}</div>
       </div>
 
     </div>
 
     <!-- AVATAR Opponent -->
-    <div *ngIf="nbPlayers == 2 " class="absolute avatar10 index99 txt_center">
+    <div *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers' && avatarOpponent != null" class="absolute avatar10 index99 txt_center">
 
       <!-- cards -->
       <div class="box_card_avatar bg_color99">
@@ -42,8 +46,12 @@
 
       <!-- img avatar-->
       <div class="box_img_avatar"><img src="./assets/images/perso2.jpg" class="width90px height90px radius50p opacity100" /></div>
-      <div class="avatar_player_name color16 top20">Player 8</div>
-      <div class="text bg_defaut_color color1 bold font18 txt_center top1 radius5">32144</div>
+      <div class="avatar_player_name color16 top20">
+        <i *ngIf="avatarOpponent.disconnected" class="pi pi-circle-fill" style="color:red"></i>
+        <i *ngIf="!avatarOpponent.disconnected" class="pi pi-circle-fill" style="color:green"></i>
+        {{avatarOpponent.pseudo}}
+      </div>
+      <div class="text bg_defaut_color color1 bold font18 txt_center top1 radius5">{{avatarOpponent.stack}}</div>
 
     </div>
 

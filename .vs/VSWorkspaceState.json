@@ -1,0 +1,17 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\PKMania",
+    "\\PKMania\\PM-Backend",
+    "\\PKMania\\PM-Backend\\Hubs",
+    "\\PKMania\\PM-FrontEnd",
+    "\\PKMania\\PM-FrontEnd\\src",
+    "\\PKMania\\PM-FrontEnd\\src\\app",
+    "\\PKMania\\PM-FrontEnd\\src\\app\\features",
+    "\\PKMania\\PM-FrontEnd\\src\\app\\features\\home",
+    "\\PKMania\\PM-FrontEnd\\src\\app\\features\\home\\pages",
+    "\\PKMania\\PM-FrontEnd\\src\\app\\features\\home\\pages\\game",
+    "\\PKMania\\PM-FrontEnd\\src\\app\\features\\tools"
+  ],
+  "PreviewInSolutionExplorer": false
+}

@@ -19,5 +19,6 @@ namespace PM_BLL.Interfaces
         Boolean StillFreePlacesForTournament(int trId);
         void RegisterTournament(int trId, int playerId);
         int GetPlayerCurrentTournamentId(int playerId);
+        void EliminateFromTournament(int trId, int playerId);
     }
 }
