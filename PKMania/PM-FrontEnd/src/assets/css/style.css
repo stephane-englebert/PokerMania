@@ -247,8 +247,157 @@ body {padding-top:20px;}
     z-index:999;
     transform: rotate(5deg);
     }
+.btn_dealer_player{
+    position:absolute;
+    width:18px;
+    height:20px;
+    margin-top:370px;
+    margin-left:360px;
+    padding:0px 2px 3px 4px ;
+    z-index:999;
+    color:black;
+    background-color:white;
+    font-weight:bold;
+    font-size:24px;
+    text-align:center;
+    border-radius:13px;
+    border:2px solid black;
+}
+.btn_dealer_opponent{
+    position:absolute;
+    width:18px;
+    height:20px;
+    margin-top:220px;
+    margin-left:360px;
+    padding:0px 2px 3px 4px ;
+    z-index:999;
+    color:black;
+    background-color:white;
+    font-weight:bold;
+    font-size:24px;
+    text-align:center;
+    border-radius:13px;
+    border:2px solid black;
+}
+.chips_player {
+  position: absolute;
+  width: 100px;
+  height: 20px;
+  margin-top: 370px;
+  margin-left: 410px;
+  padding: 5px 0px 0px 20px;
+  z-index: 999;
+  color: #304717;
+  border-radius: 13px;
+  border: 2px solid #304717;
+}
 
+.chips_opponent {
+  position: absolute;
+  width: 100px;
+  height: 20px;
+  margin-top: 220px;
+  margin-left: 410px;
+  padding: 5px 0px 0px 20px;
+  z-index: 999;
+  color: #304717;
+  border-radius: 13px;
+  border: 2px solid #304717;
+}
+.central_cards {
+  position: absolute;
+  width: 250px;
+  height: 65px;
+  margin-top: 267px;
+  margin-left: 345px;
+  z-index: 999;
+}
 
+.card_flop1 {
+  position: absolute;
+  width: 48px;
+  height: 65px;
+  margin-top: 267px;
+  margin-left: 345px;
+  left: 0px;
+  top: 0px;
+  z-index: 999;
+}
+
+.card_flop2 {
+  position: absolute;
+  width: 48px;
+  height: 65px;
+  margin-top: 267px;
+  margin-left: 390px;
+  left: 0px;
+  top: 0px;
+  z-index: 999;
+}
+.card_flop3 {
+  position: absolute;
+  width: 48px;
+  height: 65px;
+  margin-top: 267px;
+  margin-left: 435px;
+  left: 0px;
+  top: 0px;
+  z-index: 999;
+}
+.card_turn {
+  position: absolute;
+  width: 48px;
+  height: 65px;
+  margin-top: 267px;
+  margin-left: 480px;
+  left: 0px;
+  top: 0px;
+  z-index: 999;
+}
+
+.card_river {
+  position: absolute;
+  width: 48px;
+  height: 65px;
+  margin-top: 267px;
+  margin-left: 525px;
+  left: 0px;
+  top: 0px;
+  z-index: 999;
+}
+.pot {
+  position: absolute;
+  width: 80px;
+  height: 60px;
+  margin-top: 267px;
+  margin-left: 625px;
+  z-index: 999;
+  color: #304717;
+  text-align: center;
+  font-size: 20px;
+}
+.timer_opponent {
+  position: absolute;
+  width: 80px;
+  height: 60px;
+  margin-top: 100px;
+  margin-left: 200px;
+  z-index: 999;
+  color: #304717;
+  text-align: center;
+  font-size: 20px;
+}
+.timer_player {
+  position: absolute;
+  width: 80px;
+  height: 60px;
+  margin-top: 470px;
+  margin-left: 200px;
+  z-index: 999;
+  color: #304717;
+  text-align: center;
+  font-size: 20px;
+}
 /* ======================================================================== A PARTIR DE 1600 ========================================================================== 
    ========================================================================================================================================================================= */ 
 @media screen and (min-width: 1600px) {
@@ -298,7 +447,7 @@ body {padding-top:20px;}
     .poker_table {
       width:705px;
       height:280px;
-      margin-top: 275px;
+      margin-top: 260px;
       margin-left:275px;
     }
     
@@ -315,6 +464,170 @@ body {padding-top:20px;}
     margin-top: 105px;
     margin-left: 565px;
   }
+  .btn_dealer_player {
+    position: absolute;
+    width: 18px;
+    height: 20px;
+    margin-top: 500px;
+    margin-left: 530px;
+    padding: 0px 2px 3px 4px;
+    z-index: 999;
+    color: black;
+    background-color: white;
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    border-radius: 13px;
+    border: 2px solid black;
+  }
+
+  .btn_dealer_opponent {
+    position: absolute;
+    width: 18px;
+    height: 20px;
+    margin-top: 300px;
+    margin-left: 530px;
+    padding: 0px 2px 3px 4px;
+    z-index: 999;
+    color: black;
+    background-color: white;
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    border-radius: 13px;
+    border: 2px solid black;
+  }
+  .chips_player {
+    position: absolute;
+    width: 100px;
+    height: 20px;
+    margin-top: 500px;
+    margin-left: 580px;
+    padding: 5px 0px 0px 20px;
+    z-index: 999;
+    color: #304717;
+    border-radius: 13px;
+    border: 2px solid #304717;
+  }
+  .chips_opponent {
+    position: absolute;
+    width: 100px;
+    height: 20px;
+    margin-top: 300px;
+    margin-left: 580px;
+    padding: 5px 0px 0px 20px;
+    z-index: 999;
+    color: #304717;
+    border-radius: 13px;
+    border: 2px solid #304717;
+  }
+  .central_cards{
+      position:absolute;
+      width: 300px;
+      height: 85px;
+      margin-top:360px;
+      margin-left:450px;
+      z-index: 999;
+
+  }
+  .card_flop1 {
+    position: absolute;
+    width: 63px;
+    height: 85px;
+    margin-top: 360px;
+    margin-left: 450px;
+    left: 0px;
+    top: 0px;
+    z-index: 999;
+  }
+  .card_flop2 {
+    position: absolute;
+    width: 63px;
+    height: 85px;
+    margin-top: 360px;
+    margin-left: 510px;
+    left: 0px;
+    top: 0px;
+    z-index: 999;
+  }
+  .card_flop3 {
+    position: absolute;
+    width: 63px;
+    height: 85px;
+    margin-top: 360px;
+    margin-left: 570px;
+    left: 0px;
+    top: 0px;
+    z-index: 999;
+  }
+  .card_turn {
+    position: absolute;
+    width: 63px;
+    height: 85px;
+    margin-top: 360px;
+    margin-left: 630px;
+    left: 0px;
+    top: 0px;
+    z-index: 999;
+  }
+
+  .card_river {
+    position: absolute;
+    width: 63px;
+    height: 85px;
+    margin-top: 360px;
+    margin-left: 690px;
+    left: 0px;
+    top: 0px;
+    z-index: 999;
+  }
+  .pot {
+    position: absolute;
+    width: 80px;
+    height: 60px;
+    margin-top: 360px;
+    margin-left: 855px;
+    z-index: 999;
+    color: #304717;
+    text-align:center;
+    font-size:22px;
+  }
+  .timer_opponent {
+  position: absolute;
+  width: 80px;
+  height: 60px;
+  margin-top: 130px;
+  margin-left: 325px;
+  z-index: 999;
+  color: #304717;
+  text-align: center;
+  font-size: 20px;
+}
+.timer_player {
+  position: absolute;
+  width: 80px;
+  height: 60px;
+  margin-top: 600px;
+  margin-left: 325px;
+  z-index: 999;
+  color: #304717;
+  text-align: center;
+  font-size: 20px;
+}
+  .btn_raise {
+    width: 150px;
+    height: 20px;
+    margin: auto;
+    background-color: #333;
+    padding: 5px;
+    margin: 8px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+    .btn_raise:hover {
+      background-color: #e76138;
+    }
 }
 
 /* ======================================================================== DE 1280 A 1600 ========================================================================== 
@@ -365,7 +678,7 @@ body {padding-top:20px;}
     .poker_table {
       width:505px;
       height:215px;
-      margin-top: 200px;
+      margin-top: 185px;
       margin-left:215px;
     }
     
@@ -384,19 +697,20 @@ body {padding-top:20px;}
     .avatar8 {margin-top: 75px;margin-left:125px;}
     .avatar9 {margin-top: 45px;margin-left:300px;}
     .avatar10 {margin-top: 35px;margin-left:400px;}
+  .btn_raise {
+    width: 150px;
+    height: 20px;
+    margin: auto;
+    background-color: #333;
+    padding: 5px;
+    margin: 8px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
 
-}
-    .btn_raise{
-        width:150px;
-        height:20px;
-        margin:auto;
-        background-color:#333;
-        padding:5px;
-        margin:8px;
-        cursor:pointer;
-        border-radius:5px;
+    .btn_raise:hover {
+      background-color: #e76138;
     }
-      .btn_raise:hover {
-        background-color: #e76138;
-      }
+}
+
 

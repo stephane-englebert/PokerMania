@@ -45,6 +45,9 @@ export class GameComponent implements OnInit {
   riverCard: string = "";
   privateCard1: string = "";
   privateCard2: string = "";
+  pot: number = 0;
+  timerPlayer: number = 0;
+  timerOpponent: number = 0;
 
   constructor(
       private _loginService: LoginService,
@@ -111,6 +114,8 @@ export class GameComponent implements OnInit {
             }
             this.privateCard1 = this.avatarPlayer.privateCards[0].abbreviation;
             this.privateCard2 = this.avatarPlayer.privateCards[1].abbreviation;
+            this.timerPlayer = this.avatarPlayer.bonusTime;
+            this.timerOpponent = this.avatarOpponent.bonusTime;
             console.log(this.tablePlayers);
           });
           this._hubConnection.on('sendTournamentRankedPlayers', (data) => {
@@ -122,6 +127,12 @@ export class GameComponent implements OnInit {
           this._hubConnection.on('sendHand', (hand) => {
             console.log(hand);
             this.currentHand = hand;
+            this.flopCards[0] = this.currentHand.flop[0].abbreviation;
+            this.flopCards[1] = this.currentHand.flop[1].abbreviation;
+            this.flopCards[2] = this.currentHand.flop[2].abbreviation;
+            this.turnCard = this.currentHand.turn.abbreviation;
+            this.riverCard = this.currentHand.river.abbreviation;
+            this.pot = this.currentHand.pot;
           })
         });
   }

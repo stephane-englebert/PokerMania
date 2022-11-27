@@ -9,6 +9,7 @@ export interface Player {
   sittingAtTable: number;
   seatNr: number;
   stack: number;
+  moneyInPot: number;
   disconnected: boolean;
   turnToPlay: boolean;
   privateCards: Card[];
