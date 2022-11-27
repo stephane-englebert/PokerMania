@@ -1,377 +1,391 @@
+
+<div *ngIf="roomJoined">
+
   <div class="box degrade_gris_clair">
 
-  <div *ngIf="trStatus == 'unknown' || trStatus == 'waitingForPlayers'" class="msgToPlayer width70 height10vh auto absolute index99 txt_center top125 lineh_25 font18 pad50" style="">{{msgToPlayer}}</div>
+    <div *ngIf="trStatus == 'unknown' || trStatus == 'waitingForPlayers'" class="msgToPlayer width70 height10vh auto absolute index99 txt_center top125 lineh_25 font18 pad50" style="">{{msgToPlayer}}</div>
 
-  <!-- COLONNE GAUCHE-->
-  <div class="col_left" *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers'">
+    <!-- COLONNE GAUCHE-->
+    <div class="col_left" *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers'">
 
-    <div class="absolute index99 height30px font16 bold width100 color1" style="background-color: #f7a728; padding-top:5px;height:23px;">
-      <span class="" style="margin-left:450px;">Tournoi : </span>
-      <span class="" style="margin-left:20px;">{{infosTournament.name}}</span>
-    </div>
+      <div class="absolute index99 height30px font16 bold width100 color1" style="background-color: #f7a728; padding-top:5px;height:23px;">
+        <span class="" style="margin-left:450px;">Tournoi : </span>
+        <span class="" style="margin-left:20px;">{{infosTournament.name}}</span>
+      </div>
 
-    <!-- MY AVATAR-->
-    <div *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers' && avatarPlayer != null" class="my_avatar index999 txt_center padtop10">
+      <!-- MY AVATAR-->
+      <div *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers' && avatarPlayer != null && currentHand != null" class="my_avatar index999 txt_center padtop10">
 
-      <div class="my_box_blind color1 pad5 bold font14 maj" style="background-color: #E76138;">
+        <div *ngIf="currentHand.seatNrSmallBlind == avatarPlayer.id" class="my_box_blind color1 pad5 bold font14 maj" style="background-color: #E76138;">
+            sb
+        </div>
+        <div *ngIf="currentHand.seatNrBigBlind == avatarPlayer.id" class="my_box_blind color1 pad5 bold font14 maj" style="background-color: #E76138;">
+            bb
+        </div> 
+        <!-- My cards -->
+        <div class="my_box_card top10">
+          <img *ngIf="privateCard1 != null" src="./assets/cards/{{privateCard1}}.png" class="my_card_1" />
+          <img *ngIf="privateCard2 != null" src="./assets/cards/{{privateCard2}}.png" class="my_card_2" />
+        </div>
+
+        <!-- img avatar-->
+        <div class="my_avatar_img left"><a href=""><img src="./assets/images/demon.jpg" class="width50px height50px radius50p opacity100" /></a></div>
+        <div class="left color16">
+          <div class="top5">
+            <i *ngIf="avatarPlayer.disconnected" class="pi pi-circle-fill" style="color:red"></i>
+            <i *ngIf="!avatarPlayer.disconnected" class="pi pi-circle-fill" style="color:green"></i>
+            {{avatarPlayer.pseudo}}
+          </div>
+          <div class="bg_defaut_color color1 bold font18 txt_center top5 radius5">{{avatarPlayer.stack}}</div>
+        </div>
+
+      </div>
+
+      <!-- AVATAR Opponent -->
+      <div *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers' && avatarOpponent != null  && currentHand != null" class="absolute avatar10 index99 txt_center">
+
+        <div *ngIf="currentHand.seatNrSmallBlind == avatarOpponent.id" class="my_box_blind color1 pad5 bold font14 maj" style="background-color: #E76138;">
           sb
-      </div> 
-      <!-- My cards -->
-      <div class="my_box_card top10">
-        <img src="./assets/images/dos.png" class="my_card_1" />
-        <img src="./assets/images/2_tr.png" class="my_card_2" />
-      </div>
-
-      <!-- img avatar-->
-      <div class="my_avatar_img left"><a href=""><img src="./assets/images/demon.jpg" class="width50px height50px radius50p opacity100" /></a></div>
-      <div class="left color16">
-        <div class="top5">
-          <i *ngIf="avatarPlayer.disconnected" class="pi pi-circle-fill" style="color:red"></i>
-          <i *ngIf="!avatarPlayer.disconnected" class="pi pi-circle-fill" style="color:green"></i>
-          {{avatarPlayer.pseudo}}
         </div>
-        <div class="bg_defaut_color color1 bold font18 txt_center top5 radius5">{{avatarPlayer.stack}}</div>
+        <div *ngIf="currentHand.seatNrBigBlind == avatarOpponent.id" class="my_box_blind color1 pad5 bold font14 maj" style="background-color: #E76138;">
+          bb
+        </div>
+
+        <!-- cards -->
+        <div class="box_card_avatar bg_color99">
+          <img src="./assets/images/dos.png" class="card_avatar_1 shadow_color" />
+          <img src="./assets/images/dos.png" class="card_avatar_2 shadow_color" />
+        </div>
+
+        <!-- img avatar-->
+        <div class="box_img_avatar"><img src="./assets/images/perso2.jpg" class="width90px height90px radius50p opacity100" /></div>
+        <div class="avatar_player_name color16 top20">
+          <i *ngIf="avatarOpponent.disconnected" class="pi pi-circle-fill" style="color:red"></i>
+          <i *ngIf="!avatarOpponent.disconnected" class="pi pi-circle-fill" style="color:green"></i>
+          {{avatarOpponent.pseudo}}
+        </div>
+        <div class="text bg_defaut_color color1 bold font18 txt_center top1 radius5">{{avatarOpponent.stack}}</div>
+
       </div>
 
+
+      <div *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers'" class="absolute index99"><img src="./assets/images/table_ok.png" class="poker_table" /></div>
+      <div class="absolute index9"><img src="./assets/images/fond2.jpg" class="poker_decor" /></div>
     </div>
 
-    <!-- AVATAR Opponent -->
-    <div *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers' && avatarOpponent != null" class="absolute avatar10 index99 txt_center">
+    <!-- COLONNE DROITE-->
+    <div class="degrade_gris_moyen col_right" style="" *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers'">
+      <div class="absolute index999 height30px font18 width100 txt_right" style="background-color: #f7a728;">
 
-      <!-- cards -->
-      <div class="box_card_avatar bg_color99">
-        <img src="./assets/images/dos.png" class="card_avatar_1 shadow_color" />
-        <img src="./assets/images/dos.png" class="card_avatar_2 shadow_color" />
       </div>
+      <ul>
+        <li class="{{isMenuOptionActive(1)}}"><a (click)="switchMenu(1)"><i class="pi pi-sort-numeric-down"></i></a></li>
+        <!--<li *ngIf="nbAllPlayers > 9" class="{{isMenuOptionActive(2)}}"><a (click)="switchMenu(2)"><i class="pi pi-sort-amount-down"></i></a></li>-->
+        <li class="{{isMenuOptionActive(3)}}"><a (click)="switchMenu(3)"><i class="pi pi-play"></i></a></li>
+        <li class="{{isMenuOptionActive(4)}}"><a (click)="switchMenu(4)"><i class="pi pi-question-circle"></i></a></li>
+      </ul>
 
-      <!-- img avatar-->
-      <div class="box_img_avatar"><img src="./assets/images/perso2.jpg" class="width90px height90px radius50p opacity100" /></div>
-      <div class="avatar_player_name color16 top20">
-        <i *ngIf="avatarOpponent.disconnected" class="pi pi-circle-fill" style="color:red"></i>
-        <i *ngIf="!avatarOpponent.disconnected" class="pi pi-circle-fill" style="color:green"></i>
-        {{avatarOpponent.pseudo}}
-      </div>
-      <div class="text bg_defaut_color color1 bold font18 txt_center top1 radius5">{{avatarOpponent.stack}}</div>
+      <!-- Ranking TABLE -->
+      <div *ngIf="menuOption == 1 && infosTournament != null" class="ranking_box_table index999 bg_color12">
 
-    </div>
-
-
-    <div *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers'" class="absolute index99"><img src="./assets/images/table_ok.png" class="poker_table" /></div>
-    <div class="absolute index9"><img src="./assets/images/fond2.jpg" class="poker_decor" /></div>
-  </div>
-
-  <!-- COLONNE DROITE-->
-  <div class="degrade_gris_moyen col_right" style="" *ngIf="trStatus != 'unknown' && trStatus != 'waitingForPlayers'">
-    <div class="absolute index999 height30px font18 width100 txt_right" style="background-color: #f7a728;">
-
-    </div>
-    <ul>
-      <li class="{{isMenuOptionActive(1)}}"><a (click)="switchMenu(1)"><i class="pi pi-sort-numeric-down"></i></a></li>
-      <!--<li *ngIf="nbAllPlayers > 9" class="{{isMenuOptionActive(2)}}"><a (click)="switchMenu(2)"><i class="pi pi-sort-amount-down"></i></a></li>-->
-      <li class="{{isMenuOptionActive(3)}}"><a (click)="switchMenu(3)"><i class="pi pi-play"></i></a></li>
-      <li class="{{isMenuOptionActive(4)}}"><a (click)="switchMenu(4)"><i class="pi pi-question-circle"></i></a></li>
-    </ul>
-
-    <!-- Ranking TABLE -->
-    <div *ngIf="menuOption == 1" class="ranking_box_table index999 bg_color12">
-
-      <div *ngIf="rankedTablePlayers.length > 0" class="ranking_box_title font14 italic txt_center maj bold color1" style="background-color: #f7a728; padding-top:7px;height:23px;">
-        Rank Table : {{getRankPlayer(rankedTablePlayers,userId)}} / {{rankedTablePlayers.length}}
-      </div>
-      <div class="ranking_line dflex font14 bold top30 bg_color4 color8">
-        <div class="ranking_line_content width10">#</div>
-        <div class="ranking_line_content width60">Pseudo</div>
-        <div class="ranking_line_content width30">Jetons</div>
-      </div>
-      <div *ngFor="let rkPlayer of rankedTablePlayers; index as i;">
-        <div *ngIf="rkPlayer.playerId == userId" class="ranking_line dflex defaut_color font14 bg_color7">
-          <div class="ranking_line_content width10">{{i+1}}</div>
-          <div class="ranking_line_content width60">{{rkPlayer.pseudo}}</div>
-          <div class="ranking_line_content width30">{{rkPlayer.stack}}</div>
+        <div *ngIf="rankedTablePlayers.length > 0" class="ranking_box_title font14 italic txt_center maj bold color1" style="background-color: #f7a728; padding-top:7px;height:23px;">
+          Rank Table : {{getRankPlayer(rankedTablePlayers,userId)}} / {{rankedTablePlayers.length}}
         </div>
-        <div *ngIf="rkPlayer.playerId != userId" class="ranking_line dflex color3 font14">
-          <div class="ranking_line_content width10">{{i+1}}</div>
-          <div class="ranking_line_content width60">{{rkPlayer.pseudo}}</div>
-          <div class="ranking_line_content width30">{{rkPlayer.stack}}</div>
+        <div class="ranking_line dflex font14 bold top30 bg_color4 color8">
+          <div class="ranking_line_content width10">#</div>
+          <div class="ranking_line_content width60">Pseudo</div>
+          <div class="ranking_line_content width30">Jetons</div>
         </div>
-      </div>
-
-
-        <!-- Informations Niveaux - SB - BB - Ante -->
-        <div class="ranking_line dflex font14 bold top50 bg_color4 color8 txt_center">
-          <div class="ranking_line_content width100">Infos niveaux Blinds</div>
-        </div>
-        <div class="ranking_line dflex color3 font14">
-          <div class="ranking_line_content width50"></div>
-          <div class="ranking_line_content width25">Actuel</div>
-          <div class="ranking_line_content width25">A venir</div>
-        </div>
-        <div class="ranking_line dflex color3 font14">
-          <div class="ranking_line_content width50">Niveau</div>
-          <div class="ranking_line_content width25">{{infosTournament.currentLevel}}</div>
-          <div class="ranking_line_content width25">{{infosTournament.nextLevel}}</div>
-        </div>
-        <div class="ranking_line dflex color3 font14">
-          <div class="ranking_line_content width50">Small Blind</div>
-          <div class="ranking_line_content width25">{{infosTournament.currentSmallBlind}}</div>
-          <div class="ranking_line_content width25">{{infosTournament.nextSmallBlind}}</div>
-        </div>
-        <div class="ranking_line dflex color3 font14">
-          <div class="ranking_line_content width50">Big Blind</div>
-          <div class="ranking_line_content width25">{{infosTournament.currentBigBlind}}</div>
-          <div class="ranking_line_content width25">{{infosTournament.nextBigBlind}}</div>
-        </div>
-        <div class="ranking_line dflex color3 font14">
-          <div class="ranking_line_content width50">Ante</div>
-          <div class="ranking_line_content width25">{{infosTournament.currentAnte}}</div>
-          <div class="ranking_line_content width25">{{infosTournament.nextAnte}}</div>
-        </div>
-      </div>
-    <!-- Ranking TOURNAMENT -->
-    <!--<div *ngIf="menuOption == 2" class="ranking_box_tournament index999 bg_color12">
-
-      <div class="ranking_box_title font14 italic txt_center maj bold color1" style="background-color: #f7a728; padding-top:7px;height:23px;">
-        Rank Tournament : 7 / {{nbAllPlayers}}
-      </div>
-
-      <div class="ranking_line dflex font14 bold bg_color4 color8 top30">
-        <div class="ranking_line_content width10">#</div>
-        <div class="ranking_line_content width60">Pseudo</div>
-        <div class="ranking_line_content width30">Jetons</div>
-      </div>
-
-      <div *ngFor="let rkPlayer of rankedPlayers; index as i;">
-        <div *ngIf="rkPlayer.playerId == userId" class="ranking_line dflex defaut_color font14 bg_color7">
-          <div class="ranking_line_content width10">{{i+1}}</div>
-          <div class="ranking_line_content width60">{{rkPlayer.pseudo}}</div>
-          <div class="ranking_line_content width30">{{rkPlayer.stack}}</div>
-        </div>
-        <div *ngIf="rkPlayer.playerId != userId" class="ranking_line dflex color3 font14">
-          <div class="ranking_line_content width10">{{i+1}}</div>
-          <div class="ranking_line_content width60">{{rkPlayer.pseudo}}</div>
-          <div class="ranking_line_content width30">{{rkPlayer.stack}}</div>
-        </div>
-      </div>
-
-    </div>-->
-
-    <!-- Mises -->
-    <div *ngIf="menuOption == 3" class="ranking_box_tournament index999 bg_color12">
-
-      <div class="ranking_box_title font14 italic txt_center maj bold color1" style="background-color: #f7a728; padding-top:7px;height:23px;">
-        MISES
-      </div>
-
-      <div class="ranking_line dflex color1 font14 bold top80">
-        <div class="ranking_line_content width100">
-          <div class="bt_defaut">FOLD</div>
-        </div>
-      </div>
-
-      <div class="ranking_line dflex color1 font14 bold">
-        <div class="ranking_line_content width100">
-          <div class="bt_defaut">CHECK</div>
-        </div>
-      </div>
-
-
-      <div class="ranking_line dflex color1 font14 bold bg_color10 top30">
-        <div class="ranking_line_content width80 left10p txt_center">
-          <div class="ranking_line dflex color1 font14 bold">
-            <div class="ranking_line_content width100">
-              <form>
-                <span class="bt_defaut " (click)="raiseHand()" style="width:75px;">
-                  RAISE
-                </span>
-                <!--<span class="bt_defaut " style="width:75px;">
-                  <input style="width:75px;height:20px;margin-left: 25px;text-align:right;border-radius:5px;border:2px solid black;" id="useridentifier-input" type="text" formControlName="UserRaise" pInputText placeholder="600" />
-                </span>-->
-              </form>
-            </div>
+        <div *ngFor="let rkPlayer of rankedTablePlayers; index as i;">
+          <div *ngIf="rkPlayer.playerId == userId" class="ranking_line dflex defaut_color font14 bg_color7">
+            <div class="ranking_line_content width10">{{i+1}}</div>
+            <div class="ranking_line_content width60">{{rkPlayer.pseudo}}</div>
+            <div class="ranking_line_content width30">{{rkPlayer.stack}}</div>
           </div>
+          <div *ngIf="rkPlayer.playerId != userId" class="ranking_line dflex color3 font14">
+            <div class="ranking_line_content width10">{{i+1}}</div>
+            <div class="ranking_line_content width60">{{rkPlayer.pseudo}}</div>
+            <div class="ranking_line_content width30">{{rkPlayer.stack}}</div>
+          </div>
+        </div>
 
-          <div class="txt_center top20" style="margin-left:45px;">
-            <div class="btn_raise" (click)="chooseRaiseAmount(3000)">
-              <span class="bt_defaut2 bold defaut_color txt_left">All In</span>
-              <span class="defaut_color txt_left" style="padding:0px 5px 0px 5px">:</span>
-              <span class="bt_defaut2 bold color12 txt_right">3000</span>
+
+          <!-- Informations Niveaux - SB - BB - Ante -->
+          <div class="ranking_line dflex font14 bold top50 bg_color4 color8 txt_center">
+            <div class="ranking_line_content width100">Infos niveaux Blinds</div>
+          </div>
+          <div class="ranking_line dflex color3 font14">
+            <div class="ranking_line_content width50"></div>
+            <div class="ranking_line_content width25">Actuel</div>
+            <div class="ranking_line_content width25">A venir</div>
+          </div>
+          <div class="ranking_line dflex color3 font14">
+            <div class="ranking_line_content width50">Niveau</div>
+            <div class="ranking_line_content width25">{{infosTournament.currentLevel}}</div>
+            <div class="ranking_line_content width25">{{infosTournament.nextLevel}}</div>
+          </div>
+          <div class="ranking_line dflex color3 font14">
+            <div class="ranking_line_content width50">Small Blind</div>
+            <div class="ranking_line_content width25">{{infosTournament.currentSmallBlind}}</div>
+            <div class="ranking_line_content width25">{{infosTournament.nextSmallBlind}}</div>
+          </div>
+          <div class="ranking_line dflex color3 font14">
+            <div class="ranking_line_content width50">Big Blind</div>
+            <div class="ranking_line_content width25">{{infosTournament.currentBigBlind}}</div>
+            <div class="ranking_line_content width25">{{infosTournament.nextBigBlind}}</div>
+          </div>
+          <!--<div class="ranking_line dflex color3 font14">
+            <div class="ranking_line_content width50">Ante</div>
+            <div class="ranking_line_content width25">{{infosTournament.currentAnte}}</div>
+            <div class="ranking_line_content width25">{{infosTournament.nextAnte}}</div>
+          </div>-->
+        </div>
+      <!-- Ranking TOURNAMENT -->
+      <!--<div *ngIf="menuOption == 2" class="ranking_box_tournament index999 bg_color12">
+
+        <div class="ranking_box_title font14 italic txt_center maj bold color1" style="background-color: #f7a728; padding-top:7px;height:23px;">
+          Rank Tournament : 7 / {{nbAllPlayers}}
+        </div>
+
+        <div class="ranking_line dflex font14 bold bg_color4 color8 top30">
+          <div class="ranking_line_content width10">#</div>
+          <div class="ranking_line_content width60">Pseudo</div>
+          <div class="ranking_line_content width30">Jetons</div>
+        </div>
+
+        <div *ngFor="let rkPlayer of rankedPlayers; index as i;">
+          <div *ngIf="rkPlayer.playerId == userId" class="ranking_line dflex defaut_color font14 bg_color7">
+            <div class="ranking_line_content width10">{{i+1}}</div>
+            <div class="ranking_line_content width60">{{rkPlayer.pseudo}}</div>
+            <div class="ranking_line_content width30">{{rkPlayer.stack}}</div>
+          </div>
+          <div *ngIf="rkPlayer.playerId != userId" class="ranking_line dflex color3 font14">
+            <div class="ranking_line_content width10">{{i+1}}</div>
+            <div class="ranking_line_content width60">{{rkPlayer.pseudo}}</div>
+            <div class="ranking_line_content width30">{{rkPlayer.stack}}</div>
+          </div>
+        </div>
+
+      </div>-->
+
+      <!-- Mises -->
+      <div *ngIf="menuOption == 3" class="ranking_box_tournament index999 bg_color12">
+
+        <div class="ranking_box_title font14 italic txt_center maj bold color1" style="background-color: #f7a728; padding-top:7px;height:23px;">
+          MISES
+        </div>
+
+        <div class="ranking_line dflex color1 font14 bold top80">
+          <div class="ranking_line_content width100">
+            <div class="bt_defaut">FOLD</div>
+          </div>
+        </div>
+
+        <div class="ranking_line dflex color1 font14 bold">
+          <div class="ranking_line_content width100">
+            <div class="bt_defaut">CHECK</div>
+          </div>
+        </div>
+
+
+        <div class="ranking_line dflex color1 font14 bold bg_color10 top30">
+          <div class="ranking_line_content width80 left10p txt_center">
+            <div class="ranking_line dflex color1 font14 bold">
+              <div class="ranking_line_content width100">
+                <form>
+                  <span class="bt_defaut " (click)="raiseHand()" style="width:75px;">
+                    RAISE
+                  </span>
+                  <!--<span class="bt_defaut " style="width:75px;">
+                    <input style="width:75px;height:20px;margin-left: 25px;text-align:right;border-radius:5px;border:2px solid black;" id="useridentifier-input" type="text" formControlName="UserRaise" pInputText placeholder="600" />
+                  </span>-->
+                </form>
+              </div>
             </div>
-            <div class="btn_raise" (click)="chooseRaiseAmount(1200)">
-              <span class="bt_defaut2 bold defaut_color">Pot</span>
-              <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
-              <span class="bt_defaut2 bold color12">1200</span>
-            </div>
-            <div class="btn_raise" (click)="chooseRaiseAmount(900)">
-              <span class="bt_defaut2 bold defaut_color">3/4 Pot</span>
-              <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
-              <span class="bt_defaut2 bold color12">900</span>
-            </div>
-            <div class="btn_raise" (click)="chooseRaiseAmount(600)">
-              <span class="bt_defaut2 bold defaut_color">1/2 Pot</span>
-              <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
-              <span class="bt_defaut2 bold color12">600</span>
-            </div>
-            <div class="btn_raise" (click)="chooseRaiseAmount(400)">
-              <span class="bt_defaut2 bold defaut_color">1/3 Pot</span>
-              <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
-              <span class="bt_defaut2 bold color12">400</span>
-            </div>
-            <div class="btn_raise" (click)="chooseRaiseAmount(300)">
-              <span class="bt_defaut2 bold defaut_color">1/4 Pot</span>
-              <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
-              <span class="bt_defaut2 bold color12">300</span>
-            </div>
-            <div class="btn_raise" (click)="chooseRaiseAmount(100)">
-              <span class="bt_defaut2 bold defaut_color">Min</span>
-              <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
-              <span class="bt_defaut2 bold color12">100</span>
+
+            <div class="txt_center top20" style="margin-left:45px;">
+              <div class="btn_raise" (click)="chooseRaiseAmount(3000)">
+                <span class="bt_defaut2 bold defaut_color txt_left">All In</span>
+                <span class="defaut_color txt_left" style="padding:0px 5px 0px 5px">:</span>
+                <span class="bt_defaut2 bold color12 txt_right">3000</span>
+              </div>
+              <div class="btn_raise" (click)="chooseRaiseAmount(1200)">
+                <span class="bt_defaut2 bold defaut_color">Pot</span>
+                <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
+                <span class="bt_defaut2 bold color12">1200</span>
+              </div>
+              <div class="btn_raise" (click)="chooseRaiseAmount(900)">
+                <span class="bt_defaut2 bold defaut_color">3/4 Pot</span>
+                <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
+                <span class="bt_defaut2 bold color12">900</span>
+              </div>
+              <div class="btn_raise" (click)="chooseRaiseAmount(600)">
+                <span class="bt_defaut2 bold defaut_color">1/2 Pot</span>
+                <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
+                <span class="bt_defaut2 bold color12">600</span>
+              </div>
+              <div class="btn_raise" (click)="chooseRaiseAmount(400)">
+                <span class="bt_defaut2 bold defaut_color">1/3 Pot</span>
+                <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
+                <span class="bt_defaut2 bold color12">400</span>
+              </div>
+              <div class="btn_raise" (click)="chooseRaiseAmount(300)">
+                <span class="bt_defaut2 bold defaut_color">1/4 Pot</span>
+                <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
+                <span class="bt_defaut2 bold color12">300</span>
+              </div>
+              <div class="btn_raise" (click)="chooseRaiseAmount(100)">
+                <span class="bt_defaut2 bold defaut_color">Min</span>
+                <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
+                <span class="bt_defaut2 bold color12">100</span>
+              </div>
+
             </div>
 
           </div>
-
         </div>
+
+
       </div>
 
+      <!-- Mains poker -->
+      <div *ngIf="menuOption == 4" class="ranking_box_tournament index999 bg_color12">
+        <div class="ranking_box_title font14 italic txt_center maj bold color1" style="background-color: #f7a728; padding-top:7px;height:23px;">
+          mains poker
+        </div>
 
+        <div class="ranking_line_cards color3 top40">
+          <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+          </div>
+          <div class="ranking_line_content font12 bold pad10" style="float:left;">
+            Quinte Flush <br />Royale
+          </div>
+        </div>
+
+        <div class="ranking_line_cards color3">
+          <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+          </div>
+          <div class="ranking_line_content font12 bold pad15" style="float:left;">
+            Quinte <br />Flush
+          </div>
+        </div>
+
+        <div class="ranking_line_cards color3">
+          <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+          </div>
+          <div class="ranking_line_content font12 bold pad15" style="float:left;">
+            Carré
+          </div>
+        </div>
+
+        <div class="ranking_line_cards color3">
+          <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+          </div>
+          <div class="ranking_line_content font12 bold pad15" style="float:left;">
+            Full
+          </div>
+        </div>
+
+        <div class="ranking_line_cards color3">
+          <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+          </div>
+          <div class="ranking_line_content font12 bold pad15" style="float:left;">
+            Couleur
+          </div>
+        </div>
+
+        <div class="ranking_line_cards color3">
+          <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+          </div>
+          <div class="ranking_line_content font12 bold pad15" style="float:left;">
+            Quinte
+          </div>
+        </div>
+
+        <div class="ranking_line_cards color3">
+          <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+          </div>
+          <div class="ranking_line_content font12 bold pad15" style="float:left;">
+            Brelan
+          </div>
+        </div>
+
+        <div class="ranking_line_cards color3">
+          <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+          </div>
+          <div class="ranking_line_content font12 bold pad15" style="float:left;">
+            Double <br />paire
+          </div>
+        </div>
+
+        <div class="ranking_line_cards color3">
+          <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+          </div>
+          <div class="ranking_line_content font12 bold pad15" style="float:left;">
+            Paire
+          </div>
+        </div>
+
+        <div class="ranking_line_cards color3">
+          <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+            <img src="./assets/images/2_ca.png" />
+          </div>
+          <div class="ranking_line_content font12 bold pad15" style="float:left;">
+            Carte <br />haute
+          </div>
+        </div>
+
+      </div>
     </div>
 
-    <!-- Mains poker -->
-    <div *ngIf="menuOption == 4" class="ranking_box_tournament index999 bg_color12">
-      <div class="ranking_box_title font14 italic txt_center maj bold color1" style="background-color: #f7a728; padding-top:7px;height:23px;">
-        mains poker
-      </div>
-
-      <div class="ranking_line_cards color3 top40">
-        <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-        </div>
-        <div class="ranking_line_content font12 bold pad10" style="float:left;">
-          Quinte Flush <br />Royale
-        </div>
-      </div>
-
-      <div class="ranking_line_cards color3">
-        <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-        </div>
-        <div class="ranking_line_content font12 bold pad15" style="float:left;">
-          Quinte <br />Flush
-        </div>
-      </div>
-
-      <div class="ranking_line_cards color3">
-        <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-        </div>
-        <div class="ranking_line_content font12 bold pad15" style="float:left;">
-          Carré
-        </div>
-      </div>
-
-      <div class="ranking_line_cards color3">
-        <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-        </div>
-        <div class="ranking_line_content font12 bold pad15" style="float:left;">
-          Full
-        </div>
-      </div>
-
-      <div class="ranking_line_cards color3">
-        <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-        </div>
-        <div class="ranking_line_content font12 bold pad15" style="float:left;">
-          Couleur
-        </div>
-      </div>
-
-      <div class="ranking_line_cards color3">
-        <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-        </div>
-        <div class="ranking_line_content font12 bold pad15" style="float:left;">
-          Quinte
-        </div>
-      </div>
-
-      <div class="ranking_line_cards color3">
-        <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-        </div>
-        <div class="ranking_line_content font12 bold pad15" style="float:left;">
-          Brelan
-        </div>
-      </div>
-
-      <div class="ranking_line_cards color3">
-        <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-        </div>
-        <div class="ranking_line_content font12 bold pad15" style="float:left;">
-          Double <br />paire
-        </div>
-      </div>
-
-      <div class="ranking_line_cards color3">
-        <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-        </div>
-        <div class="ranking_line_content font12 bold pad15" style="float:left;">
-          Paire
-        </div>
-      </div>
-
-      <div class="ranking_line_cards color3">
-        <div class="ranking_line_content" style="clear:both;float:left;padding-left:5px;padding-top:5px;">
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-          <img src="./assets/images/2_ca.png" />
-        </div>
-        <div class="ranking_line_content font12 bold pad15" style="float:left;">
-          Carte <br />haute
-        </div>
-      </div>
-
-    </div>
   </div>
-
 </div>

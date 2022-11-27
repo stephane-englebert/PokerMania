@@ -560,9 +560,10 @@ namespace PM_Backend.Hubs
             // créer une nouvelle main
             CurrentHandDTO hand = new CurrentHandDTO();
             hand.TournamentId = trId;
+            hand.TableNr = 1;
             hand.StartedOn = DateTime.Now;
             
-            // choisir le premier joueur à la parole
+            // au hasard, choisir le premier joueur à la parole
             Random rand = new Random();
             int firstPl = rand.Next(1,10) % 2;
             int secondPl = (firstPl == 0) ? 1 : 0;
@@ -573,10 +574,15 @@ namespace PM_Backend.Hubs
             // positionner les blinds (SB & BB) à table
             hand.SeatNrSmallBlind = trPlayers.ToList()[firstPl].Id; // playerId 1er joueur
             hand.SeatNrBigBlind = trPlayers.ToList()[secondPl].Id; // playerId 2ème joueur
-            
+
             // Positionner les joueurs à la table 1
+            hand.SeatNrPlayerToPlay = hand.SeatNrSmallBlind;
             this.UpdateFieldPlayerDTO("sittingAtTable",1,trId,hand.SeatNrSmallBlind);
             this.UpdateFieldPlayerDTO("sittingAtTable",1,trId,hand.SeatNrBigBlind);
+
+            // Préciser qui doit démarrer la main
+            this.UpdateFieldPlayerDTO("turnToPlay", 1, hand.TournamentId, hand.SeatNrSmallBlind);
+            this.UpdateFieldPlayerDTO("turnToPlay", 0, hand.TournamentId, hand.SeatNrBigBlind);
 
             // adapter les niveaux de SB, BB & Ante en fonction du level en cours
             int crtLvl = this._trList.Tournaments.Single(t => t.Id == trId).CurrentLevel;
@@ -591,16 +597,22 @@ namespace PM_Backend.Hubs
             // percevoir les blinds
             hand = this.TakingBlinds(hand);
 
-            // màj data & transmettre aux joueurs
+            // màj data 
             this._trHands.Add(hand);
 
             // prendre un nouveau jeu de cartes et le mélanger
             this.ShuffleCards(hand);
 
+            // distribuer les cartes (joueurs,flop,turn,river)
+            this.DealPrivateCards(hand);
+            this.DealFlop(hand);
+            this.DealTurn(hand);
+            this.DealRiver(hand);
+
             // transmettre infos aux joueurs
             this.SendTrPlayersToRoomPlayers(hand.TournamentId);
             this.SendInfosTournament(trId, Clients.Group("tr" + trId));
-
+            Clients.Group("tr" + hand.TournamentId).SendAsync("sendHand", hand);
         }
 
         private void SaveHand(CurrentHandDTO hand)
@@ -643,15 +655,25 @@ namespace PM_Backend.Hubs
             List<PlayerDTO> listPl = this._trPlayers.Single(d => d.TournamentId == hand.TournamentId).Players.ToList();
             int stackSB = listPl.Single(p => p.Id == hand.SeatNrSmallBlind).Stack;
             int crtSB = this._trList.Tournaments.Single(t => t.Id == hand.TournamentId).CurrentSmallBlind;
+            int newCrtSB = (stackSB - crtSB<0) ? stackSB : crtSB; // ALL IN
+            int newStackSB = stackSB - newCrtSB;
+            this.UpdateFieldPlayerDTO("stack", newStackSB, hand.TournamentId, hand.SeatNrSmallBlind);
+            this.UpdateFieldPlayerDTO("moneyInPot",newCrtSB,hand.TournamentId, hand.SeatNrSmallBlind);
+            hand.Pot += newCrtSB;
             int stackBB = listPl.Single(p => p.Id == hand.SeatNrBigBlind).Stack;
             int crtBB = this._trList.Tournaments.Single(t => t.Id == hand.TournamentId).CurrentBigBlind;
-            this.UpdateFieldPlayerDTO("stack", stackSB - crtSB, hand.TournamentId, hand.SeatNrSmallBlind);
-            this.UpdateFieldPlayerDTO("stack", stackBB - crtBB, hand.TournamentId, hand.SeatNrBigBlind);
+            int newCrtBB = (stackBB - crtBB<0) ? stackBB : crtBB; // ALL-IN
+            int newStackBB = stackBB - newCrtBB;
+            this.UpdateFieldPlayerDTO("stack", newStackBB, hand.TournamentId, hand.SeatNrBigBlind);
+            this.UpdateFieldPlayerDTO("moneyInPot",newCrtBB,hand.TournamentId, hand.SeatNrBigBlind);
+            hand.Pot += newCrtBB;
             return hand;
         }
         private void UpdateFieldPlayerDTO(string field, int fieldValue, int trId, int playerId)
         {
             if(field == "stack") { this._trPlayers.Single(d => d.TournamentId == trId).Players.Single(p => p.Id == playerId).Stack = fieldValue; }
+            if(field == "moneyInPot") { this._trPlayers.Single(d => d.TournamentId == trId).Players.Single(p => p.Id == playerId).MoneyInPot += fieldValue; }
+            if(field == "turnToPlay") { this._trPlayers.Single(d => d.TournamentId == trId).Players.Single(p => p.Id == playerId).TurnToPlay = fieldValue==1; }
         }
         private void ShuffleCards(CurrentHandDTO hand)
         {
@@ -668,8 +690,7 @@ namespace PM_Backend.Hubs
                 cpt++;
             }
             hand.CardsPack.Pack = listShuf.OrderBy(c => c.shuffleGuid).Select(l => l.Card).ToList();
-            this.SaveHand(hand);
-            Clients.Group("tr" + hand.TournamentId).SendAsync("sendHand", hand);
+            this.SaveHand(hand);            
         }
         private void BurnCard(CurrentHandDTO hand)
         {
@@ -685,19 +706,36 @@ namespace PM_Backend.Hubs
         }
         private void DealPrivateCards(CurrentHandDTO hand)
         {
-
+            List<CardDTO> cardsSB = new List<CardDTO>();
+            cardsSB.Add(this.DealCard(hand));
+            cardsSB.Add(this.DealCard(hand));
+            List<CardDTO> cardsBB = new List<CardDTO>();
+            cardsBB.Add(this.DealCard(hand));
+            cardsBB.Add(this.DealCard(hand));
+            this._trPlayers.Single(d => d.TournamentId == hand.TournamentId).Players.Single(p => p.Id == hand.SeatNrSmallBlind).PrivateCards = cardsSB;
+            this._trPlayers.Single(d => d.TournamentId == hand.TournamentId).Players.Single(p => p.Id == hand.SeatNrBigBlind).PrivateCards = cardsBB;
         }
         private void DealFlop(CurrentHandDTO hand)
         {
-
+            this.BurnCard(hand);
+            List<CardDTO> cardsFlop = new List<CardDTO>();
+            cardsFlop.Add(this.DealCard(hand));
+            cardsFlop.Add(this.DealCard(hand));
+            cardsFlop.Add(this.DealCard(hand));
+            hand.Flop = cardsFlop;
+            this.SaveHand(hand);
         }
         private void DealTurn(CurrentHandDTO hand)
         {
-
+            this.BurnCard(hand);
+            hand.Turn = this.DealCard(hand);
+            this.SaveHand(hand);
         }
         private void DealRiver(CurrentHandDTO hand)
         {
-
+            this.BurnCard(hand);
+            hand.River = this.DealCard(hand);
+            this.SaveHand(hand);
         }
 
         private void AddToHandHistory(CurrentHandDTO hand)

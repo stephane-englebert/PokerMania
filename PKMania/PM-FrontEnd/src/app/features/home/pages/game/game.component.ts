@@ -5,6 +5,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ToastrService } from 'ngx-toastr';
 import { LoggedUserModel } from '../../../tools/login/models/loggedUser';
 import { LoginService } from '../../../tools/login/services/login.service';
+import { CurrentHand } from '../../../tools/tournaments/models/currentHand';
 import { Player } from '../../../tools/tournaments/models/player';
 import { RankedPlayer } from '../../../tools/tournaments/models/rankedPlayer';
 import { Tournament } from '../../../tools/tournaments/models/tournament';
@@ -38,6 +39,12 @@ export class GameComponent implements OnInit {
   avatarPlayer!: Player;        // infos complètes sur le joueur connecté (Heads Up)
   avatarOpponent!: Player;      // infos complètes sur son adversaire (Heads Up)
   roomJoined: Boolean = false;
+  currentHand!: CurrentHand;
+  flopCards: string[] = ["", "", ""];
+  turnCard: string = "";
+  riverCard: string = "";
+  privateCard1: string = "";
+  privateCard2: string = "";
 
   constructor(
       private _loginService: LoginService,
@@ -102,6 +109,8 @@ export class GameComponent implements OnInit {
               this.avatarPlayer = this.tablePlayers[1];
               this.avatarOpponent = this.tablePlayers[0];
             }
+            this.privateCard1 = this.avatarPlayer.privateCards[0].abbreviation;
+            this.privateCard2 = this.avatarPlayer.privateCards[1].abbreviation;
             console.log(this.tablePlayers);
           });
           this._hubConnection.on('sendTournamentRankedPlayers', (data) => {
@@ -110,7 +119,10 @@ export class GameComponent implements OnInit {
             this.nbAllPlayers = this.rankedPlayers.length;
           });
           this._hubConnection.on('roomJoined', () => this.roomJoined = true);
-          this._hubConnection.on('sendHand', (hand) => { console.log(hand); })
+          this._hubConnection.on('sendHand', (hand) => {
+            console.log(hand);
+            this.currentHand = hand;
+          })
         });
   }
     

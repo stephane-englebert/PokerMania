@@ -11,6 +11,7 @@ namespace PM_BLL.Data.DTO.Entities
         public int SittingAtTable { get; set; }
         public int SeatNr { get; set; }
         public int Stack { get; set; }
+        public int MoneyInPot { get; set; }
         public Boolean Disconnected { get; set; }
         public Boolean TurnToPlay { get; set; }
         public IEnumerable<CardDTO> PrivateCards { get; set; }
@@ -25,6 +26,7 @@ namespace PM_BLL.Data.DTO.Entities
             SittingAtTable = 0;
             SeatNr = 0;
             Stack = 0;
+            MoneyInPot = 0;
             Disconnected = true;
             TurnToPlay = false;
             PrivateCards = new List<CardDTO>();
