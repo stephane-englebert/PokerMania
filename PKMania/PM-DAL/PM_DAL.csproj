@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Enums\" />
     <Folder Include="Tools\Migrations\" />
   </ItemGroup>
 

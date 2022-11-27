@@ -3,6 +3,7 @@ namespace PM_BLL.Data.DTO.Entities
 {
     public class CurrentHandDTO
     {
+        public Guid Guid { get; set; }
         public int TournamentId { get; set; }
         public int TableNr { get; set; }
         public DateTime StartedOn { get; set; }
@@ -13,12 +14,14 @@ namespace PM_BLL.Data.DTO.Entities
         public int SeatNrButton { get; set; }
         public int SeatNrSmallBlind { get; set; }
         public int SeatNrBigBlind { get; set; }
+        public CardsPackDTO CardsPack { get; set; }
         public IEnumerable<CardDTO> Flop { get; set; }
         public CardDTO Turn { get; set; }
         public CardDTO River { get; set; }
         public string HandHistory { get; set; } = string.Empty;
         public CurrentHandDTO()
         {
+            Guid = Guid.NewGuid();
             TournamentId = 0;
             TableNr = 0;
             StartedOn = DateTime.Now;
@@ -29,9 +32,10 @@ namespace PM_BLL.Data.DTO.Entities
             SeatNrButton = 0;
             SeatNrSmallBlind = 0;
             SeatNrBigBlind = 0;
+            CardsPack = new CardsPackDTO();
             Flop = new List<CardDTO>();
-            Turn = new CardDTO();
-            River = new CardDTO();
+            Turn = new CardDTO("queen","hearts","hq");
+            River = new CardDTO("king","hearts","kh");
             HandHistory = "";
         }
     }

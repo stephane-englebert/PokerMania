@@ -37,6 +37,7 @@ export class GameComponent implements OnInit {
   tournamentType!: TournamentsTypes;      // infos générales sur les types de tournois existants
   avatarPlayer!: Player;        // infos complètes sur le joueur connecté (Heads Up)
   avatarOpponent!: Player;      // infos complètes sur son adversaire (Heads Up)
+  roomJoined: Boolean = false;
 
   constructor(
       private _loginService: LoginService,
@@ -87,7 +88,7 @@ export class GameComponent implements OnInit {
             this.trStatus = this.infosTournament.status;
             this.nbPlayers = this.infosTournament.registrationsNumber;
             this._hubConnection.send("GetTournamentType", this.infosTournament.tournamentType);
-            this._hubConnection.send("JoinRoom", "tr" + this.infosTournament.id, this.infosTournament.id, this.userId);
+            if (!this.roomJoined) { this._hubConnection.send("JoinRoom", "tr" + this.infosTournament.id, this.infosTournament.id, this.userId); }
           });
           this._hubConnection.on('sendTournamentType', (data) => {
             this.tournamentType = data;
@@ -107,13 +108,9 @@ export class GameComponent implements OnInit {
             this.rankedPlayers = data[0];
             this.rankedTablePlayers = data[0];
             this.nbAllPlayers = this.rankedPlayers.length;
-            console.log(this.rankedPlayers);
           });
-          this._hubConnection.on('testSA', (data) => {
-            console.log("============= test SA ==========");
-            console.log(data);
-            console.log("============= test SA ==========");
-          });
+          this._hubConnection.on('roomJoined', () => this.roomJoined = true);
+          this._hubConnection.on('sendHand', (hand) => { console.log(hand); })
         });
   }
     
@@ -131,13 +128,15 @@ export class GameComponent implements OnInit {
   raiseHand() {
     console.log("Raise hand!!!");
   }
-
+   
   chooseRaiseAmount(amount: number) {
     console.log(amount);
   }
 
   getRankPlayer(searchTable: RankedPlayer[], playerId: number) {
-    return searchTable.findIndex(p => p.playerId == playerId) + 1;
+    if (this.rankedTablePlayers.length > 0) {
+      return (searchTable.findIndex(p => p.playerId == playerId)) + 1;
+    } else { return 0;}
   }
 
 }

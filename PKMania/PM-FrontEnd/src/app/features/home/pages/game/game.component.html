@@ -75,7 +75,7 @@
     <!-- Ranking TABLE -->
     <div *ngIf="menuOption == 1" class="ranking_box_table index999 bg_color12">
 
-      <div class="ranking_box_title font14 italic txt_center maj bold color1" style="background-color: #f7a728; padding-top:7px;height:23px;">
+      <div *ngIf="rankedTablePlayers.length > 0" class="ranking_box_title font14 italic txt_center maj bold color1" style="background-color: #f7a728; padding-top:7px;height:23px;">
         Rank Table : {{getRankPlayer(rankedTablePlayers,userId)}} / {{rankedTablePlayers.length}}
       </div>
       <div class="ranking_line dflex font14 bold top30 bg_color4 color8">
