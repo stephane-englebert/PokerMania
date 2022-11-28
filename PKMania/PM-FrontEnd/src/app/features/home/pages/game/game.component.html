@@ -84,11 +84,11 @@
 
       <!-- Cartes (Flop - Turn - River)-->
       <div class="central_cards"></div>
-      <img *ngIf="privateCard1 != null" src="./assets/cards/{{flopCards[0]}}.png" class="card_flop1" />>
-      <img *ngIf="privateCard1 != null" src="./assets/cards/{{flopCards[1]}}.png" class="card_flop2" />>
-      <img *ngIf="privateCard1 != null" src="./assets/cards/{{flopCards[2]}}.png" class="card_flop3" />>
-      <img *ngIf="privateCard1 != null" src="./assets/cards/{{turnCard}}.png" class="card_turn" />>
-      <img *ngIf="privateCard1 != null" src="./assets/cards/{{riverCard}}.png" class="card_river" />>
+      <img *ngIf="flopCards[0] != ''" src="./assets/cards/{{flopCards[0]}}.png" class="card_flop1" />>
+      <img *ngIf="flopCards[1] != ''" src="./assets/cards/{{flopCards[1]}}.png" class="card_flop2" />>
+      <img *ngIf="flopCards[2] != ''" src="./assets/cards/{{flopCards[2]}}.png" class="card_flop3" />>
+      <img *ngIf="turnCard != ''" src="./assets/cards/{{turnCard}}.png" class="card_turn" />>
+      <img *ngIf="riverCard != ''" src="./assets/cards/{{riverCard}}.png" class="card_river" />>
 
       <!-- Pot -->
       <div *ngIf="pot >= 0" class="pot">
@@ -136,7 +136,7 @@
           <div class="ranking_line_content width60">Pseudo</div>
           <div class="ranking_line_content width30">Jetons</div>
         </div>
-        <div *ngFor="let rkPlayer of rankedTablePlayers; index as i;">
+        <div *ngFor="let rkPlayer of rankedTablePlayers; index as i; order">
           <div *ngIf="rkPlayer.playerId == userId" class="ranking_line dflex defaut_color font14 bg_color7">
             <div class="ranking_line_content width10">{{i+1}}</div>
             <div class="ranking_line_content width60">{{rkPlayer.pseudo}}</div>
@@ -215,69 +215,67 @@
           MISES
         </div>
 
-        <div class="ranking_line dflex color1 font14 bold top80">
+        <div *ngIf="btnFold" class="ranking_line dflex color1 font14 bold top80">
           <div class="ranking_line_content width100">
-            <div class="bt_defaut">FOLD</div>
+            <div class="bt_defaut" (click)="foldHand()">FOLD</div>
           </div>
         </div>
 
-        <div class="ranking_line dflex color1 font14 bold">
+        <div *ngIf="btnCheck" class="ranking_line dflex color1 font14 bold">
           <div class="ranking_line_content width100">
-            <div class="bt_defaut">CHECK</div>
+            <div class="bt_defaut" (click)="checkHand()">CHECK</div>
           </div>
         </div>
 
 
-        <div class="ranking_line dflex color1 font14 bold bg_color10 top30">
+        <div *ngIf="btnRaise" class="ranking_line dflex color1 font14 bold bg_color10 top30">
           <div class="ranking_line_content width80 left10p txt_center">
             <div class="ranking_line dflex color1 font14 bold">
               <div class="ranking_line_content width100">
-                <form>
-                  <span class="bt_defaut " (click)="raiseHand()" style="width:75px;">
+                  <span class="bt_defaut " (click)="chooseRaiseAmount(avatarPlayer.stack)" style="width:75px;">
                     RAISE
                   </span>
                   <!--<span class="bt_defaut " style="width:75px;">
                     <input style="width:75px;height:20px;margin-left: 25px;text-align:right;border-radius:5px;border:2px solid black;" id="useridentifier-input" type="text" formControlName="UserRaise" pInputText placeholder="600" />
                   </span>-->
-                </form>
               </div>
             </div>
 
             <div class="txt_center top20" style="margin-left:45px;">
-              <div class="btn_raise" (click)="chooseRaiseAmount(3000)">
+              <div *ngIf="avatarPlayer.stack != null" class="btn_raise" (click)="chooseRaiseAmount(avatarPlayer.stack)">
                 <span class="bt_defaut2 bold defaut_color txt_left">All In</span>
                 <span class="defaut_color txt_left" style="padding:0px 5px 0px 5px">:</span>
-                <span class="bt_defaut2 bold color12 txt_right">3000</span>
+                <span class="bt_defaut2 bold color12 txt_right">{{avatarPlayer.stack}}</span>
               </div>
-              <div class="btn_raise" (click)="chooseRaiseAmount(1200)">
+              <div *ngIf="this.pot > 0 && (avatarOpponent.moneyInPot - avatarPlayer.moneyInPot) <= this.pot" class="btn_raise" (click)="chooseRaiseAmount(this.pot)">
                 <span class="bt_defaut2 bold defaut_color">Pot</span>
                 <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
-                <span class="bt_defaut2 bold color12">1200</span>
+                <span class="bt_defaut2 bold color12">{{this.pot}}</span>
               </div>
-              <div class="btn_raise" (click)="chooseRaiseAmount(900)">
+              <div *ngIf="this.pot > 0 && (avatarOpponent.moneyInPot - avatarPlayer.moneyInPot) <= this.pot * 0.75" class="btn_raise" (click)="chooseRaiseAmount(this.pot * 0.75)">
                 <span class="bt_defaut2 bold defaut_color">3/4 Pot</span>
                 <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
-                <span class="bt_defaut2 bold color12">900</span>
+                <span class="bt_defaut2 bold color12">{{this.pot * 0.75}}</span>
               </div>
-              <div class="btn_raise" (click)="chooseRaiseAmount(600)">
+              <div *ngIf="this.pot > 0 && (avatarOpponent.moneyInPot - avatarPlayer.moneyInPot) <= this.pot/2" class="btn_raise" (click)="chooseRaiseAmount(this.pot / 2)">
                 <span class="bt_defaut2 bold defaut_color">1/2 Pot</span>
                 <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
-                <span class="bt_defaut2 bold color12">600</span>
+                <span class="bt_defaut2 bold color12">{{this.pot / 2}}</span>
               </div>
-              <div class="btn_raise" (click)="chooseRaiseAmount(400)">
+              <div *ngIf="this.pot > 0 && (avatarOpponent.moneyInPot - avatarPlayer.moneyInPot) <= this.pot/3" class="btn_raise" (click)="chooseRaiseAmount(this.pot/3)">
                 <span class="bt_defaut2 bold defaut_color">1/3 Pot</span>
                 <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
-                <span class="bt_defaut2 bold color12">400</span>
+                <span class="bt_defaut2 bold color12">{{this.pot / 3}}</span>
               </div>
-              <div class="btn_raise" (click)="chooseRaiseAmount(300)">
+              <div *ngIf="this.pot > 0 && (avatarOpponent.moneyInPot - avatarPlayer.moneyInPot) <= this.pot/4" class="btn_raise" (click)="chooseRaiseAmount(this.pot / 4)">
                 <span class="bt_defaut2 bold defaut_color">1/4 Pot</span>
                 <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
-                <span class="bt_defaut2 bold color12">300</span>
+                <span class="bt_defaut2 bold color12">{{this.pot / 4}}</span>
               </div>
-              <div class="btn_raise" (click)="chooseRaiseAmount(100)">
+              <div *ngIf="this.pot > 0" class="btn_raise" (click)="chooseRaiseAmount(avatarOpponent.moneyInPot - avatarPlayer.moneyInPot)">
                 <span class="bt_defaut2 bold defaut_color">Min</span>
                 <span class="defaut_color" style="padding:0px 5px 0px 5px">:</span>
-                <span class="bt_defaut2 bold color12">100</span>
+                <span class="bt_defaut2 bold color12">{{avatarOpponent.moneyInPot - avatarPlayer.moneyInPot}}</span>
               </div>
 
             </div>

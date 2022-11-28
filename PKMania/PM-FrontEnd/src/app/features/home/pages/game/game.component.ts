@@ -8,6 +8,7 @@ import { LoginService } from '../../../tools/login/services/login.service';
 import { CurrentHand } from '../../../tools/tournaments/models/currentHand';
 import { Player } from '../../../tools/tournaments/models/player';
 import { RankedPlayer } from '../../../tools/tournaments/models/rankedPlayer';
+import { Speak } from '../../../tools/tournaments/models/speak';
 import { Tournament } from '../../../tools/tournaments/models/tournament';
 import { TournamentsTypes } from '../../../tools/tournaments/models/tournamentsTypes';
 import { GameService } from '../../../tools/tournaments/services/game.service';
@@ -28,6 +29,7 @@ export class GameComponent implements OnInit {
   nbAllPlayers: number = 0;     // nombre de participants au tournoi
   nbPlayers: number = 2;        // nombre de joueurs à la table
   menuOption: number = 1;       // option du menu latéral active
+  backUpMenuOption: number = 0;
   trStatus: string = "unknown"; // statut du tournoi 
   msgToPlayer: string = "Vous ne pouvez pas rejoindre ce tournoi.";
   seatsPlayersIds: number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];   // Id des joueurs assis à table
@@ -48,6 +50,10 @@ export class GameComponent implements OnInit {
   pot: number = 0;
   timerPlayer: number = 0;
   timerOpponent: number = 0;
+  btnFold: Boolean = false;
+  btnCheck: Boolean = false;
+  btnRaise: Boolean = false;
+  speakPlayer!: Speak;
 
   constructor(
       private _loginService: LoginService,
@@ -116,28 +122,70 @@ export class GameComponent implements OnInit {
             this.privateCard2 = this.avatarPlayer.privateCards[1].abbreviation;
             this.timerPlayer = this.avatarPlayer.bonusTime;
             this.timerOpponent = this.avatarOpponent.bonusTime;
-            console.log(this.tablePlayers);
           });
           this._hubConnection.on('sendTournamentRankedPlayers', (data) => {
             this.rankedPlayers = data[0];
             this.rankedTablePlayers = data[0];
             this.nbAllPlayers = this.rankedPlayers.length;
+            console.log("on passe par les ranked players!");
+            console.log(this.rankedTablePlayers);
           });
           this._hubConnection.on('roomJoined', () => this.roomJoined = true);
           this._hubConnection.on('sendHand', (hand) => {
+            console.log("================================");
             console.log(hand);
+            console.log("================================");
             this.currentHand = hand;
-            this.flopCards[0] = this.currentHand.flop[0].abbreviation;
-            this.flopCards[1] = this.currentHand.flop[1].abbreviation;
-            this.flopCards[2] = this.currentHand.flop[2].abbreviation;
-            this.turnCard = this.currentHand.turn.abbreviation;
-            this.riverCard = this.currentHand.river.abbreviation;
+            if (this.currentHand.progress == 0) {
+              this.flopCards[0] = "";
+              this.flopCards[1] = "";
+              this.flopCards[2] = "";
+              this.turnCard = "";
+              this.riverCard = "";
+            }
+            if (this.currentHand.progress == 1) {
+              this.flopCards[0] = this.currentHand.flop[0].abbreviation;
+              this.flopCards[1] = this.currentHand.flop[1].abbreviation;
+              this.flopCards[2] = this.currentHand.flop[2].abbreviation;
+            }
+            if (this.currentHand.progress == 2) {
+              this.turnCard = this.currentHand.turn.abbreviation;
+            }
+            if (this.currentHand.progress == 3) {
+              this.riverCard = this.currentHand.river.abbreviation;
+            }
             this.pot = this.currentHand.pot;
-          })
+            if (this.currentHand.seatNrPlayerToPlay == this.userId) {
+              this.backUpMenuOption = this.menuOption;
+              this.openCloseAllChoiceBtn(true);
+            }
+            if (this.currentHand.progress < 4 && this.currentHand.seatNrPlayerToPlay == this.userId) { this.menuOption = 3; } else { this.menuOption = 1; }
+          });
+          this._hubConnection.on('takeDecision', (speak) => {
+            this.speakPlayer = speak;
+            if (speak.choice == "raise") { this.btnCheck = false; }
+            console.log("***");
+            console.log("choice player[" + speak.idNext + "] = " + speak.choice);
+            console.log("progress = " + this.currentHand.progress);
+            console.log("***");
+            if (speak.turnSpeak == 0) {
+              this.flopCards[0] = "";
+              this.flopCards[1] = "";
+              this.flopCards[2] = "";
+              this.turnCard = "";
+              this.riverCard = "";
+            }
+          });
         });
   }
     
   ngOnInit(): void {
+  }
+
+  openCloseAllChoiceBtn(choice: Boolean) {
+    this.btnFold = choice;
+    this.btnCheck = choice;
+    this.btnRaise = choice;
   }
 
   switchMenu(nbMenu: number) {
@@ -148,12 +196,33 @@ export class GameComponent implements OnInit {
     if (this.menuOption == nbOption) { return "active" } else { return ""; }
   }
 
-  raiseHand() {
-    console.log("Raise hand!!!");
+  foldHand() {
+    this.speakPlayer.choice = "fold";
+    this.speakPlayer.newPlayerBet = 0;
+    this._hubConnection.send('TakingDecision', this.speakPlayer);
+    this.menuOption = this.backUpMenuOption;
+    this.openCloseAllChoiceBtn(false);
+  }
+
+  checkHand() {
+    if (this.speakPlayer.choice == "proposeCheck") { this.speakPlayer.choice = "checkAccepted"; }
+    this.speakPlayer.newPlayerBet = 0;
+    this._hubConnection.send('TakingDecision', this.speakPlayer);
+    this.menuOption = this.backUpMenuOption;
+    this.openCloseAllChoiceBtn(false);
+  }
+
+  raiseHand(amount: number) {
+    console.log("on passe par le raise... [" + amount + "]");
+    this.speakPlayer.choice = "raise";
+    this.speakPlayer.newPlayerBet = amount; 
+    this._hubConnection.send('TakingDecision', this.speakPlayer);
+    this.menuOption = this.backUpMenuOption;
+    this.openCloseAllChoiceBtn(false);
   }
    
   chooseRaiseAmount(amount: number) {
-    console.log(amount);
+    this.raiseHand(amount);
   }
 
   getRankPlayer(searchTable: RankedPlayer[], playerId: number) {

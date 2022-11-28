@@ -6,6 +6,7 @@ export interface CurrentHand {
   tableNr: number;
   startedOn: string;
   finishedOn: string;
+  progress: number;
   pot: number;
   players: Player[];
   seatNrPlayerToPlay: number;

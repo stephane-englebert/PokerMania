@@ -8,6 +8,7 @@ namespace PM_BLL.Data.DTO.Entities
         public int TableNr { get; set; }
         public DateTime StartedOn { get; set; }
         public DateTime FinishedOn { get; set; }
+        public int Progress { get; set; }
         public int Pot { get; set; }
         public IEnumerable<PlayerDTO> Players { get; set; }
         public int SeatNrPlayerToPlay { get; set; }
@@ -26,6 +27,7 @@ namespace PM_BLL.Data.DTO.Entities
             TableNr = 0;
             StartedOn = DateTime.Now;
             FinishedOn = new DateTime(1970,1,1,0,0,0);
+            Progress = 0;
             Pot = 0;
             Players = new List<PlayerDTO>();
             SeatNrPlayerToPlay = 0;

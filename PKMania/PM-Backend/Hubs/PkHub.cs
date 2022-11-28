@@ -511,7 +511,15 @@ namespace PM_Backend.Hubs
                 this.SendInfosTournament(trId, Clients.Group("tr"+trId));
 
                 //=================================================================
-                this.startHand(trId, trPlayers.Players);
+                // au hasard, choisir le premier joueur à la parole
+                Random rand = new Random();
+                int firstPl = rand.Next(1, 10) % 2;
+                int secondPl = (firstPl == 0) ? 1 : 0;
+                int idFirstPlayer = trPlayers.Players.ToList()[firstPl].Id;
+                int idSecondPlayer = trPlayers.Players.ToList()[secondPl].Id;
+
+                // démarrer la main
+                this.startHand(trId,idFirstPlayer,idSecondPlayer);
 
                 //=================================================================
             }
@@ -555,25 +563,23 @@ namespace PM_Backend.Hubs
             this.SendMsgToAll("Initiation de la gestion des tournois...");
             
         }
-        public void startHand(int trId, IEnumerable<PlayerDTO> trPlayers)
+        public void startHand(int trId, int idFirstPlayer, int idSecondPlayer)
         {
+            // récupération des données des joueurs
+            IEnumerable<PlayerDTO> trPlayers = this._trPlayers.Single(t => t.TournamentId == trId).Players;
+
             // créer une nouvelle main
             CurrentHandDTO hand = new CurrentHandDTO();
             hand.TournamentId = trId;
             hand.TableNr = 1;
-            hand.StartedOn = DateTime.Now;
-            
-            // au hasard, choisir le premier joueur à la parole
-            Random rand = new Random();
-            int firstPl = rand.Next(1,10) % 2;
-            int secondPl = (firstPl == 0) ? 1 : 0;
+            hand.StartedOn = DateTime.Now;           
 
             // placer le bouton (playerId 1er joueur)
-            hand.SeatNrButton = trPlayers.ToList()[firstPl].Id;
+            hand.SeatNrButton = idFirstPlayer;
 
             // positionner les blinds (SB & BB) à table
-            hand.SeatNrSmallBlind = trPlayers.ToList()[firstPl].Id; // playerId 1er joueur
-            hand.SeatNrBigBlind = trPlayers.ToList()[secondPl].Id; // playerId 2ème joueur
+            hand.SeatNrSmallBlind = idFirstPlayer; // playerId 1er joueur
+            hand.SeatNrBigBlind = idSecondPlayer; // playerId 2ème joueur
 
             // Positionner les joueurs à la table 1
             hand.SeatNrPlayerToPlay = hand.SeatNrSmallBlind;
@@ -603,16 +609,206 @@ namespace PM_Backend.Hubs
             // prendre un nouveau jeu de cartes et le mélanger
             this.ShuffleCards(hand);
 
-            // distribuer les cartes (joueurs,flop,turn,river)
+            // distribuer les cartes privées aux joueurs
             this.DealPrivateCards(hand);
-            this.DealFlop(hand);
-            this.DealTurn(hand);
-            this.DealRiver(hand);
 
             // transmettre infos aux joueurs
             this.SendTrPlayersToRoomPlayers(hand.TournamentId);
             this.SendInfosTournament(trId, Clients.Group("tr" + trId));
             Clients.Group("tr" + hand.TournamentId).SendAsync("sendHand", hand);
+            SpeakDTO firstSpeak = new SpeakDTO(hand.Guid);
+            firstSpeak.IdTr = trId;
+            firstSpeak.Guid = hand.Guid;
+            firstSpeak.TurnSpeak = 0;
+            firstSpeak.IdPlay = idFirstPlayer;
+            firstSpeak.IdNext = idSecondPlayer;
+            firstSpeak.Choice = "raise";
+            firstSpeak.NewPlayerBet = trPlayers.Single(p => p.Id == idSecondPlayer).MoneyInPot;
+            Clients.Group("tr" + hand.TournamentId).SendAsync("takeDecision", firstSpeak);
+        }
+        public void TakingDecision(SpeakDTO speak)
+        {
+            // Màj données joueurs/tournoi
+            IEnumerable<PlayerDTO> trPlayers = this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players;
+            int moneyInPotFirstPlayer = trPlayers.Single(p => p.Id == speak.IdPlay).MoneyInPot;
+            int moneyInPotSecondPlayer = trPlayers.Single(p => p.Id == speak.IdNext).MoneyInPot;
+            int stackFirstPlayer = this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == speak.IdPlay).Stack;
+            if(stackFirstPlayer < speak.NewPlayerBet) { speak.NewPlayerBet = stackFirstPlayer; } // All in
+            int handProgress = this._trHands.Single(h => h.TournamentId == speak.IdTr && h.Guid == speak.Guid).Progress;
+            this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == speak.IdPlay).Stack -= speak.NewPlayerBet;
+            this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == speak.IdPlay).MoneyInPot += speak.NewPlayerBet;
+            this._trHands.Single(h => h.TournamentId == speak.IdTr && h.Guid == speak.Guid).Pot += speak.NewPlayerBet;
+            this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == speak.IdPlay).TurnToPlay = false;
+            this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == speak.IdNext).TurnToPlay = true;
+
+            if (speak.Choice == "fold")
+            {
+                this.SharingPot(speak,false,speak.IdNext,speak.IdPlay);
+            }
+            if(speak.Choice == "raiseCheck")
+            {
+                // 1er check après le flop, la turn ou la river
+                if(speak.TurnSpeak == 1)
+                {
+                    // lorsque l'on vient de distribuer les cartes privées, la Big Blind
+                    // a le droit de raise même si la Small Blind a "raiseCheck"
+                    // (uniquement dans le cas de la toute première prise de parole de la Big Blind)
+                    if ((moneyInPotFirstPlayer + speak.NewPlayerBet) == moneyInPotSecondPlayer)
+                    {
+                        // La Big Blind décide de checker et de découvrir le Flop
+                        this.OkGoFurther(speak, "check");
+                    }
+                    else
+                    {
+                        if ((moneyInPotFirstPlayer + speak.NewPlayerBet) > moneyInPotSecondPlayer)
+                        {
+                            // La Big Blind décide de surenchérir
+                            speak.Choice = "raise";
+                            this.SendDecisionToOpponent(speak);
+                        }
+                        else
+                        {
+                            // ou est All-In...
+                            this.SharingPot(speak, true, 0, 0);
+                        }
+                    }
+                }
+                else
+                {
+                    // dans les autres cas, pas possible de re-raise si votre adversaire a accepté votre mise
+                    this.OkGoFurther(speak, "check");
+                }
+            }else if(speak.Choice == "check")
+            {
+                // On passe à l'étape suivante (Flop -> Turn -> River)
+                // Premier de parole à compter du Flop
+                speak.Choice = "proposeCheck";
+                this.SendDecisionToOpponent(speak);
+            }else if(speak.Choice == "checkAccepted")
+            {
+                // Check proposé par l'adversaire accepté
+                // On passe à l'étape suivante (Flop -> Turn -> River)
+                this.OkGoFurther(speak, "check");
+            }else if(speak.Choice == "raise")
+            {
+                if (stackFirstPlayer < speak.NewPlayerBet)
+                {
+                    // Le joueur se met All-in
+                    this.SharingPot(speak, true, 0, 0);
+                }
+                else
+                {
+                    // Si le raise correspond à simplement égaliser la mise précédente,
+                    if ((moneyInPotFirstPlayer + speak.NewPlayerBet) == moneyInPotSecondPlayer)
+                    {
+                        // Alors on considère que cela équivaut à un simple check (raiseCheck)                        
+                        speak.Choice = "raiseCheck";
+                    }
+                    else if((moneyInPotFirstPlayer + speak.NewPlayerBet) > moneyInPotSecondPlayer)
+                    {
+                        // Sinon, il s'agit d'un vrai 'raise' ou 're-raise'
+                        speak.Choice = "raise";
+                    }             
+                    this.SendDecisionToOpponent(speak);
+                }
+            }
+        }
+        private void OkGoFurther(SpeakDTO speak, string choice)
+        {
+            this.ProgressHand(speak);
+            speak.Choice = choice;
+            this.SendDecisionToOpponent(speak);
+        }
+        private void SendDecisionToOpponent(SpeakDTO speak)
+        {
+            int temp = speak.IdPlay;
+            speak.IdPlay = speak.IdNext;
+            speak.IdNext = temp;
+            speak.TurnSpeak += 1;
+            this._trHands.Single(h => h.TournamentId == speak.IdTr && h.Guid == speak.Guid).SeatNrPlayerToPlay = speak.IdPlay;
+            this._trHands.Single(h => h.TournamentId == speak.IdTr && h.Guid == speak.Guid).SeatNrSmallBlind = speak.IdPlay;
+            this._trHands.Single(h => h.TournamentId == speak.IdTr && h.Guid == speak.Guid).SeatNrBigBlind = speak.IdNext;
+            CurrentHandDTO hand = this._trHands.Single(h => h.TournamentId == speak.IdTr && h.Guid == speak.Guid);
+            //this.SaveHand(hand);
+            this.SendTrPlayersToRoomPlayers(hand.TournamentId);
+            this.SendInfosTournament(speak.IdTr, Clients.Group("tr" + speak.IdTr));
+            Clients.Group("tr" + hand.TournamentId).SendAsync("sendHand", hand);
+            Clients.Group("tr" + speak.IdTr).SendAsync("takeDecision", speak);
+        }
+
+        private void ProgressHand(SpeakDTO speak)
+        {
+            this._trHands.Single(h => h.TournamentId == speak.IdTr && h.Guid == speak.Guid).Progress += 1;
+            CurrentHandDTO hand = this._trHands.Single(h => h.TournamentId == speak.IdTr && h.Guid == speak.Guid);
+            int newProgress = hand.Progress;
+            if(newProgress == 1)
+            {
+                this.DealFlop(hand);
+
+            }
+            if(newProgress == 2)
+            {
+                this.DealTurn(hand);
+
+            }
+            if(newProgress == 3)
+            {
+                this.DealRiver(hand);
+            }
+            if(newProgress == 4)
+            {
+                this.SharingPot(speak, true, 0, 0);
+            }
+        }
+
+        public void SharingPot(SpeakDTO speak, Boolean showDown, int idWinner, int idLooser)
+        {
+            // récupération des données des joueurs
+            IEnumerable<PlayerDTO> trPlayers = this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players;
+            int stackFirstPlayer = trPlayers.Single(p => p.Id == speak.IdPlay).Stack;
+            int stackSecondPlayer = trPlayers.Single(p => p.Id == speak.IdNext).Stack;
+
+            if (showDown)
+            {
+                // Comparaison des mains afin de décider qui gagne en cas de Showdown
+                idWinner = 1;
+                idLooser = 2;
+            }
+            int moneyInPotWinner = trPlayers.Single(p => p.Id == idWinner).MoneyInPot;
+            int moneyInPotLooser = trPlayers.Single(p => p.Id == idLooser).MoneyInPot;
+            this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == idWinner).MoneyInPot = 0;
+            this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == idLooser).MoneyInPot = 0;
+            this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == idWinner).Stack += moneyInPotWinner + moneyInPotLooser;
+            if(speak.IdPlay == idWinner) { stackFirstPlayer += moneyInPotWinner + moneyInPotLooser; } else { stackSecondPlayer += moneyInPotWinner + moneyInPotLooser; }
+
+            // Vérifier si le tournoi est terminé ou non (1 des 2 joueurs avec une stack == 0
+            if(stackFirstPlayer == 0 || stackSecondPlayer == 0)
+            {
+                // Annonce du gagnant
+                if(stackFirstPlayer > 0) { idWinner = speak.IdPlay; } else { idWinner = speak.IdNext; }
+                Clients.Group("tr" + speak.IdTr).SendAsync("endTournament", idWinner);
+            }
+            else
+            {
+                // Finaliser la main
+                this._trHands.Single(h => h.TournamentId == speak.IdTr && h.Guid == speak.Guid).FinishedOn = DateTime.Now;
+                this._trHands.Single(h => h.TournamentId == speak.IdTr && h.Guid == speak.Guid).Pot = 0;
+                // Mettre à jour la 'Ranked' List
+                this._trPlayers.Single(t => t.TournamentId == speak.IdTr).RankedPlayers.Single(p => p.PlayerId == speak.IdPlay).Stack = stackFirstPlayer;
+                this._trPlayers.Single(t => t.TournamentId == speak.IdTr).RankedPlayers.Single(p => p.PlayerId == speak.IdNext).Stack = stackSecondPlayer;
+                int rankFirstPlayer = (stackFirstPlayer >= stackSecondPlayer) ? 1 : 2;
+                int rankSecondPlayer = (rankFirstPlayer == 1) ? 2 : 1;
+                this._trPlayers.Single(t => t.TournamentId == speak.IdTr).RankedPlayers.Single(p => p.PlayerId == speak.IdPlay).Rank = rankFirstPlayer;
+                this._trPlayers.Single(t => t.TournamentId == speak.IdTr).RankedPlayers.Single(p => p.PlayerId == speak.IdNext).Rank = rankSecondPlayer;
+                List<RankedPlayerDTO> orderedRkList = this._trPlayers.Single(t => t.TournamentId == speak.IdTr).RankedPlayers.ToList().OrderBy(p => p.Rank).ToList();
+                this._trPlayers.Single(t => t.TournamentId == speak.IdTr).RankedPlayers = orderedRkList;
+                this.SendTrRankedPlayers(speak.IdTr, Clients.Group("tr" + speak.IdTr));
+                // transmettre infos aux joueurs
+                //this.SendTrPlayersToRoomPlayers(speak.IdTr);
+                //this.SendInfosTournament(speak.IdTr, Clients.Group("tr" + speak.IdTr));
+                // Démarrer une nouvelle main en inversant l'ordre de parole
+                this.startHand(speak.IdTr,speak.IdNext,speak.IdPlay);
+            }
         }
 
         private void SaveHand(CurrentHandDTO hand)
@@ -674,6 +870,7 @@ namespace PM_Backend.Hubs
             if(field == "stack") { this._trPlayers.Single(d => d.TournamentId == trId).Players.Single(p => p.Id == playerId).Stack = fieldValue; }
             if(field == "moneyInPot") { this._trPlayers.Single(d => d.TournamentId == trId).Players.Single(p => p.Id == playerId).MoneyInPot += fieldValue; }
             if(field == "turnToPlay") { this._trPlayers.Single(d => d.TournamentId == trId).Players.Single(p => p.Id == playerId).TurnToPlay = fieldValue==1; }
+            if(field == "sittingAtTable") { this._trPlayers.Single(d => d.TournamentId == trId).Players.Single(p => p.Id == playerId).SittingAtTable = fieldValue; }
         }
         private void ShuffleCards(CurrentHandDTO hand)
         {
