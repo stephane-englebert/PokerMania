@@ -3,6 +3,7 @@ using PM_BLL.Data.DTO.Entities;
 using PM_BLL.Data.DTO.Entities.Hubs;
 using PM_BLL.Interfaces;
 using PM_BLL.Services;
+using System.Linq;
 
 namespace PM_Backend.Hubs
 {
@@ -771,24 +772,42 @@ namespace PM_Backend.Hubs
             if (showDown)
             {
                 // Comparaison des mains afin de décider qui gagne en cas de Showdown
-                idWinner = 1;
-                idLooser = 2;
-            }
-            int moneyInPotWinner = trPlayers.Single(p => p.Id == idWinner).MoneyInPot;
-            int moneyInPotLooser = trPlayers.Single(p => p.Id == idLooser).MoneyInPot;
-            this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == idWinner).MoneyInPot = 0;
-            this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == idLooser).MoneyInPot = 0;
-            this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == idWinner).Stack += moneyInPotWinner + moneyInPotLooser;
-            if(speak.IdPlay == idWinner) { stackFirstPlayer += moneyInPotWinner + moneyInPotLooser; } else { stackSecondPlayer += moneyInPotWinner + moneyInPotLooser; }
+                CurrentHandDTO hand = this._trHands.Single(h => h.TournamentId == speak.IdTr && h.Guid == speak.Guid);
+                List<CardDTO> flop = hand.Flop.ToList();
+                CardDTO turn = hand.Turn;
+                CardDTO river = hand.River;
+                List<CardDTO> privateCardsFirstPlayer = trPlayers.Single(p => p.Id == speak.IdPlay).PrivateCards.ToList();
+                List<CardDTO> privateCardsSecondPlayer = trPlayers.Single(p => p.Id == speak.IdNext).PrivateCards.ToList();
+                int handResult = this.whoWins(speak.IdPlay, speak.IdNext, flop, turn, river, privateCardsFirstPlayer, privateCardsSecondPlayer);
+                if(handResult == -1)
+                {
+                    // Stricte égalité - pot partagé
 
-            // Vérifier si le tournoi est terminé ou non (1 des 2 joueurs avec une stack == 0
-            if(stackFirstPlayer == 0 || stackSecondPlayer == 0)
-            {
-                // Annonce du gagnant
-                if(stackFirstPlayer > 0) { idWinner = speak.IdPlay; } else { idWinner = speak.IdNext; }
-                Clients.Group("tr" + speak.IdTr).SendAsync("endTournament", idWinner);
+                }
+                else
+                {
+                    // 1 seul gagnant
+                    idWinner = handResult;
+                    idLooser = (idWinner == speak.IdPlay) ? speak.IdNext : speak.IdPlay;
+
+                    int moneyInPotWinner = trPlayers.Single(p => p.Id == idWinner).MoneyInPot;
+                    int moneyInPotLooser = trPlayers.Single(p => p.Id == idLooser).MoneyInPot;
+                    this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == idWinner).MoneyInPot = 0;
+                    this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == idLooser).MoneyInPot = 0;
+                    this._trPlayers.Single(t => t.TournamentId == speak.IdTr).Players.Single(p => p.Id == idWinner).Stack += moneyInPotWinner + moneyInPotLooser;
+                    if (speak.IdPlay == idWinner) { stackFirstPlayer += moneyInPotWinner + moneyInPotLooser; } else { stackSecondPlayer += moneyInPotWinner + moneyInPotLooser; }
+
+                    // Vérifier si le tournoi est terminé ou non (1 des 2 joueurs avec une stack == 0
+                    if (stackFirstPlayer == 0 || stackSecondPlayer == 0)
+                    {
+                        // Annonce du gagnant
+                        if (stackFirstPlayer > 0) { idWinner = speak.IdPlay; } else { idWinner = speak.IdNext; }
+                        Clients.Group("tr" + speak.IdTr).SendAsync("endTournament", idWinner);
+                    }
+                }
             }
-            else
+
+            if (stackFirstPlayer != 0 && stackSecondPlayer != 0)
             {
                 // Finaliser la main
                 this._trHands.Single(h => h.TournamentId == speak.IdTr && h.Guid == speak.Guid).FinishedOn = DateTime.Now;
@@ -810,7 +829,400 @@ namespace PM_Backend.Hubs
                 this.startHand(speak.IdTr,speak.IdNext,speak.IdPlay);
             }
         }
+        private int whoWins(int idP1, int idP2,List<CardDTO> flop, CardDTO turn, CardDTO river, List<CardDTO> privateCardsFirstPlayer, List<CardDTO> privateCardsSecondPlayer)
+        {
+            List<CardDTO> sevenCardsP1 = new List<CardDTO>();
+            List<CardDTO> sevenCardsP2 = new List<CardDTO>();
+            sevenCardsP1 = flop.ToList();
+            sevenCardsP1.Add(turn);
+            sevenCardsP1.Add(river);
+            sevenCardsP2 = sevenCardsP1.ToList();
+            sevenCardsP1.AddRange(privateCardsFirstPlayer.ToList());
+            sevenCardsP2.AddRange(privateCardsSecondPlayer.ToList());
+            Clients.Group("tr3004").SendAsync("whowins", sevenCardsP1, sevenCardsP2);
+            int handLevelP1 = this.whichHandLevel(sevenCardsP1);
+            int handLevelP2 = this.whichHandLevel(sevenCardsP2);
+            if(handLevelP1 > handLevelP2) { return idP1;}
+            if(handLevelP2 > handLevelP1) { return idP2;}
+            return this.CompareTwoHandsOfSameLevel(idP1,idP2,handLevelP1,sevenCardsP1,sevenCardsP2);
+        }
+        private int CompareTwoHandsOfSameLevel(int idP1, int idP2, int handLevel, List<CardDTO> cardsP1, List<CardDTO> cardsP2)
+        {
+            List<int> NbOfCardsPerFamilyP1 = this.GetNbOfCardsPerFamily(cardsP1);
+            int MaxNbOfCardsPerFamilyP1 = NbOfCardsPerFamilyP1.Max();
+            List<int> NbOfCardsPerValueP1 = this.GetNbOfCardsPerValues(cardsP1);
+            int MaxNbOfCardsPerValueP1 = NbOfCardsPerValueP1.Max();
 
+            List<int> NbOfCardsPerFamilyP2 = this.GetNbOfCardsPerFamily(cardsP2);
+            int MaxNbOfCardsPerFamilyP2 = NbOfCardsPerFamilyP2.Max();
+            List<int> NbOfCardsPerValueP2 = this.GetNbOfCardsPerValues(cardsP2);
+            int MaxNbOfCardsPerValueP2 = NbOfCardsPerValueP2.Max();
+
+            switch (handLevel)
+            {
+                case 9:
+                    List<CardDTO> quinteFlushCardsP1 = this.GetFlushCards(cardsP1);
+                    List<CardDTO> quinteFlushCardsP2 = this.GetFlushCards(cardsP2);
+                    return this.CompareTwoFlushes(idP1, idP2, quinteFlushCardsP1, quinteFlushCardsP2);
+                    break;
+                case 8: return this.CompareTwoCarre(idP1, idP2, NbOfCardsPerValueP1, NbOfCardsPerValueP2); break;
+                case 7:
+                    List<CardDTO> fullThreesP1 = GetThreeOfAKind(cardsP1);
+                    List<CardDTO> fullThreesP2 = GetThreeOfAKind(cardsP2);
+                    int result = this.CompareTwoThrees(idP1, idP2, fullThreesP1, fullThreesP2);
+                    if(result == -1)
+                    {
+                        List<CardDTO> fullPairsP1 = GetPairs(cardsP1);
+                        List<CardDTO> fullPairsP2 = GetPairs(cardsP2);
+                        return this.CompareTwoPairs(idP1, idP2, fullPairsP1, fullPairsP2);
+                    }
+                    return -1;
+                    break;
+                case 6:
+                    List<CardDTO> flushCardsP1 = this.GetFlushCards(cardsP1);
+                    List<CardDTO> flushCardsP2 = this.GetFlushCards(cardsP2);
+                    return this.CompareTwoFlushes(idP1,idP2,flushCardsP1,flushCardsP2);
+                    break;
+                case 5: return this.CompareTwoQuinte(idP1,idP2,cardsP1,cardsP2); break;
+                case 4:
+                    List<CardDTO> threesP1 = GetThreeOfAKind(cardsP1);
+                    List<CardDTO> threesP2 = GetThreeOfAKind(cardsP2);
+                    return this.CompareTwoThrees(idP1, idP2, threesP1, threesP2);
+                    break;
+                case 3:
+                    List<CardDTO> twoPairsP1 = GetPairs(cardsP1);
+                    List<CardDTO> twoPairsP2 = GetPairs(cardsP2);
+                    return this.CompareTwoOrThreePairs(idP1, idP2, twoPairsP1, twoPairsP2);
+                    break;
+                case 2:
+                    List<CardDTO> pairsP1 = GetPairs(cardsP1);
+                    List<CardDTO> pairsP2 = GetPairs(cardsP2);
+                    return this.CompareTwoPairs(idP1, idP2, pairsP1, pairsP2); 
+                    break;
+                case 1: return this.CompareTwoHigherCard(idP1, idP2, NbOfCardsPerValueP1, NbOfCardsPerValueP2); break;
+                default: return idP1;
+            }
+        }
+        private int CompareTwoFlushes(int idP1, int idP2, List<CardDTO> flushP1, List<CardDTO> flushP2)
+        {
+            string typeCards = "akqjt98765432";
+            List<CardDTO> flushCardsP1 = this.OrderCardsInList(flushP1);
+            List<CardDTO> flushCardsP2 = this.OrderCardsInList(flushP2);
+            for(int i=0; i < flushCardsP1.Count(); i++)
+            {
+                if (typeCards.IndexOf(flushCardsP1[i].Abbreviation.Last()) < typeCards.IndexOf(flushCardsP2[i].Abbreviation.Last())) { return idP1; }
+                if (typeCards.IndexOf(flushCardsP2[i].Abbreviation.Last()) < typeCards.IndexOf(flushCardsP1[i].Abbreviation.Last())) { return idP2; }
+            }
+            return -1;
+        }
+        private List<CardDTO> OrderCardsInList(List<CardDTO> cards)
+        {
+            string typeCards = "akqjt98765432";
+            List<CardDTO> newCards = new List<CardDTO>();
+            for(int i=0; i<13; i++)
+            {
+                foreach(CardDTO card in cards)
+                {
+                    if(card.Abbreviation.Last() == typeCards[i])
+                    {
+                        newCards.Add(card);
+                    }
+                }
+            }
+            return newCards;
+        }
+        private List<CardDTO> DeleteCardInList(List<CardDTO> cards, CardDTO toDel)
+        {
+            List<CardDTO> newCards = new List<CardDTO>();
+            foreach (CardDTO card in cards)
+            {
+                if (toDel != card) { newCards.Add(card); }
+            }
+            return newCards;
+        }
+        private List<CardDTO> GetFlushCards(List<CardDTO> cards)
+        {
+            List<char> cardFamilies = new List<char>() { 'h', 'd', 'c', 's' };
+            List<int> NbOfCardsPerFamily = this.GetNbOfCardsPerFamily(cards);
+            int MaxNbOfCardsPerFamily = NbOfCardsPerFamily.Max();
+            char family = this.GetMostRepresentedFamily(NbOfCardsPerFamily);
+            return this.GetCardsOfOneFamily(cards, family);
+        }
+        private char GetMostRepresentedFamily(List<int> NbOfCardsPerFamily)
+        {
+            List<char> cardFamilies = new List<char>() { 'h', 'd', 'c', 's' };
+            int cpt = 0;
+            for (int i= 1; i < 4; i++)
+            {
+                if(NbOfCardsPerFamily[i] > cpt) { cpt = i; }
+            }
+            return cardFamilies[cpt];
+        }
+        private int CompareTwoThrees(int idP1, int idP2, List<CardDTO> threesP1, List<CardDTO> threesP2)
+        {
+            string typeThrees = "akqjt98765432";
+            int indThreesP1 = 0;
+            int indThreesP2 = 0;
+            if(threesP1.Count > 3) {
+                int indFirstThrees = typeThrees.IndexOf(threesP1[0].Abbreviation.Last());
+                int indSecondThrees = typeThrees.IndexOf(threesP1[3].Abbreviation.Last());
+                if (indFirstThrees < indSecondThrees){ indThreesP1 = indFirstThrees; } else { indThreesP1 = indSecondThrees; }
+            }
+            if(threesP2.Count > 3) {
+                int indFirstThrees = typeThrees.IndexOf(threesP2[0].Abbreviation.Last());
+                int indSecondThrees = typeThrees.IndexOf(threesP2[3].Abbreviation.Last());
+                if (indFirstThrees < indSecondThrees){ indThreesP2 = indFirstThrees; } else { indThreesP2 = indSecondThrees; }
+            }
+            if (threesP1.Count == 3){indThreesP1 = typeThrees.IndexOf(threesP1[0].Abbreviation.Last());}
+            if (threesP2.Count == 3){indThreesP2 = typeThrees.IndexOf(threesP2[0].Abbreviation.Last());}
+            if (indThreesP1 < indThreesP2) { return idP1; }
+            if (indThreesP2 < indThreesP1) { return idP2; }
+            return -1;
+        }
+        private int CompareTwoOrThreePairs(int idP1, int idP2, List<CardDTO> pairsP1, List<CardDTO> pairsP2)
+        {
+            List<CardDTO> orderedPairsP1 = this.OrderPairsList(pairsP1);
+            List<CardDTO> orderedPairsP2 = this.OrderPairsList(pairsP2);
+            int idWin = this.CompareTwoPairs(idP1, idP2, orderedPairsP1, orderedPairsP2);
+            if (idWin == -1)
+            {
+                orderedPairsP1 = this.DeletePairInList(orderedPairsP1, orderedPairsP1[0]);
+                orderedPairsP2 = this.DeletePairInList(orderedPairsP2, orderedPairsP2[0]);
+                idWin = this.CompareTwoPairs(idP1, idP2, orderedPairsP1, orderedPairsP2);
+            }
+            return idWin;
+        }
+        private List<CardDTO> OrderPairsList(List<CardDTO> cards)
+        {
+            List<CardDTO> newCards = new List<CardDTO>();
+            for (int i=0; i<cards.Count()/2;i++)
+            {
+                CardDTO hgCard = this.GetHigherPairInPairsList(cards);
+                newCards.Add(hgCard); // 1ère carte de la paire
+                hgCard = this.GetHigherPairInPairsList(cards);
+                newCards.Add(hgCard); // 2ème carte de la paire
+                cards = this.DeletePairInList(cards, hgCard);
+            }
+            return newCards;
+        }
+        private List<CardDTO> DeletePairInList(List<CardDTO> pairs, CardDTO toDel)
+        {
+            List<CardDTO> newPairs = new List<CardDTO>();
+            foreach(CardDTO pair in pairs)
+            {
+                if(toDel.Abbreviation.Last() != pair.Abbreviation.Last()) { newPairs.Add(pair); }
+            }
+            return newPairs;
+        }
+        private CardDTO GetHigherPairInPairsList(List<CardDTO> pairs)
+        {
+            string typePairs = "akqjt98765432";
+            CardDTO hgPair = pairs[0];
+            int posHgPair = typePairs.IndexOf(hgPair.Abbreviation.Last());
+            foreach (CardDTO pair in pairs)
+            {
+                int posHgPairCrt = typePairs.IndexOf(pair.Abbreviation.Last());
+                if (posHgPairCrt < posHgPair) { posHgPair = posHgPairCrt; }
+            }
+            return hgPair;
+        }
+        private List<CardDTO> GetPairs(List<CardDTO> cards)
+        {
+            string typePairs = "akqjt98765432";
+            List<CardDTO> pairs = new List<CardDTO>();
+            List<int> nbValues = this.GetNbOfCardsPerValues(cards);
+
+            for (int i=0; i < 13; i++) { 
+                if (nbValues[i] == 2) { 
+                    foreach(CardDTO c in cards)
+                    {
+                        if(c.Abbreviation.Last() == typePairs[i])
+                        {
+                            pairs.Add(c);
+                        }
+                    }
+                } 
+            }
+            return pairs;
+        }
+        private List<CardDTO> GetThreeOfAKind(List<CardDTO> cards)
+        {
+            string typeThrees = "akqjt98765432";
+            List<CardDTO> threes = new List<CardDTO>();
+            List<int> nbValues = this.GetNbOfCardsPerValues(cards);
+
+            foreach (int i in nbValues)
+            {
+                if (i == 3)
+                {
+                    threes.Add(cards.Single(p => p.Abbreviation.Last() == typeThrees[i]));
+                }
+            }
+            return threes;
+        }
+        private int CompareTwoPairs(int idP1, int idP2, List<CardDTO> pairsP1, List<CardDTO> pairsP2)
+        {
+            string typePairs = "akqjt98765432";
+            int posPairP1 = typePairs.IndexOf(pairsP1[0].Abbreviation.Last());
+            int posPairP2 = typePairs.IndexOf(pairsP2[0].Abbreviation.Last());
+            if(posPairP1 < posPairP2) { return idP1; }
+            if(posPairP2 < posPairP1) { return idP2; }
+            return -1;
+        }
+        private int CompareTwoHigherCard(int idP1, int idP2, List<int> NbOfCardsPerValueP1, List<int> NbOfCardsPerValueP2)
+        {
+            for (int i=0; i<7; i++)
+            {
+                if (NbOfCardsPerValueP1[i]>0 && NbOfCardsPerValueP2[i] == 0) { return idP1; }
+                if (NbOfCardsPerValueP1[i]==0 && NbOfCardsPerValueP2[i] > 0) { return idP2; }
+            }
+            return -1;
+        }
+        private int CompareTwoCarre(int idP1, int idP2, List<int> NbOfCardsPerValueP1, List<int> NbOfCardsPerValueP2)
+        {
+            int posHigherCardP1 = NbOfCardsPerValueP1.IndexOf(4);
+            int posHigherCardP2 = NbOfCardsPerValueP2.IndexOf(4);
+            return (posHigherCardP1 < posHigherCardP2) ? idP1 : idP2;
+        }
+        private int CompareTwoQuinte(int idP1, int idP2, List<CardDTO> cardsP1, List<CardDTO> cardsP2)
+        {
+            string typeQuinte = "akqjt98765432";
+            string quinteP1 = this.WhichQuinte(cardsP1);
+            string quinteP2 = this.WhichQuinte(cardsP2);
+            int posHigherCardP1 = typeQuinte.IndexOf(quinteP1[0]);
+            int posHigherCardP2 = typeQuinte.IndexOf(quinteP2[0]);
+            if (posHigherCardP1 < posHigherCardP2) { return idP1; }
+            if (posHigherCardP2 < posHigherCardP1) { return idP2; }
+            return -1;
+        }
+        private int whichHandLevel(List<CardDTO> sevenCards)
+        {
+            int handLvl = 0;
+            List<int> NbOfCardsPerFamily = this.GetNbOfCardsPerFamily(sevenCards);
+            int MaxNbOfCardsPerFamily = NbOfCardsPerFamily.Max();
+            List<int> NbOfCardsPerValue = this.GetNbOfCardsPerValues(sevenCards);
+            int MaxNbOfCardsPerValue =NbOfCardsPerValue.Max();
+            string aQuinte = this.WhichQuinte(sevenCards);
+            int nbPairs = this.HowManyPairs(NbOfCardsPerValue);
+
+            if (MaxNbOfCardsPerFamily >= 5)
+            {
+                if ( aQuinte != "")
+                {
+                    if (aQuinte[0] == 'a'){handLvl = 10;}       // Vérification level 10 - Quinte Flush Royale
+                    else{handLvl = 9;}                          // Vérification level 9 - Quinte Flush
+                }
+                else{handLvl = 6;}                              // Vérification level 6 - Couleur
+            }else{
+                if(aQuinte != ""){handLvl = 5;}                 // Vérification level 5 - Quinte
+                else
+                {
+                    if(MaxNbOfCardsPerValue == 4){handLvl = 8;} // Vérification level 8 - Carré
+                    else
+                    {
+                        if (this.IsThereAThreeOfAKind(NbOfCardsPerValue))
+                        {
+                            if (this.IsThereAPair(NbOfCardsPerValue))
+                            {handLvl = 7;}                      // Vérification level 7 - Full
+                            else { handLvl = 4;}                // Vérification level 4 - Brelan
+                        }
+                        else
+                        {
+                            if(nbPairs == 0) { handLvl = 1;}    // Vérification level 1 - Carte haute
+                            else
+                            {
+                                if(nbPairs >= 2){handLvl = 3;}  // Vérification level 3 - Double paire
+                                else { handLvl = 2;}            // Vérification level 2 - Paire
+                            }
+                        }
+                    }
+                }
+            }
+            return handLvl;
+        }
+        private int HowManyPairs(List<int> NbOfCardsPerValue)
+        {
+            int cptPairs = 0;
+            foreach(int i in NbOfCardsPerValue) { if(i == 2) { cptPairs++; } }
+            return cptPairs;
+        }
+        private Boolean IsThereAPair(List<int> NbOfCardsPerValue)
+        {
+            return NbOfCardsPerValue.Contains(2);
+        }
+        private Boolean IsThereAThreeOfAKind(List<int> NbOfCardsPerValue)
+        {
+            return NbOfCardsPerValue.Max() == 3;
+        }
+        private string WhichQuinte(List<CardDTO> cards)
+        {
+            string quinte = "";
+            string typeQuinte = "akqjt98765432";
+            string strValues = "";
+            List<int> nbValues = this.GetNbOfCardsPerValues(cards);
+            foreach (int nb in nbValues)
+            {
+                if(nb > 0) { strValues += "1"; } else { strValues += "0"; }
+            }
+            Boolean isThereAQuinte = strValues.Contains("11111");
+            if (isThereAQuinte)
+            {
+                int pos = strValues.IndexOf("11111");
+                quinte = typeQuinte.Substring(pos,5);
+            }
+            return quinte;
+        }
+        private List<CardDTO> GetCardsOfOneFamily(List<CardDTO> cards,char family)
+        {
+            List<CardDTO> result = new List<CardDTO>();
+            return (List<CardDTO>)cards.Select(c => c.Abbreviation.ToString().First() == family);
+        }
+        private List<int> GetNbOfCardsPerFamily(List<CardDTO> cards)
+        {
+            // Récupération du nombre de cartes dans une main pour chaque famille
+            // Ordre des totaux -> Hearts - Diamonds - Clubs - Spades
+                List<char> cardFamilies = new List<char>() { 'h', 'd', 'c', 's' };
+                List<int> nbCardFamilies = new List<int>() { 0, 0, 0, 0 };
+                string strFamilies = this.GetFirstCharOfCardAbbreviation(cards);
+                foreach (char c in strFamilies)
+                {
+                    int pos = cardFamilies.FindIndex(x => x == c);
+                    nbCardFamilies[pos] += 1;
+                }
+                return nbCardFamilies;
+        }
+        private List<int> GetNbOfCardsPerValues(List<CardDTO> cards)
+        {
+            // Récupération du nombre de cartes dans une main pour chaque valeur de carte
+            // Ordre des totaux -> Ace - King - Queen - Jack - Ten - 9 - 8 - 7 - 6 - 5 - 4 - 3 - 2
+                List<char> cardValues = new List<char>() { 'a','k','q','j','t','9','8','7','6','5','4','3','2'};
+                List<int> nbCardValues = new List<int>() { 0,0,0,0,0,0,0,0,0,0,0,0,0};
+                string strValues = this.GetLastCharOfCardAbbreviation(cards);
+                foreach (char c in strValues)
+                {
+                    int pos = cardValues.FindIndex(x => x == c);
+                    nbCardValues[pos] += 1;
+                }
+                return nbCardValues;
+        }
+        private string GetFirstCharOfCardAbbreviation(List<CardDTO> cards)
+        {
+            string firstLetters = "";
+            foreach (CardDTO card in cards)
+            {
+                firstLetters += card.Abbreviation.First();
+            }
+            return firstLetters;
+        }
+        private string GetLastCharOfCardAbbreviation(List<CardDTO> cards)
+        {
+            string lastLetters = "";
+            foreach (CardDTO card in cards)
+            {
+                lastLetters += card.Abbreviation.Last();
+            }
+            return lastLetters;
+        }
         private void SaveHand(CurrentHandDTO hand)
         {
             if (this._trHands != null)

@@ -127,14 +127,14 @@ export class GameComponent implements OnInit {
             this.rankedPlayers = data[0];
             this.rankedTablePlayers = data[0];
             this.nbAllPlayers = this.rankedPlayers.length;
-            console.log("on passe par les ranked players!");
-            console.log(this.rankedTablePlayers);
+            //console.log("on passe par les ranked players!");
+            //console.log(this.rankedTablePlayers);
           });
           this._hubConnection.on('roomJoined', () => this.roomJoined = true);
           this._hubConnection.on('sendHand', (hand) => {
-            console.log("================================");
-            console.log(hand);
-            console.log("================================");
+            //console.log("================================");
+            //console.log(hand);
+            //console.log("================================");
             this.currentHand = hand;
             if (this.currentHand.progress == 0) {
               this.flopCards[0] = "";
@@ -164,10 +164,10 @@ export class GameComponent implements OnInit {
           this._hubConnection.on('takeDecision', (speak) => {
             this.speakPlayer = speak;
             if (speak.choice == "raise") { this.btnCheck = false; }
-            console.log("***");
-            console.log("choice player[" + speak.idNext + "] = " + speak.choice);
-            console.log("progress = " + this.currentHand.progress);
-            console.log("***");
+            //console.log("***");
+            //console.log("choice player[" + speak.idNext + "] = " + speak.choice);
+            //console.log("progress = " + this.currentHand.progress);
+            //console.log("***");
             if (speak.turnSpeak == 0) {
               this.flopCards[0] = "";
               this.flopCards[1] = "";
@@ -175,6 +175,12 @@ export class GameComponent implements OnInit {
               this.turnCard = "";
               this.riverCard = "";
             }
+          });
+          this._hubConnection.on('whowins', (sevenP1,sevenP2) => {
+            console.log("========================================");
+            console.log(sevenP1);
+            console.log(sevenP2);
+            console.log("========================================");
           });
         });
   }
